@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="quickjspp"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\CMake\;CMake Files\ThirdParty\;CMake Files\ThirdParty\quickjspp\;CMake Files\ThirdParty\quickjspp\quickjs\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="qjs">
+				<Option output="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/qjs" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/Include"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/."/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 qjs"/>
+					<CompileFile command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="qjs/fast">
+				<Option output="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/qjs" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/Include"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/."/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 qjs/fast"/>
+					<CompileFile command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="quickjs">
+				<Option output="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/libquickjs.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DCONFIG_VERSION=&quot;2021-03-27&quot;"/>
+					<Add option="-D_GNU_SOURCE"/>
+					<Add option="-DCONFIG_BIGNUM"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/Include"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 quickjs"/>
+					<CompileFile command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="quickjs/fast">
+				<Option output="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/libquickjs.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DCONFIG_VERSION=&quot;2021-03-27&quot;"/>
+					<Add option="-D_GNU_SOURCE"/>
+					<Add option="-DCONFIG_BIGNUM"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/Include"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 quickjs/fast"/>
+					<CompileFile command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="quickjs-dumpleaks">
+				<Option output="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/libquickjs-dumpleaks.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DCONFIG_VERSION=&quot;2021-03-27&quot;"/>
+					<Add option="-D_GNU_SOURCE"/>
+					<Add option="-DCONFIG_BIGNUM"/>
+					<Add option="-DDUMP_LEAKS=1"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/Include"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 quickjs-dumpleaks"/>
+					<CompileFile command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="quickjs-dumpleaks/fast">
+				<Option output="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/libquickjs-dumpleaks.so" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs"/>
+				<Option object_output="./"/>
+				<Option type="3"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DCONFIG_VERSION=&quot;2021-03-27&quot;"/>
+					<Add option="-D_GNU_SOURCE"/>
+					<Add option="-DCONFIG_BIGNUM"/>
+					<Add option="-DDUMP_LEAKS=1"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/Include"/>
+					<Add directory="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 quickjs-dumpleaks/fast"/>
+					<CompileFile command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/gmake -j4 -f &quot;/home/titto/CProjects/RmlUi5.0/cmake-build-debug/ThirdParty/quickjspp/quickjs/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/qjs.cpp">
+			<Option target="qjs"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/cutils.c">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/cutils.h">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/libbf.c">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/libbf.h">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/libregexp.c">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/libregexp.h">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/libunicode.c">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/libunicode.h">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/quickjs-libc.c">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/quickjs-libc.h">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/quickjs.c">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/quickjs.h">
+			<Option target="quickjs"/>
+			<Option target="quickjs-dumpleaks"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/CMake/BackendFileList.cmake">
+			<Option virtualFolder="CMake Files\CMake\"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/CMake/FileList.cmake">
+			<Option virtualFolder="CMake Files\CMake\"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/CMake/RmlUiConfig.cmake.build.in">
+			<Option virtualFolder="CMake Files\CMake\"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/CMake/RmlUiConfig.cmake.install.in">
+			<Option virtualFolder="CMake Files\CMake\"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/CMake/SampleFileList.cmake">
+			<Option virtualFolder="CMake Files\CMake\"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ThirdParty\quickjspp\"/>
+		</Unit>
+		<Unit filename="/home/titto/CProjects/RmlUi5.0/ThirdParty/quickjspp/quickjs/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\ThirdParty\quickjspp\quickjs\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

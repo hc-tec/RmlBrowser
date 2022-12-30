@@ -2,8 +2,8 @@
 # Build script for RmlUi ===========
 #===================================
 
-cmake_minimum_required(VERSION 3.1)
-
+cmake_minimum_required(VERSION 3.13)
+set(CMAKE_CXX_STANDARD 17)
 if(APPLE)
 	# This has to be before most other options so CMake properly handles the 
 	# compiler variables, it MUST bebefore the project() definition
@@ -161,7 +161,8 @@ if(APPLE)
 	option(BUILD_FRAMEWORK "Build Framework bundle for OSX" OFF)
 endif()
 
-option(BUILD_SAMPLES "Build samples" OFF)
+option(BUILD_SAMPLES "Build samples" ON)
+option(BUILD_TESTING "Build tests" OFF)
 
 set(SAMPLES_BACKEND "auto" CACHE STRING "Backend platform and renderer used for the samples.")
 set_property(CACHE SAMPLES_BACKEND PROPERTY STRINGS auto Win32_GL2 Win32_VK X11_GL2 SDL_GL2 SDL_GL3 SDL_VK SDL_SDLrenderer SFML_GL2 GLFW_GL2 GLFW_GL3 GLFW_VK)
@@ -299,11 +300,11 @@ macro(add_common_target_options NAME)
 	# C++ language version
 	if(CMAKE_VERSION VERSION_LESS 3.8.0)
 		set_target_properties(${NAME} PROPERTIES 
-			CXX_STANDARD 14
+			CXX_STANDARD 17
 			CXX_STANDARD_REQUIRED YES
 		)
 	else()
-		target_compile_features(${NAME} PUBLIC cxx_std_14)
+		target_compile_features(${NAME} PUBLIC cxx_std_17)
 	endif()
 	set_target_properties(${NAME} PROPERTIES CXX_EXTENSIONS OFF)
 	
@@ -1030,3 +1031,30 @@ else()
 		" or write generators for RmlUiConfig.cmake by yourself.")
 endif()
 
+
+# Build browser
+
+include_directories(ThirdParty/quickjspp)
+add_subdirectory(ThirdParty/quickjspp)
+
+set(browser_LIBRARIES
+		shell
+		RmlCore
+		RmlDebugger
+		quickjspp
+		)
+
+add_executable(browser
+#		Source/Browser/MainWindow.h
+#		Source/Browser/MainWindow.cpp
+		Source/Script/QuickJs.h
+		Source/Script/QuickJs.cpp
+		Source/Script/Test.h
+		Source/Script/Test.cpp
+		)
+
+include_directories(${PROJECT_SOURCE_DIR}/Backends)
+include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)
+add_common_target_options(browser)
+
+target_link_libraries(browser ${browser_LIBRARIES})

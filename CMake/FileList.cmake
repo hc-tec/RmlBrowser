@@ -113,6 +113,7 @@ set(MASTER_Core_PUB_HDR_FILES
 )
 
 set(Core_PUB_HDR_FILES
+    ${PROJECT_SOURCE_DIR}/Source/Browser/MainWindow.h
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Config/Config.h
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/Animation.h
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/BaseXMLParser.h
@@ -225,6 +226,7 @@ set(Core_PUB_HDR_FILES
 )
 
 set(Core_SRC_FILES
+    ${PROJECT_SOURCE_DIR}/Source/Browser/MainWindow.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/BaseXMLParser.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/Box.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/Clock.cpp
