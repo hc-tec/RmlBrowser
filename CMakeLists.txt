@@ -161,6 +161,7 @@ if(APPLE)
 	option(BUILD_FRAMEWORK "Build Framework bundle for OSX" OFF)
 endif()
 
+option(BUILD_SHELL "Build shell" ON)
 option(BUILD_SAMPLES "Build samples" OFF)
 option(BUILD_TESTING "Build tests" OFF)
 
@@ -637,7 +638,7 @@ macro(bl_sample NAME)
 endmacro()
 
 # Build shell
-if(BUILD_SAMPLES OR BUILD_TESTING)
+if(BUILD_SHELL)
 	message("-- Adding shell with '${SAMPLES_BACKEND}' backend.")
 	
 	include(SampleFileList)
