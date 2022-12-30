@@ -1,9 +1,0 @@
-/home/titto/Downloads/clion-2020.3.4/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/titto/CProjects/RmlUi5.0
--- Adding shell with 'X11_GL2' backend.
--- Found X11: /usr/include   
--- Found X11 library.
--- Found X11 KBlib: /usr/lib/x86_64-linux-gnu/libX11.so
--- Adding OpenGL 2 renderer backend.
--- Configuring done
--- Generating done
--- Build files have been written to: /home/titto/CProjects/RmlUi5.0/cmake-build-debug

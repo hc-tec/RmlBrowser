@@ -161,7 +161,7 @@ if(APPLE)
 	option(BUILD_FRAMEWORK "Build Framework bundle for OSX" OFF)
 endif()
 
-option(BUILD_SAMPLES "Build samples" ON)
+option(BUILD_SAMPLES "Build samples" OFF)
 option(BUILD_TESTING "Build tests" OFF)
 
 set(SAMPLES_BACKEND "auto" CACHE STRING "Backend platform and renderer used for the samples.")
