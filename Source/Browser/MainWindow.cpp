@@ -69,7 +69,9 @@ int main(int argc, char** argv) {
 						 "log('ID' + ':' + ele.getId());"
 						 "log(document.getTitle());"
 						 "const ele2 = document.createElement(document, 'div');"
-						 "log('ele2' + ele2.getId())");
+						 "log('ele2' + ele2.getId());"
+						 "ele2.setInnerRML('Hello ELE2');"
+						 "ele2.appendChild(document, ele2);");
     }catch(qjs::exception)
     {
         auto exc = js_context->getException();
@@ -80,21 +82,21 @@ int main(int argc, char** argv) {
     }
 
     bool running = true;
-//    while (running)
-//    {
-//        // Handle input and window events.
-//        running = Backend::ProcessEvents(context, nullptr);
-//
-//        // This is a good place to update your game or application.
-//
-//        // Always update the context before rendering.
-//        context->Update();
-//
-//        // Prepare the backend for taking rendering commands from RmlUi and then render the context.
-//        Backend::BeginFrame();
-//        context->Render();
-//        Backend::PresentFrame();
-//    }
+    while (running)
+    {
+        // Handle input and window events.
+        running = Backend::ProcessEvents(context, nullptr);
+
+        // This is a good place to update your game or application.
+
+        // Always update the context before rendering.
+        context->Update();
+
+        // Prepare the backend for taking rendering commands from RmlUi and then render the context.
+        Backend::BeginFrame();
+        context->Render();
+        Backend::PresentFrame();
+    }
 
     // Shutdown RmlUi.
     Rml::Shutdown();

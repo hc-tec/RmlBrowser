@@ -7,6 +7,7 @@
 
 #include "RmlUi/Core/Plugin.h"
 #include "Dom/Document.h"
+
 namespace Rml {
 
 namespace Script {
@@ -30,11 +31,10 @@ public:
 private:
 
 	Context* context_;
-//    UniquePtr<Document> document_;
 };
 
 static ScriptPlugin* plugin = nullptr;
-static ScriptPlugin* GetInstance() {
+inline ScriptPlugin* GetInstance() {
 	if (plugin == nullptr) {
 		plugin = new ScriptPlugin();
 	}

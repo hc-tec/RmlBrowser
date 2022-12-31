@@ -6,6 +6,7 @@
 
 #include "RmlUi/Core/Context.h"
 #include "RmlUi/Core/ElementDocument.h"
+#include "Ownership.h"
 
 namespace Rml {
 
@@ -19,7 +20,9 @@ void Document::Glue(qjs::Context::Module& m)
         .fun<&ElementDocument::GetTitle>("getTitle")
         .fun<&ElementDocument::GetSourceURL>("getSourceURL")
         .fun<>("createElement", [](ElementDocument* _this, const String& tag) {
-			return _this->CreateElement(tag).get();
+            ElementPtr ele_ptr = _this->CreateElement(tag);
+            Element* ele = GetOwnership()->ShiftOwner(std::move(ele_ptr));
+            return ele;
 		})
 //        .fun_ptr<&ElementDocument::CreateElement>("createElementB")
 //        .fun<&ElementDocument::CreateTextNode>("createTextNode")

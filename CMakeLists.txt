@@ -1054,7 +1054,14 @@ add_executable(browser
 		Source/Script/ScriptPlugin.cpp
 		Source/Script/Dom/Element.h
 		Source/Script/Dom/Element.cpp
-		Source/Script/Dom/Document.cpp Source/Script/Dom/Document.h Source/Script/RunTime.cpp Source/Script/RunTime.h Source/Script/Glue.cpp Source/Script/Glue.h)
+		Source/Script/Dom/Document.cpp
+		Source/Script/Dom/Document.h
+		Source/Script/RunTime.cpp
+		Source/Script/RunTime.h
+		Source/Script/Glue.cpp
+		Source/Script/Glue.h
+		Source/Script/Dom/Ownership.h
+		Source/Script/Dom/Ownership.cpp)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)
