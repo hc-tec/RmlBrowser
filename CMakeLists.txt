@@ -310,8 +310,8 @@ macro(add_common_target_options NAME)
 	set_target_properties(${NAME} PROPERTIES CXX_EXTENSIONS OFF)
 	
 	# Compiler warnings
+	target_compile_options(${NAME} PRIVATE -Wsign-conversion -Wno-sign-conversion)
 	if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-		target_compile_options(${NAME} PRIVATE -Wall -pedantic -Wextra)
 		
 		if(WARNINGS_AS_ERRORS)
 			target_compile_options(${NAME} PRIVATE -Werror)
@@ -1046,13 +1046,15 @@ set(browser_LIBRARIES
 		)
 
 add_executable(browser
-#		Source/Browser/MainWindow.h
-#		Source/Browser/MainWindow.cpp
-		Source/Script/QuickJs.h
-		Source/Script/QuickJs.cpp
-		Source/Script/Test.h
-		Source/Script/Test.cpp
-		)
+		Source/Browser/MainWindow.h
+		Source/Browser/MainWindow.cpp
+#		Source/Script/Test.h
+#		Source/Script/Test.cpp
+		Source/Script/ScriptPlugin.h
+		Source/Script/ScriptPlugin.cpp
+		Source/Script/Dom/Element.h
+		Source/Script/Dom/Element.cpp
+		Source/Script/Dom/Document.cpp Source/Script/Dom/Document.h Source/Script/RunTime.cpp Source/Script/RunTime.h Source/Script/Glue.cpp Source/Script/Glue.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

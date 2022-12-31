@@ -3,74 +3,20 @@
 //
 
 #include "MainWindow.h"
-
-#include <string>
+#include "../Script/RunTime.h"
+#include "../Script/ScriptPlugin.h"
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
+#include <RmlUi/Config/Config.h>
 #include <RmlUi_Backend.h>
 #include <Shell.h>
-//#include <quickjs/quickjs-libc.h>
-#include <quickjspp.hpp>
-//static int eval_buf(JSContext *ctx, const char *buf, int buf_len,
-//                    const char *filename, int eval_flags) {
-//    JSValue val;
-//    int ret;
-//
-//    if ((eval_flags & JS_EVAL_TYPE_MASK) == JS_EVAL_TYPE_MODULE) {
-//        /* for the modules, we compile then run to be able to set
-//           import.meta */
-//        val = JS_Eval(ctx, buf, buf_len, filename,
-//                      eval_flags | JS_EVAL_FLAG_COMPILE_ONLY);
-//        if (!JS_IsException(val)) {
-//            js_module_set_import_meta(ctx, val, 1, 1);
-//            val = JS_EvalFunction(ctx, val);
-//        }
-//    } else {
-//        val = JS_Eval(ctx, buf, buf_len, filename, eval_flags);
-//    }
-//    if (JS_IsException(val)) {
-//        js_std_dump_error(ctx);
-//        ret = -1;
-//    } else {
-//        ret = 0;
-//    }
-//    JS_FreeValue(ctx, val);
-//    return ret;
-//}
+#include <iostream>
+#include <string>
 
-int main(int argc, char** argv)
+int main(int argc, char** argv) {
 
-{
-
-//    JSRuntime *rt;
-//    JSContext *ctx;
-//    rt = JS_NewRuntime();
-//    ctx = JS_NewContextRaw(rt);
-//    JS_SetModuleLoaderFunc(rt, NULL, js_module_loader, NULL);
-//    JS_AddIntrinsicBaseObjects(ctx);
-//    JS_AddIntrinsicDate(ctx);
-//    JS_AddIntrinsicEval(ctx);
-//    JS_AddIntrinsicStringNormalize(ctx);
-//    JS_AddIntrinsicRegExp(ctx);
-//    JS_AddIntrinsicJSON(ctx);
-//    JS_AddIntrinsicProxy(ctx);
-//    JS_AddIntrinsicMapSet(ctx);
-//    JS_AddIntrinsicTypedArrays(ctx);
-//    JS_AddIntrinsicPromise(ctx);
-//    JS_AddIntrinsicBigInt(ctx);
-//    js_std_add_helpers(ctx, argc, argv);
-//
-//    extern JSModuleDef *js_init_module_fib(JSContext *ctx, const char *name);
-//    js_init_module_fib(ctx, "fib.so");
-//
-//    std::string buf("import { fib } from 'fib.so';console.log(fib(10));");
-//    size_t buf_len = buf.size();
-//    const char *filename = "test.js";
-//
-//    eval_buf(ctx, buf.data(), buf_len, filename, JS_EVAL_TYPE_MODULE);
-//
-//    JS_FreeContext(ctx);
-//    JS_FreeRuntime(rt);
+	Rml::Script::ScriptPlugin* script_plugin = Rml::Script::GetInstance();
+	Rml::RegisterPlugin(script_plugin);
 
     const int window_width = 1024;
     const int window_height = 768;
@@ -104,7 +50,7 @@ int main(int argc, char** argv)
     }
 
     // The RmlUi debugger is optional but very useful. Try it by pressing 'F8' after starting this sample.
-    Rml::Debugger::Initialise(context);
+//    Rml::Debugger::Initialise(context);
 
     // Fonts should be loaded before any documents are loaded.
     Shell::LoadFonts();
@@ -112,6 +58,26 @@ int main(int argc, char** argv)
     // Load and show the demo document.
     if (Rml::ElementDocument* document = context->LoadDocument("/home/titto/CProjects/RmlUi5.0/Samples/assets/demo.rml"))
         document->Show();
+
+    qjs::Context* js_context = Rml::Script::GetContext();
+    try
+    {
+		js_context->global()["log"] = [](const Rml::String& str){
+			std::cout << str << std::endl;
+		};
+        js_context->eval("const ele = document.getElementById(\"title_bar\");"
+						 "log('ID' + ':' + ele.getId());"
+						 "log(document.getTitle());"
+						 "const ele2 = document.createElement(document, 'div');"
+						 "log('ele2' + ele2.getId())");
+    }catch(qjs::exception)
+    {
+        auto exc = js_context->getException();
+        std::cerr << (std::string) exc << std::endl;
+        if((bool) exc["stack"])
+            std::cerr << (std::string) exc["stack"] << std::endl;
+        return 1;
+    }
 
     bool running = true;
 //    while (running)
