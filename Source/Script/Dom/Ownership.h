@@ -12,20 +12,38 @@ namespace Rml {
 
 namespace Script {
 
-class Ownership {
-public:
+class BaseOwnership {};
 
-    Element* ShiftOwner(ElementPtr ele_ptr);
-	ElementPtr GetOwner(Rml::Element* ele);
+template <typename T, typename UT>
+class Ownership : public BaseOwnership {
+public:
+    T* ShiftOwner(UT ele_ptr) {
+        T* ele = ele_ptr.get();
+        owner_map_.emplace(ele, std::move(ele_ptr));
+        return ele;
+	}
+	UT GetOwner(T* ele) {
+        auto it = owner_map_.find(ele);
+        if (it == owner_map_.end()) return std::move(UT());
+        return std::move(it->second);
+	}
 
 private:
-	UnorderedMap<Element*, ElementPtr> owner_map_;
+	UnorderedMap<T*, UT> owner_map_;
 
 };
 
-static Ownership instance;
-inline Ownership* GetOwnership() {
-    return &instance;
+static UnorderedMap<String, UniquePtr<BaseOwnership>> instance;
+
+template <typename T, typename UT = UniquePtr<T>>
+inline Ownership<T, UT>* GetOwnership() {
+	const char* type_name = typeid(T).name();
+	auto it = instance.find(type_name);
+	if (it == instance.end()) {
+		instance[type_name] = std::move(MakeUnique<Ownership<T, UT>>());
+		it = instance.find(type_name);
+	}
+    return static_cast<Ownership<T, UT>*>(it->second.get());
 }
 
 }

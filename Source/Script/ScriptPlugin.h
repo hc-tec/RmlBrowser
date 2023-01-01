@@ -5,8 +5,10 @@
 #ifndef RMLUI_SCRIPTPLUGIN_H
 #define RMLUI_SCRIPTPLUGIN_H
 
+
 #include "RmlUi/Core/Plugin.h"
 #include "Dom/Document.h"
+
 
 namespace Rml {
 

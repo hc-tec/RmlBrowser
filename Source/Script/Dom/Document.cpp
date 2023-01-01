@@ -21,11 +21,9 @@ void Document::Glue(qjs::Context::Module& m)
         .fun<&ElementDocument::GetSourceURL>("getSourceURL")
         .fun<>("createElement", [](ElementDocument* _this, const String& tag) {
             ElementPtr ele_ptr = _this->CreateElement(tag);
-            Element* ele = GetOwnership()->ShiftOwner(std::move(ele_ptr));
+            Element* ele = GetOwnership<Element, ElementPtr>()->ShiftOwner(std::move(ele_ptr));
             return ele;
 		})
-//        .fun_ptr<&ElementDocument::CreateElement>("createElementB")
-//        .fun<&ElementDocument::CreateTextNode>("createTextNode")
         .fun<&ElementDocument::GetElementById>("getElementById");
 }
 

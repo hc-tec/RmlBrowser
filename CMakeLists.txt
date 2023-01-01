@@ -1046,10 +1046,9 @@ set(browser_LIBRARIES
 		)
 
 add_executable(browser
+		Source/Script/quickjsppExtend.h
 		Source/Browser/MainWindow.h
 		Source/Browser/MainWindow.cpp
-#		Source/Script/Test.h
-#		Source/Script/Test.cpp
 		Source/Script/ScriptPlugin.h
 		Source/Script/ScriptPlugin.cpp
 		Source/Script/Dom/Element.h
@@ -1061,7 +1060,11 @@ add_executable(browser
 		Source/Script/Glue.cpp
 		Source/Script/Glue.h
 		Source/Script/Dom/Ownership.h
-		Source/Script/Dom/Ownership.cpp)
+		Source/Script/Dom/Ownership.cpp
+		Source/Script/Dom/SelfListener.cpp
+		Source/Script/Dom/SelfListener.h
+		Source/Script/Dom/Event.cpp
+		Source/Script/Dom/Event.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

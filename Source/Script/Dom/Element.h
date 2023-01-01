@@ -5,7 +5,7 @@
 #ifndef RMLUI_SCRIPT_ELEMENT_H
 #define RMLUI_SCRIPT_ELEMENT_H
 
-#include "quickjspp.hpp"
+#include "../quickjsppExtend.h"
 
 namespace Rml {
 

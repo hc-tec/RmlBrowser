@@ -70,9 +70,15 @@ int main(int argc, char** argv) {
 						 "log(document.getTitle());"
 						 "const ele2 = document.createElement(document, 'div');"
 						 "log('ele2' + ele2.getId());"
-						 "ele2.setInnerRML('Hello ELE2');"
-						 "ele2.appendChild(document, ele2);");
-    }catch(qjs::exception)
+						 "ele2.innerRML = 'Hello ELE2';"
+						 "ele2.setId('test');"
+						 "log(ele2.innerRML);"
+						 "ele2.appendChild(document, ele2);"
+						 "ele2.addEventListener(ele2, 'click', (e) => {"
+						    "const target = e.getTargetElement();"
+						    "if (target !== null) log(`click event - ElementID: ${target.getId()}`);"
+						 "});");
+    } catch (qjs::exception)
     {
         auto exc = js_context->getException();
         std::cerr << (std::string) exc << std::endl;
