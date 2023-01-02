@@ -17,8 +17,8 @@ void Glue() {
 
     qjs::Context::Module& dom = js_context_->addModule("dom");
     Event::Glue(dom);
+    Element::Glue(dom);
 	Document::Glue(dom);
-	Element::Glue(dom);
 }
 
 }

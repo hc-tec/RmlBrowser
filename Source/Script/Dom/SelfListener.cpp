@@ -4,12 +4,14 @@
 
 #include "SelfListener.h"
 
+#include <utility>
+
 namespace Rml {
 
 namespace Script {
 
-SelfListener::SelfListener(const std::function<void(Event*)>& callback)
-    : callback_(callback) {}
+SelfListener::SelfListener(String  event, const std::function<void(Event*)>& callback)
+    : event_(std::move(event)), callback_(callback) {}
 
 void SelfListener::ProcessEvent(Event& event) {
 	callback_(&event);

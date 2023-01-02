@@ -22,7 +22,10 @@
 			}
 		</style>
 	</head>
-	<body template="window">
-		This is a sample.
+	<body>
+		<div id="title_bar">
+			This is a sample.
+		</div>
+		<script src="test.js"></script>
 	</body>
 </rml>

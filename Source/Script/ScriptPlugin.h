@@ -15,6 +15,7 @@ namespace Rml {
 namespace Script {
 
 class Document;
+class JsDocumentElementInstancer;
 
 class ScriptPlugin : public Rml::Plugin {
 public:
@@ -33,6 +34,7 @@ public:
 private:
 
 	Context* context_;
+    SharedPtr<JsDocumentElementInstancer> js_document_element_instancer_;
 };
 
 static ScriptPlugin* plugin = nullptr;

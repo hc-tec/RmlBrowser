@@ -1064,7 +1064,7 @@ add_executable(browser
 		Source/Script/Dom/SelfListener.cpp
 		Source/Script/Dom/SelfListener.h
 		Source/Script/Dom/Event.cpp
-		Source/Script/Dom/Event.h)
+		Source/Script/Dom/Event.h Source/Script/Dom/JsDocumentElementInstancer.cpp Source/Script/Dom/JsDocumentElementInstancer.h Source/Script/Dom/JsDocumentElement.cpp Source/Script/Dom/JsDocumentElement.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

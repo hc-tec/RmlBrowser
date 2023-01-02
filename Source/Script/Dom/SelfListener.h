@@ -13,10 +13,12 @@ namespace Script {
 
 class SelfListener : public EventListener {
 	public:
-        SelfListener(const std::function<void(Event*)>& callback);
+        SelfListener(String event, const std::function<void(Event*)>& callback);
 		void ProcessEvent(Event& event) override;
 
+		const String& GetEvent() { return event_; }
 	private:
+        String event_;
         std::function<void(Event*)> callback_;
 };
 }

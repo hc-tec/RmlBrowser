@@ -60,32 +60,9 @@ int main(int argc, char** argv) {
         document->Show();
 
     qjs::Context* js_context = Rml::Script::GetContext();
-    try
-    {
-		js_context->global()["log"] = [](const Rml::String& str){
-			std::cout << str << std::endl;
-		};
-        js_context->eval("const ele = document.getElementById(\"title_bar\");"
-						 "log('ID' + ':' + ele.getId());"
-						 "log(document.getTitle());"
-						 "const ele2 = document.createElement(document, 'div');"
-						 "log('ele2' + ele2.getId());"
-						 "ele2.innerRML = 'Hello ELE2';"
-						 "ele2.setId('test');"
-						 "log(ele2.innerRML);"
-						 "ele2.appendChild(document, ele2);"
-						 "ele2.addEventListener(ele2, 'click', (e) => {"
-						    "const target = e.getTargetElement();"
-						    "if (target !== null) log(`click event - ElementID: ${target.getId()}`);"
-						 "});");
-    } catch (qjs::exception)
-    {
-        auto exc = js_context->getException();
-        std::cerr << (std::string) exc << std::endl;
-        if((bool) exc["stack"])
-            std::cerr << (std::string) exc["stack"] << std::endl;
-        return 1;
-    }
+    js_context->global()["log"] = [](const Rml::String& str){
+      std::cout << str << std::endl;
+    };
 
     bool running = true;
     while (running)

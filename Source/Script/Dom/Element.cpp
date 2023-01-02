@@ -27,10 +27,10 @@ void Element::Glue(qjs::Context::Module& m) {
     m.class_<Rml::Element>("Element")
         .fun<&Rml::Element::GetId>("getId")
         .fun<&Rml::Element::SetId>("setId")
+        .fun<&Rml::Element::GetElementById>("getElementById")
+        .fun<&Rml::Element::_GetElementsByTagName>("getElementsByTagName")
+        .fun<&Rml::Element::_GetElementsByClassName>("getElementsByClassName")
         .fun<&Rml::Element::GetTagName>("getTagName")
-        .fun<>("appendChild", [](Rml::Element* _this, Rml::Element* child) {
-			return _this->AppendChild(GetOwnership<Rml::Element, ElementPtr>()->GetOwner(child), true);
-        })
         .fun<&Rml::Element::SetClass>("setClass")
         .fun<&Rml::Element::IsClassSet>("isClassSet")
         .fun<&Rml::Element::SetClassNames>("setClassNames")
@@ -55,15 +55,24 @@ void Element::Glue(qjs::Context::Module& m) {
         .fun<&Rml::Element::Focus>("focus")
         .fun<&Rml::Element::Blur>("blur")
         .fun<&Rml::Element::Click>("click")
-        .fun<>("addEventListener", [](Rml::Element* element, const String& event, const std::function<void(Event*)>& callback) {
-			UniquePtr<SelfListener> listener_ptr = MakeUnique<SelfListener>(callback);
+        .fun<&Rml::Element::_ScrollIntoView>("scrollIntoView")
+        .fun<>("appendChild", [](Rml::Element* _this, Rml::Element* child) {
+			return _this->AppendChild(GetOwnership<Rml::Element, ElementPtr>()->GetOwner(child), true);
+        })
+        .fun<>("removeChild", [](Rml::Element* _this, Rml::Element* child) {
+			_this->RemoveChild(child);
+			GetOwnership<Rml::Element>()->GetOwner(child).release();
+        })
+        .fun<>("addEventListener", [](Rml::Element* _this, const String& event, const std::function<void(Event*)>& callback) {
+			UniquePtr<SelfListener> listener_ptr = MakeUnique<SelfListener>(event, callback);
 			SelfListener* listener = listener_ptr.get();
             GetOwnership<SelfListener>()->ShiftOwner(std::move(listener_ptr));
-			element->AddEventListener(event, listener);
+            _this->AddEventListener(event, listener);
 			return listener;
 		})
-		.fun<>("removeEventListener", [](SelfListener* listener) {
-          GetOwnership<SelfListener>()->GetOwner(listener).release();
+		.fun<>("removeEventListener", [](Rml::Element* _this, SelfListener* listener) {
+            _this->RemoveEventListener(listener->GetEvent(), listener);
+			GetOwnership<SelfListener>()->GetOwner(listener).release();
 		})
         .property<&Rml::Element::_GetInnerRML, &Rml::Element::SetInnerRML>("innerRML");
 
