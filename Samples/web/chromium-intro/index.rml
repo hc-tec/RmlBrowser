@@ -1,0 +1,20 @@
+<rml>
+    <head>
+        <title>Chromium Introduction</title>
+        <link type="text/rcss" href="css/main.rcss" />
+        <link type="text/rcss" href="css/header.rcss" />
+    </head>
+    <body>
+        <div class="intro-header">
+            <img id="logo" src="images/chromium.png"></img>
+            <p>Chromium</p>
+        </div>
+        <div class="intro-img">
+            <img class="intro-bg" src="images/bg.png"></img>
+            <img class="intro-body" src="images/liebao.png"></img>
+            <img class="intro-lines" src="images/line.png"></img>
+            <p class="intro-text">Chromium Introduction</p>
+        </div>
+        <script src="js/main.js"></script>
+    </body>
+</rml>
