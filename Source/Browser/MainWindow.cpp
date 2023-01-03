@@ -13,20 +13,22 @@
 #include <iostream>
 #include <string>
 
-int main(int argc, char** argv) {
+bool continue_running = false;
 
+int StartWindow() {
+    continue_running = false;
 	Rml::Script::ScriptPlugin* script_plugin = Rml::Script::GetInstance();
 	Rml::RegisterPlugin(script_plugin);
 
-    const int window_width = 1024;
-    const int window_height = 768;
+    const int window_width = 1550;
+    const int window_height = 760;
 
     // Initializes the shell which provides common functionality used by the included samples.
     if (!Shell::Initialize())
         return -1;
 
     // Constructs the system and render interfaces, creates a window, and attaches the renderer.
-    if (!Backend::Initialize("Load Document Sample", window_width, window_height, true))
+    if (!Backend::Initialize("Rml Browser", window_width, window_height, true))
     {
         Shell::Shutdown();
         return -1;
@@ -50,28 +52,37 @@ int main(int argc, char** argv) {
     }
 
     // The RmlUi debugger is optional but very useful. Try it by pressing 'F8' after starting this sample.
-//    Rml::Debugger::Initialise(context);
+    Rml::Debugger::Initialise(context);
 
     // Fonts should be loaded before any documents are loaded.
     Shell::LoadFonts();
-
-    // Load and show the demo document.
-    if (Rml::ElementDocument* document = context->LoadDocument("/home/titto/CProjects/RmlUi5.0/Samples/assets/demo.rml"))
-        document->Show();
 
     qjs::Context* js_context = Rml::Script::GetContext();
     js_context->global()["log"] = [](const Rml::String& str){
       std::cout << str << std::endl;
     };
 
+
+    // Load and show the demo document.
+	Rml::String rml("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
+    Rml::ElementDocument* document = context->LoadDocument(rml);
+    if (document)
+        document->Show();
+
+    js_context->global()["reload"] = [&](){
+        Backend::RequestExit();
+        Rml::Script::GetContext(true);
+        continue_running = true;
+        std::cout << "--Reload--" << std::endl;
+    };
+
     bool running = true;
     while (running)
     {
         // Handle input and window events.
-        running = Backend::ProcessEvents(context, nullptr);
+        running = Backend::ProcessEvents(context, &Shell::ProcessKeyDownShortcuts);
 
         // This is a good place to update your game or application.
-
         // Always update the context before rendering.
         context->Update();
 
@@ -86,6 +97,12 @@ int main(int argc, char** argv) {
 
     Backend::Shutdown();
     Shell::Shutdown();
-
     return 0;
+}
+
+int main(int argc, char** argv) {
+	do
+	{
+        StartWindow();
+	} while (continue_running);
 }
