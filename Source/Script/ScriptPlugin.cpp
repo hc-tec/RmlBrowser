@@ -30,7 +30,7 @@ void ScriptPlugin::OnShutdown() { Plugin::OnShutdown(); }
 
 void ScriptPlugin::OnContextCreate(Context* context) {
     context_ = context;
-	std::cout << "Register ScriptPlugin: " << context_ << std::endl;
+	std::cout << "Register ScriptPlugin" << std::endl;
 }
 
 void ScriptPlugin::OnContextDestroy(Context* context) {
@@ -67,7 +67,6 @@ void ScriptPlugin::OnDocumentUnload(ElementDocument* document) {
 
 void ScriptPlugin::OnElementCreate(Element* element) {
 //	element->GetParentNode()
-    std::cout << "OnElementCreate: " << element->GetTagName() << "-" << element->GetId() << std::endl;
 }
 
 void ScriptPlugin::OnElementDestroy(Element* element) {

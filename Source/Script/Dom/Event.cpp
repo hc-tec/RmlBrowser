@@ -13,8 +13,12 @@ namespace Script {
 
 void Event::Glue(qjs::Context::Module& m) {
 
-//	m.class_<Rml::Dictionary>("Dictionary");
-//        .fun<&Rml::Dictionary::find>("find");
+	m.class_<Rml::SmallUnorderedMap< String, Variant >>("Dictionary");
+//        .fun<>("find", [](Rml::SmallUnorderedMap< String, Variant >* dictionary, const String& param){
+//            auto it = dictionary->find(param);
+//            if (it == dictionary->end()) return VARIANT_NONE.get()->Get(0);
+//            return it->second.Get(0);
+//		});
 
     m.class_<Rml::Event>("Event")
         .fun<&Rml::Event::GetId>("getId")
@@ -22,8 +26,8 @@ void Event::Glue(qjs::Context::Module& m) {
         .fun<&Rml::Event::GetTargetElement>("getTargetElement")
         .fun<&Rml::Event::GetType>("getType")
         .fun<&Rml::Event::StopPropagation>("stopPropagation")
-        .fun<&Rml::Event::IsPropagating>("isPropagating");
-//        .fun<&Rml::Event::GetParameters>("getParameters");
+        .fun<&Rml::Event::IsPropagating>("isPropagating")
+        .fun<&Rml::Event::GetParameters>("getParameters");
 }
 
 }

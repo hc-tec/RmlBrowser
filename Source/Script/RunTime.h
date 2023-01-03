@@ -24,11 +24,14 @@ inline qjs::Runtime* GetRunTime() {
 
 static qjs::Context* context;
 
-inline qjs::Context* GetContext() {
+inline qjs::Context* GetContext(bool fresh = false) {
 	if (context == nullptr)
 	{
 		context = new qjs::Context(*GetRunTime());
-	}
+	} else if (fresh) {
+        delete context;
+        context = new qjs::Context(*GetRunTime());
+    }
     return context;
 }
 
