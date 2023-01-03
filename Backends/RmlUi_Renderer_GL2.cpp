@@ -48,6 +48,7 @@
 	#include <GL/glext.h>
 	#include <GL/glu.h>
 	#include <GL/glx.h>
+    #include "lodepng.h"
 #endif
 
 #define GL_CLAMP_TO_EDGE 0x812F
@@ -214,6 +215,33 @@ bool RenderInterface_GL2::LoadTexture(Rml::TextureHandle& texture_handle, Rml::V
 	file_interface->Seek(file_handle, 0, SEEK_END);
 	size_t buffer_size = file_interface->Tell(file_handle);
 	file_interface->Seek(file_handle, 0, SEEK_SET);
+
+	int len = source.size();
+    if (source.substr(len-3, len) == "png") {
+        Rml::FileInterface* file_interface = Rml::GetFileInterface();
+        Rml::FileHandle file_handle = file_interface->Open(source);
+        if (!file_handle) return false;
+        file_interface->Seek(file_handle, 0, SEEK_END);
+        size_t buffer_size = file_interface->Tell(file_handle);
+        file_interface->Seek(file_handle, 0, SEEK_SET);
+        char* buffer = new char[buffer_size];
+        file_interface->Read(buffer, buffer_size, file_handle);
+        file_interface->Close(file_handle);
+        std::vector<unsigned char> png(buffer, buffer+buffer_size);
+        std::vector<unsigned char> image;
+        unsigned width, height;
+        unsigned error = lodepng::decode(image, width, height, png);
+        if (error) {
+            Rml::Log::Message(Rml::Log::LT_ERROR, "load png error: %s", lodepng_error_text(error));
+            delete[] buffer;
+            return false;
+        }
+        texture_dimensions.x = width;
+        texture_dimensions.y = height;
+        bool success = GenerateTexture(texture_handle, &image[0], texture_dimensions);
+        delete[] buffer;
+        return success;
+	}
 
 	if (buffer_size <= sizeof(TGAHeader))
 	{

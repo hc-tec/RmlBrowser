@@ -1036,6 +1036,7 @@ endif()
 # Build browser
 
 include_directories(ThirdParty/quickjspp)
+include_directories(ThirdParty/lodepng)
 add_subdirectory(ThirdParty/quickjspp)
 
 set(browser_LIBRARIES
@@ -1046,6 +1047,8 @@ set(browser_LIBRARIES
 		)
 
 add_executable(browser
+		ThirdParty/lodepng/lodepng.h
+		ThirdParty/lodepng/lodepng.cpp
 		Source/Script/quickjsppExtend.h
 		Source/Browser/MainWindow.h
 		Source/Browser/MainWindow.cpp
@@ -1064,7 +1067,11 @@ add_executable(browser
 		Source/Script/Dom/SelfListener.cpp
 		Source/Script/Dom/SelfListener.h
 		Source/Script/Dom/Event.cpp
-		Source/Script/Dom/Event.h Source/Script/Dom/JsDocumentElementInstancer.cpp Source/Script/Dom/JsDocumentElementInstancer.h Source/Script/Dom/JsDocumentElement.cpp Source/Script/Dom/JsDocumentElement.h)
+		Source/Script/Dom/Event.h
+		Source/Script/Dom/JsDocumentElementInstancer.cpp
+		Source/Script/Dom/JsDocumentElementInstancer.h
+		Source/Script/Dom/JsDocumentElement.cpp
+		Source/Script/Dom/JsDocumentElement.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)
