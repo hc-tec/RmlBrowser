@@ -43,7 +43,7 @@ void Element::Glue(qjs::Context::Module& m) {
         .fun<&Rml::Element::_RemoveProperty>("removeProperty")
         .fun<&Rml::Element::_GetProperty>("getProperty")
         .fun<&Rml::Element::_GetAttribute>("getAttribute")
-//        .fun<&Rml::Element::_SetAttribute>("setAttribute")
+        .fun<&Rml::Element::_SetAttribute>("setAttribute")
         .fun<&Rml::Element::HasAttribute>("hasAttribute")
         .fun<&Rml::Element::RemoveAttribute>("removeAttribute")
         .fun<&Rml::Element::GetParentNode>("getParentNode")
@@ -56,6 +56,9 @@ void Element::Glue(qjs::Context::Module& m) {
         .fun<&Rml::Element::Blur>("blur")
         .fun<&Rml::Element::Click>("click")
         .fun<&Rml::Element::_ScrollIntoView>("scrollIntoView")
+//		.fun<>("setAttribute", [](Rml::Element* _this, const String& name, const String& value) {
+//			_this->SetAttribute(name, value);
+//		})
         .fun<>("appendChild", [](Rml::Element* _this, Rml::Element* child) {
 			return _this->AppendChild(GetOwnership<Rml::Element, ElementPtr>()->GetOwner(child), true);
         })

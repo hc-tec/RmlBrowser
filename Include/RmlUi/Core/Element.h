@@ -216,16 +216,23 @@ public:
 	/// @param[in] property The parsed property to set.
 	/// @return True if the property was set successfully, false otherwise.
 	bool SetProperty(PropertyId id, const Property& property);
+    /// Sets a local property override on the element.
+    /// @param[in] name The name of the new property.
+    /// @param[in] value The new property to set.
+    /// @return True if the property parsed successfully, false otherwise.
+    bool _SetProperty(const String& name, const String& value);
 	/// Removes a local property override on the element; its value will revert to that defined in the style sheet.
 	/// @param[in] name The name of the local property definition to remove.
 	void RemoveProperty(const String& name);
 	void RemoveProperty(PropertyId id);
+    void _RemoveProperty(const String& name);
 	/// Returns one of this element's properties. If the property is not defined for this element and not inherited 
 	/// from an ancestor, the default value will be returned.
 	/// @param[in] name The name of the property to fetch the value for.
 	/// @return The value of this property for this element, or nullptr if no property exists with the given name.
 	const Property* GetProperty(const String& name);		
-	const Property* GetProperty(PropertyId id);		
+	const Property* GetProperty(PropertyId id);
+    const Property* _GetProperty(const String& name);
 	/// Returns the values of one of this element's properties.		
 	/// @param[in] name The name of the property to get.
 	/// @return The value of this property.
@@ -314,10 +321,12 @@ public:
 	/// @param[in] value Value of the attribute.
 	template< typename T >
 	void SetAttribute(const String& name, const T& value);
+    void _SetAttribute(const String& name, const String& value);
 	/// Gets the specified attribute.
 	/// @param[in] name Name of the attribute to retrieve.
 	/// @return A variant representing the attribute, or nullptr if the attribute doesn't exist.
 	Variant* GetAttribute(const String& name);
+    Variant* _GetAttribute(const String& name);
 	/// Gets the specified attribute.
 	const Variant* GetAttribute(const String& name) const;
 	/// Gets the specified attribute, with default value.
@@ -470,6 +479,9 @@ public:
 	/// Gets the markup and content of the element.
 	/// @return The content of the element.
 	String GetInnerRML() const;
+    /// Gets the markup and content of the element.
+    /// @return The content of the element.
+    String _GetInnerRML() const;
 	/// Sets the markup and content of the element. All existing children will be replaced.
 	/// @param[in] rml The new content of the element.
 	void SetInnerRML(const String& rml);
@@ -495,6 +507,7 @@ public:
 	/// @lifetime The added listener must stay alive until after the dispatched call from EventListener::OnDetach(). This occurs
 	///     eg. when the element is destroyed or when RemoveEventListener() is called with the same parameters passed here.
 	void AddEventListener(const String& event, EventListener* listener, bool in_capture_phase = false);
+//    void _AddEventListener(const String& event, EventListener* listener, bool in_capture_phase = false);
 	/// Adds an event listener to this element by id.
 	/// @lifetime The added listener must stay alive until after the dispatched call from EventListener::OnDetach(). This occurs
 	///     eg. when the element is destroyed or when RemoveEventListener() is called with the same parameters passed here.
@@ -504,6 +517,7 @@ public:
 	/// @param[in] listener The listener object to be detached.
 	/// @param[in] in_capture_phase True to detach from the capture phase, false from the bubble phase.
 	void RemoveEventListener(const String& event, EventListener* listener, bool in_capture_phase = false);
+//    void _RemoveEventListener(const String& event, EventListener* listener, bool in_capture_phase = false);
 	/// Removes an event listener from this element by id.
 	void RemoveEventListener(EventId id, EventListener* listener, bool in_capture_phase = false);
 	/// Sends an event to this element.
@@ -522,6 +536,7 @@ public:
 	/// Scrolls the parent element's contents so that this element is visible.
 	/// @param[in] align_with_top If true, the element will align itself to the top of the parent element's window. If false, the element will be aligned to the bottom of the parent element's window.
 	void ScrollIntoView(bool align_with_top = true);
+    void _ScrollIntoView(bool align_with_top = true);
 
 	/// Append a child to this element.
 	/// @param[in] element The element to append as a child.
@@ -553,10 +568,12 @@ public:
 	/// @param[out] elements Resulting elements.
 	/// @param[in] tag Tag to search for.
 	void GetElementsByTagName(ElementList& elements, const String& tag);
+    ElementList _GetElementsByTagName(const String& tag);
 	/// Get all descendant elements with the given class set on them.
 	/// @param[out] elements Resulting elements.
 	/// @param[in] tag Tag to search for.
 	void GetElementsByClassName(ElementList& elements, const String& class_name);
+    ElementList _GetElementsByClassName(const String& class_name);
 	/// Returns the first descendent element matching the RCSS selector query.
 	/// @param[in] selectors The selector or comma-separated selectors to match against.
 	/// @return The first matching element during a depth-first traversal.

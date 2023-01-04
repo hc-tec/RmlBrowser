@@ -601,6 +601,11 @@ bool Element::SetProperty(PropertyId id, const Property& property)
 	return meta->style.SetProperty(id, property);
 }
 
+// Sets a local property override on the element.
+bool Element::_SetProperty(const String& name, const String& value) {
+	return SetProperty(name, value);
+}
+
 // Removes a local property override on the element.
 void Element::RemoveProperty(const String& name)
 {
@@ -613,6 +618,11 @@ void Element::RemoveProperty(PropertyId id)
 	meta->style.RemoveProperty(id);
 }
 
+// Removes a local property override on the element.
+void Element::_RemoveProperty(const String& name) {
+	RemoveProperty(name);
+}
+
 // Returns one of this element's properties.
 const Property* Element::GetProperty(const String& name)
 {
@@ -623,6 +633,11 @@ const Property* Element::GetProperty(const String& name)
 const Property* Element::GetProperty(PropertyId id)
 {
 	return meta->style.GetProperty(id);
+}
+
+// Returns one of this element's properties.
+const Property* Element::_GetProperty(const String& name) {
+	return GetProperty(name);
 }
 
 // Returns one of this element's properties.
@@ -816,6 +831,10 @@ Variant* Element::GetAttribute(const String& name)
 	return GetIf(attributes, name);
 }
 
+Variant* Element::_GetAttribute(const String& name) {
+	return GetAttribute(name);
+}
+
 const Variant* Element::GetAttribute(const String& name) const
 {
 	return GetIf(attributes, name);
@@ -866,6 +885,10 @@ Context* Element::GetContext() const
 		return document->GetContext();
 
 	return nullptr;
+}
+
+void Element::_SetAttribute(const String& name, const String& value) {
+    SetAttribute(name, value);
 }
 
 // Set a group of attributes
@@ -1155,6 +1178,11 @@ String Element::GetInnerRML() const {
 	return result;
 }
 
+// Gets the markup and content of the element.
+String Element::_GetInnerRML() const {
+    return GetInnerRML();
+}
+
 // Sets the markup and content of the element. All existing children will be replaced.
 void Element::SetInnerRML(const String& rml)
 {
@@ -1236,6 +1264,11 @@ void Element::AddEventListener(const String& event, EventListener* listener, con
 }
 
 // Adds an event listener
+//void Element::_AddEventListener(const String& event, EventListener* listener, const bool in_capture_phase) {
+//    AddEventListener(event, listener, in_capture_phase);
+//}
+
+// Adds an event listener
 void Element::AddEventListener(const EventId id, EventListener* listener, const bool in_capture_phase)
 {
 	meta->event_dispatcher.AttachEvent(id, listener, in_capture_phase);
@@ -1247,6 +1280,10 @@ void Element::RemoveEventListener(const String& event, EventListener* listener, 
 	EventId id = EventSpecificationInterface::GetIdOrInsert(event);
 	meta->event_dispatcher.DetachEvent(id, listener, in_capture_phase);
 }
+
+//void Element::_RemoveEventListener(const String& event, EventListener* listener, bool in_capture_phase) {
+//	RemoveEventListener(event, listener, in_capture_phase);
+//}
 
 // Removes an event listener from this element.
 void Element::RemoveEventListener(EventId id, EventListener* listener, bool in_capture_phase)
@@ -1322,6 +1359,10 @@ void Element::ScrollIntoView(bool align_with_top)
 	options.vertical = (align_with_top ? ScrollAlignment::Start : ScrollAlignment::End);
 	options.horizontal = ScrollAlignment::Nearest;
 	ScrollIntoView(options);
+}
+
+void Element::_ScrollIntoView(bool align_with_top) {
+	ScrollIntoView(align_with_top);
 }
 
 // Appends a child to this element
@@ -1524,10 +1565,22 @@ void Element::GetElementsByTagName(ElementList& elements, const String& tag)
 	return ElementUtilities::GetElementsByTagName(elements, this, tag);
 }
 
+ElementList Element::_GetElementsByTagName(const String& tag) {
+    ElementList elements;
+    GetElementsByTagName(elements, tag);
+    return elements;
+}
+
 // Get all elements with the given class set on them.
 void Element::GetElementsByClassName(ElementList& elements, const String& class_name)
 {
 	return ElementUtilities::GetElementsByClassName(elements, this, class_name);
+}
+
+ElementList Element::_GetElementsByClassName(const String& class_name) {
+    ElementList elements;
+    GetElementsByClassName(elements, class_name);
+    return elements;
 }
 
 static Element* QuerySelectorMatchRecursive(const StyleSheetNodeListRaw& nodes, Element* element)
