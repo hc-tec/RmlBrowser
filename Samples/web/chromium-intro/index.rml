@@ -3,11 +3,14 @@
         <title>Chromium Introduction</title>
         <link type="text/rcss" href="css/main.rcss" />
         <link type="text/rcss" href="css/header.rcss" />
+        <link type="text/rcss" href="css/section.rcss" />
     </head>
     <body>
-        <div class="intro-header">
-            <img id="logo" src="images/chromium.png"></img>
-            <p>Chromium</p>
+        <div class="intro-header-wrapper">
+            <div class="intro-header">
+                <img id="logo" src="images/chromium.png"></img>
+                <p>Chromium</p>
+            </div>
         </div>
         <div class="intro-img">
             <img class="intro-bg" src="images/bg.png"></img>
@@ -15,6 +18,48 @@
             <img class="intro-lines" src="images/line.png"></img>
             <p class="intro-text">Chromium Introduction</p>
         </div>
+        <div class="intro-section">
+            <div class="intro-title">
+                Chromium
+                <div class="intro-title-line"></div>
+            </div>
+            <p class="intro-description">
+                Chromium is an open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web. This site contains design documents, architecture overviews, testing information, and more to help you learn to build and work with the Chromium source code.
+            </p>
+            <div class="intro-module-wrapper">
+<!--                <div class="intro-module" style="decorator: image(./images/rI6G204.png cover);">-->
+<!--                    <div class="intro-module-container">-->
+<!--                        <p class="title">Thread</p>-->
+<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="intro-module" style="decorator: image(./images/ss3c252_ANI-4.png cover);">-->
+<!--                    <div class="intro-module-container">-->
+<!--                        <p class="title">Thread</p>-->
+<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="intro-module" style="decorator: image(./images/WAN2698_ANI-1-2.png cover);">-->
+<!--                    <div class="intro-module-container">-->
+<!--                        <p class="title">Thread</p>-->
+<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="intro-module" style="decorator: image(./images/Snipaste_2023-01-04_20-48-41_prev_ui.png cover);">-->
+<!--                    <div class="intro-module-container">-->
+<!--                        <p class="title">Thread</p>-->
+<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--                <div class="intro-module" style="decorator: image(./images/ndRm753_1212.png cover);">-->
+<!--                    <div class="intro-module-container">-->
+<!--                        <p class="title">Thread</p>-->
+<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+        </div>
+        <script src="js/intro_module.js"></script>
         <script src="js/main.js"></script>
     </body>
 </rml>

@@ -1,0 +1,62 @@
+.intro-section {
+  width: 70%;
+  margin-left: 15%;
+  position: relative;
+}
+
+.intro-title {
+  position: relative;
+  display: inline-block;
+  font-size: 48px;
+}
+
+.intro-title-line {
+  position: absolute;
+  bottom: 40%;
+  width: 100%;
+  height: 5px;
+  background-color: #a2c2fa;
+  opacity: 0.6;
+}
+
+.intro-description {
+  font-size: 20px;
+}
+
+.intro-module-wrapper {
+  display: flex;
+  flex-direction: row;
+  margin-top: 50px;
+}
+
+.intro-module {
+  display: block;
+  flex: 1;
+  height: 80%;
+  position: relative;
+  transition: flex 0.3s;
+  border: 1px #fff;
+}
+
+.intro-module .title {
+  font-size: 24px;
+}
+
+.intro-module .description {
+  display: none;
+}
+
+.intro-module:hover {
+  flex: 7;
+}
+
+.intro-module:hover .description {
+  display: block;
+}
+
+.intro-module-container {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  width: 95%;
+}
