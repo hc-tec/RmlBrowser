@@ -23,8 +23,10 @@ class IntroModule {
         const intro_module_container = document.createElement(document, 'div')
         intro_module_container.setClassNames('intro-module-container')
         const intro_title = document.createElement(document, 'p')
+        intro_title.setClassNames('title')
         intro_title.innerRML = module.title
         const intro_description = document.createElement(document, 'p')
+        intro_description.setClassNames('description')
         intro_description.innerRML = module.description
         intro_module_container.appendChild(intro_module_container, intro_title)
         intro_module_container.appendChild(intro_module_container, intro_description)
