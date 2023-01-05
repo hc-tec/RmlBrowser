@@ -1071,7 +1071,12 @@ add_executable(browser
 		Source/Script/Dom/JsDocumentElementInstancer.cpp
 		Source/Script/Dom/JsDocumentElementInstancer.h
 		Source/Script/Dom/JsDocumentElement.cpp
-		Source/Script/Dom/JsDocumentElement.h)
+		Source/Script/Dom/JsDocumentElement.h
+		Source/Script/Dom/XMLNodeHandlerAnchor.cpp
+		Source/Script/Dom/XMLNodeHandlerAnchor.h
+		Source/Browser/Tab.cpp
+		Source/Browser/Tab.h
+		)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

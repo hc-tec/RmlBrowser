@@ -5,6 +5,7 @@
 #include "MainWindow.h"
 #include "../Script/RunTime.h"
 #include "../Script/ScriptPlugin.h"
+#include "../Script/Dom/Ownership.h"
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
 #include <RmlUi/Config/Config.h>
@@ -13,25 +14,29 @@
 #include <iostream>
 #include <string>
 
-bool continue_running = false;
+const int window_width = 1550;
+const int window_height = 760;
 
-int StartWindow() {
-    continue_running = false;
-	Rml::Script::ScriptPlugin* script_plugin = Rml::Script::GetInstance();
-	Rml::RegisterPlugin(script_plugin);
+namespace Rml {
+namespace Browser {
 
-    const int window_width = 1550;
-    const int window_height = 760;
+MainWindow::MainWindow() {
+	Initialize();
+}
+
+bool MainWindow::Initialize() {
+//    Rml::Script::ScriptPlugin* script_plugin = Rml::Script::GetInstance();
+//    Rml::RegisterPlugin(script_plugin);
 
     // Initializes the shell which provides common functionality used by the included samples.
     if (!Shell::Initialize())
-        return -1;
+        return false;
 
     // Constructs the system and render interfaces, creates a window, and attaches the renderer.
     if (!Backend::Initialize("Rml Browser", window_width, window_height, true))
     {
         Shell::Shutdown();
-        return -1;
+        return false;
     }
 
     // Install the custom interfaces constructed by the backend before initializing RmlUi.
@@ -40,6 +45,27 @@ int StartWindow() {
 
     // RmlUi initialisation.
     Rml::Initialise();
+
+    // Fonts should be loaded before any documents are loaded.
+    Shell::LoadFonts();
+	return true;
+}
+
+MainWindow::~MainWindow() {
+    Rml::Shutdown();
+    Backend::Shutdown();
+    Shell::Shutdown();
+}
+
+}
+}
+
+bool continue_running = false;
+
+int StartWindow() {
+    continue_running = false;
+	Rml::Script::ScriptPlugin* script_plugin = Rml::Script::GetInstance();
+	Rml::RegisterPlugin(script_plugin);
 
     // Create the main RmlUi context.
     Rml::Context* context = Rml::CreateContext("main", Rml::Vector2i(window_width, window_height));
@@ -54,9 +80,6 @@ int StartWindow() {
     // The RmlUi debugger is optional but very useful. Try it by pressing 'F8' after starting this sample.
     Rml::Debugger::Initialise(context);
 
-    // Fonts should be loaded before any documents are loaded.
-    Shell::LoadFonts();
-
     qjs::Context* js_context = Rml::Script::GetContext();
     js_context->global()["log"] = [](const Rml::String& str){
       std::cout << str << std::endl;
@@ -64,16 +87,17 @@ int StartWindow() {
 
 
     // Load and show the demo document.
-	Rml::String rml("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
+    Rml::String rml("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
     Rml::ElementDocument* document = context->LoadDocument(rml);
     if (document)
         document->Show();
 
     js_context->global()["reload"] = [&](){
-        Backend::RequestExit();
-        Rml::Script::GetContext(true);
-        continue_running = true;
-        std::cout << "--Reload--" << std::endl;
+      Backend::RequestExit();
+      Rml::Script::ClearAllOwner();
+      Rml::Script::GetContext(true);
+      continue_running = true;
+      std::cout << "--Reload--" << std::endl;
     };
 
     bool running = true;
@@ -92,17 +116,16 @@ int StartWindow() {
         Backend::PresentFrame();
     }
 
-    // Shutdown RmlUi.
-    Rml::Shutdown();
-
-    Backend::Shutdown();
-    Shell::Shutdown();
+	Rml::RemoveContext("main");
+    Rml::Debugger::Shutdown();
+    Rml::UnregisterPlugin(script_plugin);
     return 0;
 }
 
 int main(int argc, char** argv) {
-	do
-	{
+    Rml::Browser::MainWindow window;
+    do
+    {
         StartWindow();
-	} while (continue_running);
+    } while (continue_running);
 }
