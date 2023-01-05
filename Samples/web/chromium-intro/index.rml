@@ -7,10 +7,10 @@
     </head>
     <body>
         <div class="intro-header-wrapper">
-            <div class="intro-header">
+            <a class="intro-header" href="thread.rml">
                 <img id="logo" src="images/chromium.png"></img>
                 <p>Chromium</p>
-            </div>
+            </a>
         </div>
         <div class="intro-img">
             <img class="intro-bg" src="images/bg.png"></img>
@@ -28,30 +28,6 @@
             </p>
             <div class="intro-module-wrapper">
 <!--                <div class="intro-module" style="decorator: image(./images/rI6G204.png cover);">-->
-<!--                    <div class="intro-module-container">-->
-<!--                        <p class="title">Thread</p>-->
-<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="intro-module" style="decorator: image(./images/ss3c252_ANI-4.png cover);">-->
-<!--                    <div class="intro-module-container">-->
-<!--                        <p class="title">Thread</p>-->
-<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="intro-module" style="decorator: image(./images/WAN2698_ANI-1-2.png cover);">-->
-<!--                    <div class="intro-module-container">-->
-<!--                        <p class="title">Thread</p>-->
-<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="intro-module" style="decorator: image(./images/Snipaste_2023-01-04_20-48-41_prev_ui.png cover);">-->
-<!--                    <div class="intro-module-container">-->
-<!--                        <p class="title">Thread</p>-->
-<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="intro-module" style="decorator: image(./images/ndRm753_1212.png cover);">-->
 <!--                    <div class="intro-module-container">-->
 <!--                        <p class="title">Thread</p>-->
 <!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
