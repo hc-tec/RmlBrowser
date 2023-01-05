@@ -19,7 +19,7 @@ class Ownership : public BaseOwnership {
 public:
     T* ShiftOwner(UT ele_ptr) {
         T* ele = ele_ptr.get();
-        owner_map_.emplace(ele, std::move(ele_ptr));
+        owner_map_[ele] = std::move(ele_ptr);
         return ele;
 	}
 	UT GetOwner(T* ele) {
@@ -44,6 +44,10 @@ inline Ownership<T, UT>* GetOwnership() {
 		it = instance.find(type_name);
 	}
     return static_cast<Ownership<T, UT>*>(it->second.get());
+}
+
+inline void ClearAllOwner() {
+	instance.clear();
 }
 
 }
