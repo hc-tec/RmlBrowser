@@ -13,6 +13,7 @@
 
 #include "Glue.h"
 #include "Dom/JsDocumentElementInstancer.h"
+#include "Dom/XMLNodeHandlerAnchor.h"
 
 namespace Rml {
 
@@ -23,6 +24,7 @@ int ScriptPlugin::GetEventClasses() { return Plugin::GetEventClasses(); }
 void ScriptPlugin::OnInitialise() {
     js_document_element_instancer_ = MakeShared<JsDocumentElementInstancer>();
     Factory::RegisterElementInstancer("body", js_document_element_instancer_.get());
+	XMLParser::RegisterNodeHandler("a", MakeShared<XMLNodeHandlerAnchor>());
     XMLParser::RegisterNodeHandler("script", js_document_element_instancer_);
 	Glue();
 }

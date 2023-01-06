@@ -1076,7 +1076,7 @@ add_executable(browser
 		Source/Script/Dom/XMLNodeHandlerAnchor.h
 		Source/Browser/Tab.cpp
 		Source/Browser/Tab.h
-		)
+        Source/Browser/TabManager.cpp Source/Browser/TabManager.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

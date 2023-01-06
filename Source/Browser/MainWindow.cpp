@@ -5,14 +5,11 @@
 #include "MainWindow.h"
 #include "../Script/RunTime.h"
 #include "../Script/ScriptPlugin.h"
-#include "../Script/Dom/Ownership.h"
 #include <RmlUi/Core.h>
-#include <RmlUi/Debugger.h>
 #include <RmlUi/Config/Config.h>
 #include <RmlUi_Backend.h>
 #include <Shell.h>
-#include <iostream>
-#include <string>
+#include "TabManager.h"
 
 const int window_width = 1550;
 const int window_height = 760;
@@ -20,13 +17,14 @@ const int window_height = 760;
 namespace Rml {
 namespace Browser {
 
-MainWindow::MainWindow() {
+MainWindow::MainWindow()
+    : tab_manager_(MakeUnique<TabManager>()) {
 	Initialize();
 }
 
 bool MainWindow::Initialize() {
-//    Rml::Script::ScriptPlugin* script_plugin = Rml::Script::GetInstance();
-//    Rml::RegisterPlugin(script_plugin);
+    Rml::Script::SetAnchorOpenInCurrentTabCallback(OpenInCurrentTab);
+    Rml::Script::SetAnchorOpenInNewTabCallback(OpenInNewTab);
 
     // Initializes the shell which provides common functionality used by the included samples.
     if (!Shell::Initialize())
@@ -57,75 +55,28 @@ MainWindow::~MainWindow() {
     Shell::Shutdown();
 }
 
+void OpenInCurrentTab(Context* context, const URL& url) {
+    MainWindow* window = MainWindow::GetInstance();
+	TabManager* tab_manager = window->GetTabManager();
+	Tab* tab = tab_manager->GetTabByContext(context);
+	tab->SetUrl(url);
+	tab->Fresh();
+}
+
+void OpenInNewTab(Context* context, const URL& url) {
+
+}
+
 }
 }
 
-bool continue_running = false;
-
-int StartWindow() {
-    continue_running = false;
-	Rml::Script::ScriptPlugin* script_plugin = Rml::Script::GetInstance();
-	Rml::RegisterPlugin(script_plugin);
-
-    // Create the main RmlUi context.
-    Rml::Context* context = Rml::CreateContext("main", Rml::Vector2i(window_width, window_height));
-    if (!context)
-    {
-        Rml::Shutdown();
-        Backend::Shutdown();
-        Shell::Shutdown();
-        return -1;
-    }
-
-    // The RmlUi debugger is optional but very useful. Try it by pressing 'F8' after starting this sample.
-    Rml::Debugger::Initialise(context);
-
-    qjs::Context* js_context = Rml::Script::GetContext();
-    js_context->global()["log"] = [](const Rml::String& str){
-      std::cout << str << std::endl;
-    };
-
-
-    // Load and show the demo document.
-    Rml::String rml("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
-    Rml::ElementDocument* document = context->LoadDocument(rml);
-    if (document)
-        document->Show();
-
-    js_context->global()["reload"] = [&](){
-      Backend::RequestExit();
-      Rml::Script::ClearAllOwner();
-      Rml::Script::GetContext(true);
-      continue_running = true;
-      std::cout << "--Reload--" << std::endl;
-    };
-
-    bool running = true;
-    while (running)
-    {
-        // Handle input and window events.
-        running = Backend::ProcessEvents(context, &Shell::ProcessKeyDownShortcuts);
-
-        // This is a good place to update your game or application.
-        // Always update the context before rendering.
-        context->Update();
-
-        // Prepare the backend for taking rendering commands from RmlUi and then render the context.
-        Backend::BeginFrame();
-        context->Render();
-        Backend::PresentFrame();
-    }
-
-	Rml::RemoveContext("main");
-    Rml::Debugger::Shutdown();
-    Rml::UnregisterPlugin(script_plugin);
-    return 0;
-}
 
 int main(int argc, char** argv) {
-    Rml::Browser::MainWindow window;
-    do
-    {
-        StartWindow();
-    } while (continue_running);
+//    Rml::Script::SetAnchorOpenInCurrentTabCallback(Rml::Browser::OpenInCurrentTab);
+//    Rml::Script::SetAnchorOpenInNewTabCallback(Rml::Browser::OpenInNewTab);
+
+    Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
+    Rml::Browser::TabManager* tab_manager = window->GetTabManager();
+	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
+    tab->Run();
 }
