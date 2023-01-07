@@ -1,0 +1,3 @@
+[submodule "ThirdParty/coost"]
+	path = ThirdParty/coost
+	url = https://github.com/idealvin/coost
