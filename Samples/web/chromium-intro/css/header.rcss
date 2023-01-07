@@ -1,5 +1,6 @@
 .intro-header-wrapper {
   position: fixed;
+  z-index: 2;
 }
 .intro-header {
   width: 70%;

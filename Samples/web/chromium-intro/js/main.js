@@ -9,6 +9,9 @@ document.addEventListener(document, 'keydown', (e) => {
     if (key_identifier === 111) {
         reload()
     }
+    if (key_identifier === 107) {
+        window_exit()
+    }
 })
 
 
