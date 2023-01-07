@@ -9,6 +9,7 @@
 #include <RmlUi/Config/Config.h>
 #include <RmlUi_Backend.h>
 #include <Shell.h>
+#include <co/co.h>
 #include "TabManager.h"
 
 const int window_width = 1550;
@@ -23,8 +24,6 @@ MainWindow::MainWindow()
 }
 
 bool MainWindow::Initialize() {
-    Rml::Script::SetAnchorOpenInCurrentTabCallback(OpenInCurrentTab);
-    Rml::Script::SetAnchorOpenInNewTabCallback(OpenInNewTab);
 
     // Initializes the shell which provides common functionality used by the included samples.
     if (!Shell::Initialize())
@@ -67,16 +66,27 @@ void OpenInNewTab(Context* context, const URL& url) {
 
 }
 
+
 }
+
+namespace Script {
+
+void AnchorOpenInCurrentTabCallback(Context* context, const URL& url) {
+	Browser::OpenInCurrentTab(context, url);
+}
+void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
+    Browser::OpenInNewTab(context, url);
+}
+
+}
+
 }
 
 
 int main(int argc, char** argv) {
-//    Rml::Script::SetAnchorOpenInCurrentTabCallback(Rml::Browser::OpenInCurrentTab);
-//    Rml::Script::SetAnchorOpenInNewTabCallback(Rml::Browser::OpenInNewTab);
-
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->GetTabManager();
 	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
     tab->Run();
+	delete window;
 }

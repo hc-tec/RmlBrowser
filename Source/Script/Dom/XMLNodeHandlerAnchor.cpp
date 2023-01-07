@@ -9,7 +9,6 @@
 #include "RmlUi/Core/Context.h"
 #include "RmlUi/Core/ElementDocument.h"
 #include "RmlUi/Core/SystemInterface.h"
-#include "../../Browser/MainWindow.h"
 
 namespace Rml {
 
@@ -49,24 +48,15 @@ void XMLNodeHandlerAnchor::ProcessEvent(Rml::Event& event) {
 }
 
 void XMLNodeHandlerAnchor::OpenInCurrentTab(Context* context, const Rml::String& href) {
-//    (*AnchorOpenInCurrentTab)(context, href);
     Log::Message(Log::LT_DEBUG, "Open in Current Tab");
-//    if (AnchorOpenInCurrentTab != nullptr) {
-//		AnchorOpenInCurrentTab(context, URL(href));
-//	}
-//	URL source_url();
-	String url = context->GetDocument(0)->GetSourceURL();
-    Log::Message(Log::LT_DEBUG, "url: %s", url.data());
-	Browser::OpenInCurrentTab(context, URL(Absolutepath(href, url)));
+	String url = context->GetDocument(context->GetName())->GetSourceURL();
+	AnchorOpenInCurrentTabCallback(context, URL(Absolutepath(href, url)));
 }
 
 void XMLNodeHandlerAnchor::OpenInNewTab(Context* context, const Rml::String& href) {
-//    (*AnchorOpenInNewTab)(context, href);
     Log::Message(Log::LT_DEBUG, "Open in New Tab");
-    Browser::OpenInNewTab(context, URL(href));
-//    if (AnchorOpenInNewTab != nullptr) {
-//        AnchorOpenInNewTab(context, URL(href));
-//    }
+    String url = context->GetDocument(context->GetName())->GetSourceURL();
+    AnchorOpenInNewTabCallback(context, URL(Absolutepath(href, url)));
 }
 
 bool XMLNodeHandlerAnchor::ElementEnd(XMLParser* parser, const String& name) { return true; }

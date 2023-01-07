@@ -15,22 +15,8 @@ namespace Rml {
 
 namespace Script {
 
-//typedef void (*AnchorOpenInCurrentTabCallback)(Context* context, const URL& url);
-//typedef void (*AnchorOpenInNewTabCallback)(Context* context, const URL& url);
-
-using AnchorOpenInCurrentTabCallback = std::function<void(Context*, const URL&)>;
-using AnchorOpenInNewTabCallback = std::function<void(Context*, const URL&)>;
-
-static AnchorOpenInCurrentTabCallback AnchorOpenInCurrentTab;
-static AnchorOpenInNewTabCallback AnchorOpenInNewTab;
-
-static void SetAnchorOpenInCurrentTabCallback(AnchorOpenInCurrentTabCallback cb) {
-    AnchorOpenInCurrentTab = std::move(cb);
-}
-
-static void SetAnchorOpenInNewTabCallback(AnchorOpenInNewTabCallback cb) {
-    AnchorOpenInNewTab = std::move(cb);
-}
+extern void AnchorOpenInCurrentTabCallback(Context* context, const URL& url);
+extern void AnchorOpenInNewTabCallback(Context* context, const URL& url);
 
 class XMLNodeHandlerAnchor : public Rml::XMLNodeHandler, public Rml::EventListener {
 public:

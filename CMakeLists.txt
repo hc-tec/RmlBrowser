@@ -1037,13 +1037,17 @@ endif()
 
 include_directories(ThirdParty/quickjspp)
 include_directories(ThirdParty/lodepng)
+include_directories(ThirdParty/coost)
+
 add_subdirectory(ThirdParty/quickjspp)
+add_subdirectory(ThirdParty/coost)
 
 set(browser_LIBRARIES
 		shell
 		RmlCore
 		RmlDebugger
 		quickjspp
+		co
 		)
 
 add_executable(browser

@@ -42,7 +42,7 @@ int Tab::Initialize() {
     }
 
     // The RmlUi debugger is optional but very useful. Try it by pressing 'F8' after starting this sample.
-//    Rml::Debugger::Initialise(context_);
+    Rml::Debugger::Initialise(context_);
     if (delegate_) delegate_->OnInitialize(this);
 	return 0;
 }
@@ -51,6 +51,7 @@ void Tab::RunInternal() {
     Initialize();
     // Load and show the demo document.
     Rml::ElementDocument* document = context_->LoadDocument(url_.GetURL());
+	document->SetId(tab_id_);
     if (document)
         document->Show();
     rendering_ = true;
@@ -101,7 +102,7 @@ void Tab::Destroy() {
     Rml::Script::ClearAllOwner();
     Rml::Script::GetContext(true);
     Rml::RemoveContext(tab_id_);
-//    Rml::Debugger::Shutdown();
+    Rml::Debugger::Shutdown();
     Rml::UnregisterPlugin(script_plugin_);
 	Factory::ClearStyleSheetCache();
     if (delegate_) delegate_->OnDestroy(this);

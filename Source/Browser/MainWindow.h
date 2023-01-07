@@ -6,7 +6,6 @@
 #define RMLUI_MAINWINDOW_H
 
 #include "RmlUi/Core/Types.h"
-#include "../Script/Dom/XMLNodeHandlerAnchor.h"
 
 namespace Rml {
 
