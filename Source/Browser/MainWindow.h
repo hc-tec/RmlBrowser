@@ -6,6 +6,7 @@
 #define RMLUI_MAINWINDOW_H
 
 #include "RmlUi/Core/Types.h"
+#include "co/co/event.h"
 
 namespace Rml {
 
@@ -35,10 +36,14 @@ public:
 
 	bool Initialize();
 
-	TabManager* GetTabManager() { return tab_manager_.get(); }
+	void Close();
+	void WaitForClose();
+
+	TabManager* tab_manager() { return tab_manager_.get(); }
 private:
 
     UniquePtr<TabManager> tab_manager_;
+	co::Event close_event_;
 };
 
 }

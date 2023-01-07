@@ -49,14 +49,25 @@ bool MainWindow::Initialize() {
 }
 
 MainWindow::~MainWindow() {
+    tab_manager_.reset();
     Rml::Shutdown();
     Backend::Shutdown();
     Shell::Shutdown();
 }
 
+void MainWindow::Close() {
+	tab_manager_->CloseAllTabs();
+    close_event_.signal();
+}
+
+void MainWindow::WaitForClose() {
+	close_event_.wait();
+    co::sleep(500);
+}
+
 void OpenInCurrentTab(Context* context, const URL& url) {
     MainWindow* window = MainWindow::GetInstance();
-	TabManager* tab_manager = window->GetTabManager();
+	TabManager* tab_manager = window->tab_manager();
 	Tab* tab = tab_manager->GetTabByContext(context);
 	tab->SetUrl(url);
 	tab->Fresh();
@@ -83,10 +94,13 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 }
 
 
-int main(int argc, char** argv) {
+DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
-    Rml::Browser::TabManager* tab_manager = window->GetTabManager();
+    Rml::Browser::TabManager* tab_manager = window->tab_manager();
 	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
-    tab->Run();
+    go([&](){
+      tab->Run();
+    });
+	window->WaitForClose();
 	delete window;
 }

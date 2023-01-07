@@ -12,6 +12,8 @@
 #include <RmlUi/Config/Config.h>
 #include <RmlUi_Backend.h>
 #include <Shell.h>
+#include <co/co.h>
+#include "MainWindow.h"
 
 const int window_width = 1550;
 const int window_height = 760;
@@ -79,7 +81,7 @@ void Tab::RunInternal() {
 }
 
 void Tab::Run() {
-	do {
+    do {
         qjs::Context* js_context = Rml::Script::GetContext();
         js_context->global()["log"] = [](const Rml::String& str){
           std::cout << str << std::endl;
@@ -87,9 +89,13 @@ void Tab::Run() {
         js_context->global()["reload"] = [&](){
           this->Fresh();
         };
-
-		RunInternal();
-	} while (running_);
+        js_context->global()["window_exit"] = [&](){
+            Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
+            window->Close();
+        };
+        RunInternal();
+    } while (running_);
+    if (delegate_) delegate_->OnStopRunning(this);
 }
 
 void Tab::Fresh() {
@@ -106,16 +112,12 @@ void Tab::Destroy() {
     Rml::UnregisterPlugin(script_plugin_);
 	Factory::ClearStyleSheetCache();
     if (delegate_) delegate_->OnDestroy(this);
-	if (!running_) {
-        if (delegate_) delegate_->OnStopRunning(this);
-	}
 }
 
 void Tab::StopRunning() {
+	rendering_ = false;
 	running_ = false;
 }
-
-Rml::Context* Tab::GetContext() { return context_; }
 
 }
 }

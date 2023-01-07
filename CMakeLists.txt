@@ -165,20 +165,20 @@ option(BUILD_SHELL "Build shell" ON)
 option(BUILD_SAMPLES "Build samples" OFF)
 option(BUILD_TESTING "Build tests" OFF)
 
-set(SAMPLES_BACKEND "auto" CACHE STRING "Backend platform and renderer used for the samples.")
+set(SAMPLES_BACKEND "SDL_SDLrenderer" CACHE STRING "Backend platform and renderer used for the samples.")
 set_property(CACHE SAMPLES_BACKEND PROPERTY STRINGS auto Win32_GL2 Win32_VK X11_GL2 SDL_GL2 SDL_GL3 SDL_VK SDL_SDLrenderer SFML_GL2 GLFW_GL2 GLFW_GL3 GLFW_VK)
 
-if(SAMPLES_BACKEND STREQUAL "auto")
-	if(EMSCRIPTEN)
-		set(SAMPLES_BACKEND SDL_GL3)
-	elseif(WIN32)
-		set(SAMPLES_BACKEND Win32_GL2)
-	elseif(APPLE)
-		set(SAMPLES_BACKEND SDL_SDLrenderer)
-	else()
-		set(SAMPLES_BACKEND X11_GL2)
-	endif()
-endif()
+#if(SAMPLES_BACKEND STREQUAL "auto")
+#	if(EMSCRIPTEN)
+#		set(SAMPLES_BACKEND SDL_GL3)
+#	elseif(WIN32)
+#		set(SAMPLES_BACKEND Win32_GL2)
+#	elseif(APPLE)
+#		set(SAMPLES_BACKEND SDL_SDLrenderer)
+#	else()
+#		set(SAMPLES_BACKEND X11_GL2)
+#	endif()
+#endif()
 
 option(MATRIX_ROW_MAJOR "Use row-major matrices. Column-major matrices are used by default." OFF)
 
@@ -1037,7 +1037,7 @@ endif()
 
 include_directories(ThirdParty/quickjspp)
 include_directories(ThirdParty/lodepng)
-include_directories(ThirdParty/coost)
+include_directories(ThirdParty/coost/include)
 
 add_subdirectory(ThirdParty/quickjspp)
 add_subdirectory(ThirdParty/coost)
@@ -1080,7 +1080,7 @@ add_executable(browser
 		Source/Script/Dom/XMLNodeHandlerAnchor.h
 		Source/Browser/Tab.cpp
 		Source/Browser/Tab.h
-        Source/Browser/TabManager.cpp Source/Browser/TabManager.h)
+        Source/Browser/TabManager.cpp Source/Browser/TabManager.h Source/Browser/BrowserWidget.cpp Source/Browser/BrowserWidget.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

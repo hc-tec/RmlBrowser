@@ -32,10 +32,12 @@ public:
 	void Fresh();
 
 	void SetDelegate(Delegate* delegate) { delegate_ = delegate; }
-	const String& GetTabId() { return tab_id_; }
+	const String& tab_id() { return tab_id_; }
+
 	void SetUrl(const URL& url) { url_ = url; }
-	const URL& Url() { return url_; }
-	Rml::Context* GetContext();
+	const URL& url() { return url_; }
+
+	Rml::Context* context() { return context_; }
 private:
     void RunInternal();
     void Destroy();

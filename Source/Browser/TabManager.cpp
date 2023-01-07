@@ -30,25 +30,40 @@ Tab* TabManager::GetTabByContext(Context* context) {
 }
 
 void TabManager::OnInitialize(Tab* tab) {
-	Context* context = tab->GetContext();
+	Context* context = tab->context();
 	context_tab_map_[context] = tab;
 }
 
 void TabManager::OnRun(Tab* tab) {}
 
 void TabManager::OnDestroy(Tab* tab) {
-    Context* context = tab->GetContext();
+    Log::Message(Log::LT_DEBUG, "%s destroyed", tab->tab_id().data());
+    Context* context = tab->context();
     context_tab_map_.erase(context);
 }
 
 void TabManager::OnFresh(Tab* tab) {}
 
 void TabManager::OnStopRunning(Tab* tab) {
-	String tab_id = tab->GetTabId();
+	Log::Message(Log::LT_DEBUG, "%s closed", tab->tab_id().data());
+	String tab_id = tab->tab_id();
 	auto it = tab_map_.find(tab_id);
 	if (it == tab_map_.end()) return;
-	it->second.release();
+	it->second.reset();
 }
+
+void TabManager::CloseTab(const String& tab_id) {
+    auto it = tab_map_.find(tab_id);
+    if (it == tab_map_.end()) return;
+    it->second->StopRunning();
+}
+
+void TabManager::CloseAllTabs() {
+	for(auto& [_, tab] : tab_map_) {
+		tab->StopRunning();
+	}
+}
+
 
 }
 

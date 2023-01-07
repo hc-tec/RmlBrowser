@@ -23,6 +23,9 @@ public:
 
 	Tab* GetTabByContext(Context* context);
 
+    void CloseTab(const String& tab_id);
+	void CloseAllTabs();
+
 	/* Tab Delegate */
 	void OnInitialize(Tab* tab) override;
 	void OnRun(Tab* tab) override;
