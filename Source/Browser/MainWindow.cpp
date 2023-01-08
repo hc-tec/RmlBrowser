@@ -90,7 +90,6 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 }
 
 }
-
 }
 
 
@@ -98,9 +97,16 @@ DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
 	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
-    go([&](){
-      tab->Run();
-    });
+    tab->Run();
+	tab->Show();
+	co::sleep(1500);
+	tab->Hide();
+    co::sleep(1500);
+	tab->Show();
+	co::sleep(1500);
+    tab->Hide();
+    co::sleep(5000);
+    tab->Show();
 	window->WaitForClose();
 	delete window;
 }

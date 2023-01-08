@@ -5,6 +5,7 @@
 #ifndef RMLUI_TAB_H
 #define RMLUI_TAB_H
 
+#include <co/co.h>
 #include "RmlUi/Config/Config.h"
 #include "RmlUi/Core/URL.h"
 #include "../Script/ScriptPlugin.h"
@@ -26,10 +27,13 @@ public:
 	};
 	Tab(const String& tab_id, const URL& url);
     int Initialize();
+	void Render();
     void Run();
-
+    void Fresh();
 	void StopRunning();
-	void Fresh();
+
+	void Show();
+    void Hide();
 
 	void SetDelegate(Delegate* delegate) { delegate_ = delegate; }
 	const String& tab_id() { return tab_id_; }
@@ -39,15 +43,18 @@ public:
 
 	Rml::Context* context() { return context_; }
 private:
-    void RunInternal();
     void Destroy();
 
+    co::Scheduler* scheduler;
 	Delegate* delegate_;
 	String tab_id_;
 	URL url_;
+
     Rml::Context* context_;
+    Rml::ElementDocument* document_;
     Rml::Script::ScriptPlugin* script_plugin_;
 
+	bool active_;
 	bool rendering_;
 	bool running_;
 };
