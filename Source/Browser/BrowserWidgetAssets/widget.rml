@@ -1,0 +1,27 @@
+<rml>
+    <head>
+        <title>Widget</title>
+        <link type="text/rcss" href="widget.rcss" />
+    </head>
+    <body>
+        <div class="tabs">Tabs...</div>
+        <div class="components">
+            <img class="icon" src="images/left_arrow.png"></img>
+            <img class="icon" src="images/fresh.png"></img>
+            <img class="icon" src="images/right_arrow.png"></img>
+            <div class="search-bar">
+                <div>
+                    <div class="icon-wrapper">
+                        <img class="icon" src="images/rmlui_icon.png"></img>
+                        <p class="icon-text">Rml</p>
+                        <h1 class="line"></h1>
+                    </div>
+                    <input class="search-input" type="text" name="search"/>
+                </div>
+            </div>
+        </div>
+        <div class="stars">
+
+        </div>
+    </body>
+</rml>
