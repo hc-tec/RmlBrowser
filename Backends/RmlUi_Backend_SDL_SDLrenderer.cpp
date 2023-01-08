@@ -33,7 +33,7 @@
 #include <RmlUi/Core/Core.h>
 #include <RmlUi/Core/Log.h>
 #include <SDL.h>
-
+#include <co/co/mutex.h>
 /**
     Global data used by this backend.
 
@@ -49,6 +49,7 @@ struct BackendData {
 	SDL_Renderer* renderer = nullptr;
 
 	bool running = true;
+	co::mutex mutex;
 };
 static Rml::UniquePtr<BackendData> data;
 
@@ -122,6 +123,7 @@ Rml::RenderInterface* Backend::GetRenderInterface()
 
 bool Backend::ProcessEvents(Rml::Context* context, KeyDownCallback key_down_callback)
 {
+//	auto _ = co::mutex_guard(data->mutex);
 	RMLUI_ASSERT(data && context);
 
 	bool result = data->running;
@@ -173,6 +175,7 @@ void Backend::RequestExit()
 
 void Backend::BeginFrame()
 {
+//    auto _ = co::mutex_guard(data->mutex);
 	RMLUI_ASSERT(data);
 
 	SDL_SetRenderDrawColor(data->renderer, 0, 0, 0, 0);
@@ -183,6 +186,7 @@ void Backend::BeginFrame()
 
 void Backend::PresentFrame()
 {
+//    auto _ = co::mutex_guard(data->mutex);
 	RMLUI_ASSERT(data);
 
 	data->render_interface.EndFrame();
