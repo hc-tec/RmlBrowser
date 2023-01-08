@@ -4,10 +4,6 @@
 
 #include "Tab.h"
 
-#include "../Script/RunTime.h"
-#include "../Script/Dom/Ownership.h"
-#include "MainWindow.h"
-
 #include <RmlUi/Core.h>
 #include <RmlUi/Debugger.h>
 #include <RmlUi/Config/Config.h>
@@ -15,28 +11,37 @@
 #include <Shell.h>
 #include <co/co.h>
 
+#include "../Script/RunTime.h"
+#include "../Script/Dom/Ownership.h"
+#include "../Script/ScriptPlugin.h"
+#include "MainWindow.h"
+
 
 const int window_width = 1550;
 const int window_height = 760;
+const int browser_widget_height = 100;
 
 namespace Rml {
 namespace Browser {
 
 Tab::Tab(const String& tab_id, const URL& url)
-    : scheduler(co::next_scheduler()),
+    : scheduler(co::schedulers().at(0)),
 		delegate_(nullptr),
 		tab_id_(tab_id),
 		url_(url),
 		document_(nullptr),
 		context_(nullptr),
-		script_plugin_(nullptr),
+		script_plugin_(MakeUnique<Script::ScriptPlugin>()),
         active_(false),
 		rendering_(true),
 		running_(true) {
 }
 
 int Tab::Initialize() {
-    qjs::Context* js_context = Rml::Script::GetContext();
+    script_plugin_ = MakeUnique<Script::ScriptPlugin>();
+    Rml::RegisterPlugin(script_plugin_.get());
+
+    qjs::Context* js_context = script_plugin_->js_context();
     js_context->global()["log"] = [](const Rml::String& str){
       std::cout << str << std::endl;
     };
@@ -47,9 +52,6 @@ int Tab::Initialize() {
       Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
       window->Close();
     };
-
-    script_plugin_ = Rml::Script::GetInstance();
-    Rml::RegisterPlugin(script_plugin_);
 
     // Create the main RmlUi context.
     context_ = Rml::CreateContext(tab_id_, Rml::Vector2i(window_width, window_height));
@@ -65,6 +67,8 @@ int Tab::Initialize() {
     // Load the demo document.
     document_ = context_->LoadDocument(url_.GetURL());
     document_->SetId(tab_id_);
+    using Rml::PropertyId;
+    document_->SetProperty(PropertyId::Top, Rml::Property(browser_widget_height, Rml::Property::PX));
 	return 0;
 }
 
@@ -84,7 +88,7 @@ void Tab::Render() {
     Backend::BeginFrame();
     context_->Render();
     Backend::PresentFrame();
-	co::sleep(50);
+//	co::sleep(50);
 	if (rendering_)
         scheduler->go([&](){
           Render();
@@ -93,17 +97,19 @@ void Tab::Render() {
 
 void Tab::Destroy() {
     Rml::Script::ClearAllOwner();
-    Rml::Script::GetContext(true);
+    Rml::UnregisterPlugin(script_plugin_.get());
+	script_plugin_.reset();
+//	script_plugin_ = MakeUnique<Script::ScriptPlugin>();
     Rml::RemoveContext(tab_id_);
     Rml::Debugger::Shutdown();
-    Rml::UnregisterPlugin(script_plugin_);
     Factory::ClearStyleSheetCache();
     if (delegate_) delegate_->OnDestroy(this);
 }
 
-void Tab::Run() {
+void Tab::Run(bool show) {
 	scheduler->go([&](){
         Initialize();
+        if (show) Show();
 	});
 }
 
@@ -146,6 +152,10 @@ void Tab::Hide() {
 		RMLUI_ASSERT(document_)
 		document_->Hide();
 	});
+}
+
+Tab::~Tab() {
+	script_plugin_.reset();
 }
 
 }

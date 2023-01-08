@@ -5,6 +5,7 @@
 #include "TabManager.h"
 
 #include "Tab.h"
+#include "RmlUi/Core/Log.h"
 
 namespace Rml {
 

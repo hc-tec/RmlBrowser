@@ -16,6 +16,7 @@ namespace Browser {
 
 class TabManager;
 class MainWindow;
+class BrowserWidget;
 
 static MainWindow* instance;
 
@@ -43,6 +44,7 @@ public:
 private:
 
     UniquePtr<TabManager> tab_manager_;
+	UniquePtr<BrowserWidget> browser_widget_;
 	co::Event close_event_;
 };
 

@@ -11,6 +11,7 @@
 #include <Shell.h>
 #include <co/co.h>
 #include "TabManager.h"
+#include "BrowserWidget.h"
 
 const int window_width = 1550;
 const int window_height = 760;
@@ -19,8 +20,10 @@ namespace Rml {
 namespace Browser {
 
 MainWindow::MainWindow()
-    : tab_manager_(MakeUnique<TabManager>()) {
+    : tab_manager_(MakeUnique<TabManager>()),
+      browser_widget_(MakeUnique<BrowserWidget>()){
 	Initialize();
+    browser_widget_->Run();
 }
 
 bool MainWindow::Initialize() {
@@ -50,6 +53,7 @@ bool MainWindow::Initialize() {
 
 MainWindow::~MainWindow() {
     tab_manager_.reset();
+	browser_widget_.reset();
     Rml::Shutdown();
     Backend::Shutdown();
     Shell::Shutdown();
@@ -97,16 +101,7 @@ DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
 	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
-    tab->Run();
-	tab->Show();
-	co::sleep(1500);
-	tab->Hide();
-    co::sleep(1500);
-	tab->Show();
-	co::sleep(1500);
-    tab->Hide();
-    co::sleep(5000);
-    tab->Show();
+    tab->Run(true);
 	window->WaitForClose();
 	delete window;
 }

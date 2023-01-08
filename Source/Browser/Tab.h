@@ -8,10 +8,17 @@
 #include <co/co.h>
 #include "RmlUi/Config/Config.h"
 #include "RmlUi/Core/URL.h"
-#include "../Script/ScriptPlugin.h"
+
 
 namespace Rml {
 
+class ElementDocument;
+
+namespace Script {
+
+class ScriptPlugin;
+
+}
 
 namespace Browser {
 
@@ -26,9 +33,11 @@ public:
         virtual void OnStopRunning(Tab* tab) = 0;
 	};
 	Tab(const String& tab_id, const URL& url);
+	~Tab();
+
     int Initialize();
 	void Render();
-    void Run();
+    void Run(bool show = false);
     void Fresh();
 	void StopRunning();
 
@@ -52,7 +61,7 @@ private:
 
     Rml::Context* context_;
     Rml::ElementDocument* document_;
-    Rml::Script::ScriptPlugin* script_plugin_;
+    UniquePtr<Rml::Script::ScriptPlugin> script_plugin_;
 
 	bool active_;
 	bool rendering_;
