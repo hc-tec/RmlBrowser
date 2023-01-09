@@ -31,14 +31,23 @@ Tab::Tab(const String& tab_id, const URL& url)
 		url_(url),
 		document_(nullptr),
 		context_(nullptr),
-		script_plugin_(MakeUnique<Script::ScriptPlugin>()),
         active_(false),
 		rendering_(true),
 		running_(true) {
 }
 
 int Tab::Initialize() {
-    script_plugin_ = MakeUnique<Script::ScriptPlugin>();
+
+    // Create the main RmlUi context.
+    context_ = Rml::CreateContext(tab_id_, Rml::Vector2i(window_width, window_height));
+    if (!context_)
+    {
+        Destroy();
+        return -1;
+    }
+    Backend::RegisterContext(context_, scheduler);
+
+    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_);
     Rml::RegisterPlugin(script_plugin_.get());
 
     qjs::Context* js_context = script_plugin_->js_context();
@@ -53,22 +62,14 @@ int Tab::Initialize() {
       window->Close();
     };
 
-    // Create the main RmlUi context.
-    context_ = Rml::CreateContext(tab_id_, Rml::Vector2i(window_width, window_height));
-    if (!context_)
-    {
-        Destroy();
-        return -1;
-    }
-    Backend::RegisterContext(context_, scheduler);
     // The RmlUi debugger is optional but very useful. Try it by pressing 'F8' after starting this sample.
-    Rml::Debugger::Initialise(context_);
-    if (delegate_) delegate_->OnInitialize(this);
+//    Rml::Debugger::Initialise(context_);
     // Load the demo document.
     document_ = context_->LoadDocument(url_.GetURL());
     document_->SetId(tab_id_);
     using Rml::PropertyId;
     document_->SetProperty(PropertyId::Top, Rml::Property(browser_widget_height, Rml::Property::PX));
+    if (delegate_) delegate_->OnInitialize(this);
 	return 0;
 }
 
@@ -97,12 +98,11 @@ void Tab::Render() {
 
 void Tab::Destroy() {
     Backend::UnRegisterContext(context_);
+    Rml::RemoveContext(tab_id_);
     Rml::Script::ClearAllOwner();
     Rml::UnregisterPlugin(script_plugin_.get());
 	script_plugin_.reset();
-//	script_plugin_ = MakeUnique<Script::ScriptPlugin>();
-    Rml::RemoveContext(tab_id_);
-    Rml::Debugger::Shutdown();
+//    Rml::Debugger::Shutdown();
     Factory::ClearStyleSheetCache();
     if (delegate_) delegate_->OnDestroy(this);
 }
@@ -142,6 +142,7 @@ void Tab::Show() {
 	scheduler->go([&](){
         RMLUI_ASSERT(document_)
 		document_->Show();
+		if (delegate_) delegate_->OnActive(this);
 		Render();
 	});
 }
@@ -152,13 +153,18 @@ void Tab::Hide() {
 	scheduler->go([&](){
 		RMLUI_ASSERT(document_)
 		document_->Hide();
+		if (delegate_) delegate_->OnUnActive(this);
 	});
 }
 
 Tab::~Tab() {
 	if (running_) Destroy();
-	script_plugin_.reset();
+	running_ = false;
 }
+
+qjs::Context* Tab::js_context() { return script_plugin_->js_context(); }
+
+const String& Tab::title() { return document_->GetTitle(); }
 
 }
 }

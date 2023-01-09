@@ -20,8 +20,8 @@ namespace Rml {
 namespace Browser {
 
 MainWindow::MainWindow()
-    : tab_manager_(MakeUnique<TabManager>()),
-      browser_widget_(MakeUnique<BrowserWidget>()){
+    : tab_manager_(MakeUnique<TabManager>(this)),
+      browser_widget_(MakeUnique<BrowserWidget>(this)){
 	Initialize();
     browser_widget_->Run();
 }
@@ -61,6 +61,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::Close() {
+    Backend::RequestExit();
 	tab_manager_->CloseAllTabs();
     close_event_.signal();
 }
@@ -81,6 +82,28 @@ void MainWindow::ProcessEvent() {
 			Close();
 		}
 	});
+}
+
+void MainWindow::OnTabRun(Tab* tab) {
+	qjs::Context* js_context = browser_widget_->js_context();
+	auto add_tab = (std::function<void(const String&, const String&)>) js_context->eval("TAB_MANAGER_ADD_TAB");
+	add_tab(tab->tab_id(), tab->title());
+}
+
+void MainWindow::OnTabFresh(Tab* tab) {}
+
+void MainWindow::OnTabStopRunning(Tab* tab) {
+    qjs::Context* js_context = browser_widget_->js_context();
+    auto add_tab = (std::function<void(const String&)>) js_context->eval("tab_manager.remove_tab");
+    add_tab(tab->tab_id());
+}
+
+void MainWindow::DoTabFocus(const String& tab_id) {
+    tab_manager_->FocusTab(tab_id);
+}
+
+void MainWindow::DoTabRemove(const String& tab_id) {
+    tab_manager_->RemoveTab(tab_id);
 }
 
 void OpenInCurrentTab(Context* context, const URL& url) {
@@ -110,26 +133,13 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 }
 }
 
-#define DEF_main2(argc, argv) \
-int _co_main(int argc, char** argv); \
-int main(int argc, char** argv) {    \
-    flag::init(argc, argv);   \
-    int r; \
-    co::WaitGroup wg(1); \
-    go([&](){ \
-        r = _co_main(argc, argv); \
-        wg.done(); \
-    }); \
-    wg.wait(); \
-    return r; \
-} \
-int _co_main(int argc, char** argv)
-
-DEF_main2(argc, argv) {
+DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
 	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
     tab->Run(true);
+    tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
+    tab->Run();
 	window->WaitForClose();
 	delete window;
 }

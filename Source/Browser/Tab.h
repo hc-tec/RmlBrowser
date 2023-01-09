@@ -9,6 +9,11 @@
 #include "RmlUi/Config/Config.h"
 #include "RmlUi/Core/URL.h"
 
+namespace qjs {
+
+class Context;
+
+}
 
 namespace Rml {
 
@@ -27,10 +32,11 @@ public:
 	class Delegate {
 	public:
 		virtual void OnInitialize(Tab* tab) = 0;
-        virtual void OnRun(Tab* tab) = 0;
         virtual void OnDestroy(Tab* tab) = 0;
         virtual void OnFresh(Tab* tab) = 0;
         virtual void OnStopRunning(Tab* tab) = 0;
+        virtual void OnActive(Tab* tab) = 0;
+        virtual void OnUnActive(Tab* tab) = 0;
 	};
 	Tab(const String& tab_id, const URL& url);
 	~Tab();
@@ -51,6 +57,8 @@ public:
 	const URL& url() { return url_; }
 
 	Rml::Context* context() { return context_; }
+    qjs::Context* js_context();
+	const String& title();
 private:
     void Destroy();
 

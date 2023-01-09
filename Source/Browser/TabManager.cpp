@@ -11,8 +11,9 @@ namespace Rml {
 
 namespace Browser {
 
-TabManager::TabManager()
-		: tab_id_(1) {}
+TabManager::TabManager(Delegate* delegate)
+		: delegate_(delegate),
+		tab_id_(1) {}
 
 Tab* TabManager::NewTab(const URL& url) {
 	String new_tab_id("Tab-");
@@ -33,9 +34,8 @@ Tab* TabManager::GetTabByContext(Context* context) {
 void TabManager::OnInitialize(Tab* tab) {
 	Context* context = tab->context();
 	context_tab_map_[context] = tab;
+    if (delegate_) delegate_->OnTabRun(tab);
 }
-
-void TabManager::OnRun(Tab* tab) {}
 
 void TabManager::OnDestroy(Tab* tab) {
     Log::Message(Log::LT_DEBUG, "%s destroyed", tab->tab_id().data());
@@ -43,7 +43,9 @@ void TabManager::OnDestroy(Tab* tab) {
     context_tab_map_.erase(context);
 }
 
-void TabManager::OnFresh(Tab* tab) {}
+void TabManager::OnFresh(Tab* tab) {
+    if (delegate_) delegate_->OnTabFresh(tab);
+}
 
 void TabManager::OnStopRunning(Tab* tab) {
 	Log::Message(Log::LT_DEBUG, "%s closed", tab->tab_id().data());
@@ -51,6 +53,7 @@ void TabManager::OnStopRunning(Tab* tab) {
 	auto it = tab_map_.find(tab_id);
 	if (it == tab_map_.end()) return;
 	it->second.reset();
+    if (delegate_) delegate_->OnTabStopRunning(tab);
 }
 
 void TabManager::CloseTab(const String& tab_id) {
@@ -65,6 +68,22 @@ void TabManager::CloseAllTabs() {
 	}
 }
 
+void TabManager::OnActive(Tab* tab) {
+    active_tab_ = tab;
+}
+
+void TabManager::OnUnActive(Tab* tab) {}
+
+void TabManager::FocusTab(const String& tab_id) {
+	active_tab_->Hide();
+	auto it = tab_map_.find(tab_id);
+	if (it == tab_map_.end()) return;
+	it->second->Show();
+}
+
+void TabManager::RemoveTab(const String& tab_id) {
+	CloseTab(tab_id);
+}
 
 }
 

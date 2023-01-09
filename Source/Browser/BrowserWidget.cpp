@@ -4,12 +4,12 @@
 
 #include "BrowserWidget.h"
 
-
+#include <iostream>
 #include <RmlUi/Core.h>
 #include <RmlUi_Backend.h>
-#include <Shell.h>
 #include <co/co.h>
 
+#include "MainWindow.h"
 #include "../Script/ScriptPlugin.h"
 
 
@@ -20,26 +20,45 @@ namespace Rml {
 
 namespace Browser {
 
-BrowserWidget::BrowserWidget()
-		: scheduler(co::schedulers().at(0)) {}
+BrowserWidget::BrowserWidget(Delegate* delegate)
+		: delegate_(delegate),
+		scheduler(co::schedulers().at(0)),
+		context_(nullptr),
+		document_(nullptr) {}
 
 int BrowserWidget::Initialize() {
-    script_plugin_ = MakeUnique<Script::ScriptPlugin>();
-    Rml::RegisterPlugin(script_plugin_.get());
-
     // Create the main RmlUi context.
-    context_ = Rml::CreateContext("browser-widget", Rml::Vector2i(window_width, window_height));
+    context_ = Rml::CreateContext(BROWSER_WIDGET_ID, Rml::Vector2i(window_width, window_height));
     if (!context_)
     {
         return -1;
     }
     Backend::RegisterContext(context_, scheduler);
+
+    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_);
+    Rml::RegisterPlugin(script_plugin_.get());
+
+    qjs::Context* js_context = script_plugin_->js_context();
+    js_context->global()["log"] = [](const Rml::String& str){
+      std::cout << str << std::endl;
+    };
+    js_context->global()["CFocusTab"] = [](const Rml::String& tab_id){
+		auto window = MainWindow::GetInstance();
+		window->DoTabFocus(tab_id);
+		std::cout << tab_id << std::endl;
+    };
+    js_context->global()["CRemoveTab"] = [](const Rml::String& tab_id){
+      auto window = MainWindow::GetInstance();
+      window->DoTabRemove(tab_id);
+      std::cout << tab_id << std::endl;
+    };
+
     // Load the demo document.
     document_ = context_->LoadDocument(widget_rml_);
 	if (document_)
 	{
         document_->Show();
-		document_->SetId("browser-widget");
+		document_->SetId(BROWSER_WIDGET_ID);
 	}
 }
 
@@ -75,7 +94,10 @@ void BrowserWidget::Run() {
 BrowserWidget::~BrowserWidget() {
     Rml::UnregisterPlugin(script_plugin_.get());
 	script_plugin_.reset();
+    Rml::RemoveContext(BROWSER_WIDGET_ID);
 }
+
+qjs::Context* BrowserWidget::js_context() { return script_plugin_->js_context(); }
 
 }
 
