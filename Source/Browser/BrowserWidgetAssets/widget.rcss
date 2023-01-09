@@ -12,6 +12,41 @@ body {
 .tabs {
   height: 33px;
   background-color: #cdcdcd;
+  display: flex;
+  flex-direction: row;
+}
+
+.tab {
+  width: 200px;
+  padding: 10px;
+  position: relative;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+.tab:hover {
+  background-color: #e4e4e4;
+}
+
+.tab-active {
+  background-color: #f7f7f7;
+}
+
+.tab-active:hover {
+  background-color: #f7f7f7;
+}
+
+.close-icon {
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  right: 5px;
+  top: 9px;
+  text-align: center;
+}
+
+.close-icon:hover {
+  background-color: #cdcdcd;
 }
 
 .components {

@@ -4,7 +4,12 @@
         <link type="text/rcss" href="widget.rcss" />
     </head>
     <body>
-        <div class="tabs">Tabs...</div>
+        <div class="tabs">
+<!--            <div class="tab tab-active">-->
+<!--                <p>title</p>-->
+<!--                <p class="close-icon">x</p>-->
+<!--            </div>-->
+        </div>
         <div class="components">
             <img class="icon" src="images/left_arrow.png"></img>
             <img class="icon" src="images/fresh.png"></img>
@@ -23,5 +28,6 @@
         <div class="stars">
 
         </div>
+        <script src="widget.js"></script>
     </body>
 </rml>
