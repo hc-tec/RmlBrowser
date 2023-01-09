@@ -12,10 +12,8 @@ namespace Rml {
 
 namespace Script {
 
-void Glue() {
-    qjs::Context* js_context_ = GetContext();
-
-    qjs::Context::Module& dom = js_context_->addModule("dom");
+void Glue(qjs::Context* context) {
+    qjs::Context::Module& dom = context->addModule("dom");
     Event::Glue(dom);
     Element::Glue(dom);
 	Document::Glue(dom);

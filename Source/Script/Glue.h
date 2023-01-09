@@ -11,7 +11,7 @@ namespace Rml {
 
 namespace Script {
 
-void Glue();
+void Glue(qjs::Context* context);
 
 }
 

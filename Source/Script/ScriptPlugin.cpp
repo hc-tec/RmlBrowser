@@ -11,6 +11,7 @@
 #include "RmlUi/Core/Factory.h"
 #include "RmlUi/Core/ElementDocument.h"
 
+#include <co/co/mutex.h>
 #include "Glue.h"
 #include "Dom/JsDocumentElementInstancer.h"
 #include "Dom/XMLNodeHandlerAnchor.h"
@@ -22,11 +23,15 @@ namespace Script {
 int ScriptPlugin::GetEventClasses() { return Plugin::GetEventClasses(); }
 
 void ScriptPlugin::OnInitialise() {
+    static co::mutex js_mutex;
+    auto _ = co::mutex_guard(js_mutex);
+    js_runtime_ = new qjs::Runtime();
+    js_context_ = MakeUnique<qjs::Context>(js_runtime_->rt);
+    Glue(js_context_.get());
     js_document_element_instancer_ = MakeShared<JsDocumentElementInstancer>();
     Factory::RegisterElementInstancer("body", js_document_element_instancer_.get());
 	XMLParser::RegisterNodeHandler("a", MakeShared<XMLNodeHandlerAnchor>());
     XMLParser::RegisterNodeHandler("script", js_document_element_instancer_);
-	Glue();
 }
 void ScriptPlugin::OnShutdown() { Plugin::OnShutdown(); }
 
@@ -44,10 +49,12 @@ void ScriptPlugin::OnDocumentOpen(Context* context, const String& document_path)
 }
 
 void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
-    qjs::Context* js_context = GetContext();
+    qjs::Context* js_context = js_context_.get();
     js_context->global()["document"] = document;
 	DocumentHeader::ResourceList scripts = js_document_element_instancer_->GetScripts();
     try {
+//        static co::mutex js_mutex;
+//        auto _ = co::mutex_guard(js_mutex);
         for (auto& script : scripts) {
             if (script.is_inline) {
                 js_context->eval(script.content, script.path.data());
@@ -77,8 +84,13 @@ void ScriptPlugin::OnElementDestroy(Element* element) {
 }
 
 ScriptPlugin::~ScriptPlugin() {
-	ScriptPlugin* instance = GetInstance();
-	delete instance;
+    js_context_.reset();
+}
+
+void ScriptPlugin::FreshJsContext() {
+	js_context_.reset();
+    js_context_ = MakeUnique<qjs::Context>(*GetRunTime());
+    Glue(js_context_.get());
 }
 
 }
