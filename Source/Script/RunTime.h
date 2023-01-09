@@ -24,17 +24,17 @@ inline qjs::Runtime* GetRunTime() {
 	return runtime;
 }
 
-static qjs::Context* context;
+static qjs::Context* js_context;
 
 inline qjs::Context* GetContext(bool fresh = false) {
-	if (context == nullptr)
+	if (js_context == nullptr)
 	{
-		context = new qjs::Context(*GetRunTime());
+        js_context = new qjs::Context(*GetRunTime());
 	} else if (fresh) {
-        delete context;
-        context = new qjs::Context(*GetRunTime());
+        delete js_context;
+        js_context = new qjs::Context(*GetRunTime());
     }
-    return context;
+    return js_context;
 }
 
 }

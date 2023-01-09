@@ -19,6 +19,9 @@ class JsDocumentElementInstancer;
 
 class ScriptPlugin : public Rml::Plugin {
 public:
+
+	ScriptPlugin(Context* context);
+
     int GetEventClasses() override;
     void OnInitialise() override;
     void OnShutdown() override;
@@ -31,12 +34,9 @@ public:
     void OnElementDestroy(Element* element) override;
 	~ScriptPlugin() override;
 
-	void FreshJsContext();
-
 	qjs::Context* js_context() { return js_context_.get(); }
 
 private:
-
 	Context* context_;
 	qjs::Runtime* js_runtime_;
     UniquePtr<qjs::Context> js_context_;
