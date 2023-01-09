@@ -34,6 +34,7 @@
 #include <RmlUi/Core/SystemInterface.h>
 #include <RmlUi/Core/Types.h>
 #include <X11/Xutil.h>
+#include <co/co.h>
 
 class SystemInterface_X11 : public Rml::SystemInterface {
 public:
@@ -89,7 +90,7 @@ namespace RmlX11 {
 
 // Applies input on the context based on the given SFML event.
 // @return True if the event is still propagating, false if it was handled by the context.
-bool HandleInputEvent(Rml::Context* context, Display* display, const XEvent& ev);
+bool HandleInputEvent(Rml::Context* context, co::Scheduler* scheduler, Display* display, const XEvent& ev);
 
 // Converts the X11 key code to RmlUi key.
 // @note The display must be passed here as it needs to query the connected X server display for information about its install keymap abilities.

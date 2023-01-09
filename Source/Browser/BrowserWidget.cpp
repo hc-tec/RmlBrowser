@@ -33,7 +33,7 @@ int BrowserWidget::Initialize() {
     {
         return -1;
     }
-
+    Backend::RegisterContext(context_, scheduler);
     // Load the demo document.
     document_ = context_->LoadDocument(widget_rml_);
 	if (document_)
@@ -46,10 +46,10 @@ int BrowserWidget::Initialize() {
 void BrowserWidget::Render() {
 	RMLUI_ASSERT(context_)
 // Handle input and window events.
-    bool is_backend_running = Backend::ProcessEvents(context_, &Shell::ProcessKeyDownShortcuts);
-    if (!is_backend_running) {
-        running_ = false;
-    }
+//    bool is_backend_running = Backend::ProcessEvents(context_, &Shell::ProcessKeyDownShortcuts);
+//    if (!is_backend_running) {
+//        running_ = false;
+//    }
 
     // This is a good place to update your game or application.
     // Always update the context before rendering.
@@ -59,7 +59,7 @@ void BrowserWidget::Render() {
     Backend::BeginFrame();
     context_->Render();
     Backend::PresentFrame();
-    co::sleep(40);
+//    co::sleep(40);
     scheduler->go([&](){
       Render();
     });
@@ -73,6 +73,7 @@ void BrowserWidget::Run() {
 }
 
 BrowserWidget::~BrowserWidget() {
+    Rml::UnregisterPlugin(script_plugin_.get());
 	script_plugin_.reset();
 }
 

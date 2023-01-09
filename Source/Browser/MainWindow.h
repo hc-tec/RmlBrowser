@@ -36,6 +36,7 @@ public:
 	}
 
 	bool Initialize();
+    void ProcessEvent();
 
 	void Close();
 	void WaitForClose();

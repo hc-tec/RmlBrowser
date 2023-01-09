@@ -60,7 +60,7 @@ int Tab::Initialize() {
         Destroy();
         return -1;
     }
-
+    Backend::RegisterContext(context_, scheduler);
     // The RmlUi debugger is optional but very useful. Try it by pressing 'F8' after starting this sample.
     Rml::Debugger::Initialise(context_);
     if (delegate_) delegate_->OnInitialize(this);
@@ -74,11 +74,11 @@ int Tab::Initialize() {
 
 void Tab::Render() {
     // Handle input and window events.
-    bool is_backend_running = Backend::ProcessEvents(context_, &Shell::ProcessKeyDownShortcuts);
-    if (!is_backend_running) {
-        rendering_ = false;
-        running_ = false;
-    }
+//    bool is_backend_running = Backend::ProcessEvents(context_, &Shell::ProcessKeyDownShortcuts);
+//    if (!is_backend_running) {
+//        rendering_ = false;
+//        running_ = false;
+//    }
 
     // This is a good place to update your game or application.
     // Always update the context before rendering.
@@ -96,6 +96,7 @@ void Tab::Render() {
 }
 
 void Tab::Destroy() {
+    Backend::UnRegisterContext(context_);
     Rml::Script::ClearAllOwner();
     Rml::UnregisterPlugin(script_plugin_.get());
 	script_plugin_.reset();
@@ -155,6 +156,7 @@ void Tab::Hide() {
 }
 
 Tab::~Tab() {
+	if (running_) Destroy();
 	script_plugin_.reset();
 }
 

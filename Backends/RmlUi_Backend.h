@@ -33,6 +33,7 @@
 #include <RmlUi/Core/RenderInterface.h>
 #include <RmlUi/Core/SystemInterface.h>
 #include <RmlUi/Core/Types.h>
+#include <co/co.h>
 
 using KeyDownCallback = bool (*)(Rml::Context* context, Rml::Input::KeyIdentifier key, int key_modifier, float native_dp_ratio, bool priority);
 
@@ -46,6 +47,10 @@ using KeyDownCallback = bool (*)(Rml::Context* context, Rml::Input::KeyIdentifie
  */
 namespace Backend {
 
+void RegisterContext(Rml::Context* context, co::Scheduler* scheduler);
+
+void UnRegisterContext(Rml::Context* context);
+
 // Initializes the backend, including the custom system and render interfaces, and opens a window for rendering the RmlUi context.
 bool Initialize(const char* window_name, int width, int height, bool allow_resize);
 // Closes the window and release all resources owned by the backend, including the system and render interfaces.
@@ -58,7 +63,7 @@ Rml::RenderInterface* GetRenderInterface();
 
 // Polls and processes events from the current platform, and applies any relevant events to the provided RmlUi context and the key down callback.
 // @return False to indicate that the application should be closed.
-bool ProcessEvents(Rml::Context* context, KeyDownCallback key_down_callback = nullptr);
+bool ProcessEvents();
 // Request application closure during the next event processing call.
 void RequestExit();
 

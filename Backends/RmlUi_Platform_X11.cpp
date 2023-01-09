@@ -231,7 +231,7 @@ bool SystemInterface_X11::XPaste(Atom target_atom, Rml::String& clipboard_data)
 	return false;
 }
 
-bool RmlX11::HandleInputEvent(Rml::Context* context, Display* display, const XEvent& ev)
+bool RmlX11::HandleInputEvent(Rml::Context* context, co::Scheduler* scheduler, Display* display, const XEvent& ev)
 {
 	switch (ev.type)
 	{
@@ -242,11 +242,24 @@ bool RmlX11::HandleInputEvent(Rml::Context* context, Display* display, const XEv
 		case Button1:
 		case Button2:
 		case Button3:
-			return context->ProcessMouseButtonDown(ConvertMouseButton(ev.xbutton.button), RmlX11::GetKeyModifierState(ev.xbutton.state));
+			scheduler->go([context, ev](){
+				if (context == nullptr) return;
+				context->ProcessMouseButtonDown(ConvertMouseButton(ev.xbutton.button), RmlX11::GetKeyModifierState(ev.xbutton.state));
+			});
+			return true;
 		case Button4:
-			return context->ProcessMouseWheel(-1, RmlX11::GetKeyModifierState(ev.xbutton.state));
+            scheduler->go([context, ev](){
+              if (context == nullptr) return;
+              context->ProcessMouseWheel(-1, RmlX11::GetKeyModifierState(ev.xbutton.state));
+            });
+			return true;
 		case Button5:
-			return context->ProcessMouseWheel(1, RmlX11::GetKeyModifierState(ev.xbutton.state));
+            scheduler->go([context, ev](){
+
+              if (context == nullptr) return;
+              context->ProcessMouseWheel(1, RmlX11::GetKeyModifierState(ev.xbutton.state));
+            });
+			return true;
 		default:
 			return true;
 		}
@@ -259,7 +272,11 @@ bool RmlX11::HandleInputEvent(Rml::Context* context, Display* display, const XEv
 		case Button1:
 		case Button2:
 		case Button3:
-			return context->ProcessMouseButtonUp(ConvertMouseButton(ev.xbutton.button), RmlX11::GetKeyModifierState(ev.xbutton.state));
+            scheduler->go([context, ev](){
+              if (context == nullptr) return;
+              context->ProcessMouseButtonUp(ConvertMouseButton(ev.xbutton.button), RmlX11::GetKeyModifierState(ev.xbutton.state));
+            });
+			return true;
 		default:
 			return true;
 		}
@@ -267,12 +284,20 @@ bool RmlX11::HandleInputEvent(Rml::Context* context, Display* display, const XEv
 	break;
 	case MotionNotify:
 	{
-		return context->ProcessMouseMove(ev.xmotion.x, ev.xmotion.y, RmlX11::GetKeyModifierState(ev.xmotion.state));
+        scheduler->go([context, ev](){
+          if (context == nullptr) return;
+          context->ProcessMouseMove(ev.xmotion.x, ev.xmotion.y, RmlX11::GetKeyModifierState(ev.xmotion.state));
+        });
+        return true;
 	}
 	break;
 	case LeaveNotify:
 	{
-		return context->ProcessMouseLeave();
+        scheduler->go([context](){
+          if (context == nullptr) return;
+          context->ProcessMouseLeave();
+        });
+        return true;
 	}
 	break;
 	case KeyPress:
@@ -282,14 +307,21 @@ bool RmlX11::HandleInputEvent(Rml::Context* context, Display* display, const XEv
 
 		bool propagates = true;
 
-		if (key_identifier != Rml::Input::KI_UNKNOWN)
-			propagates = context->ProcessKeyDown(key_identifier, key_modifier_state);
+		if (key_identifier != Rml::Input::KI_UNKNOWN) {
+            scheduler->go([context, key_identifier, key_modifier_state](){
+              if (context == nullptr) return;
+              context->ProcessKeyDown(key_identifier, key_modifier_state);
+            });
+		}
 
 		Rml::Character character = GetCharacterCode(key_identifier, key_modifier_state);
-		if (character != Rml::Character::Null && !(key_modifier_state & Rml::Input::KM_CTRL))
-			propagates &= context->ProcessTextInput(character);
-
-		return propagates;
+		if (character != Rml::Character::Null && !(key_modifier_state & Rml::Input::KM_CTRL)) {
+            scheduler->go([context, character](){
+              if (context == nullptr) return;
+              context->ProcessTextInput(character);
+            });
+		}
+		return true;
 	}
 	break;
 	case KeyRelease:
@@ -299,10 +331,13 @@ bool RmlX11::HandleInputEvent(Rml::Context* context, Display* display, const XEv
 
 		bool propagates = true;
 
-		if (key_identifier != Rml::Input::KI_UNKNOWN)
-			propagates = context->ProcessKeyUp(key_identifier, key_modifier_state);
-
-		return propagates;
+		if (key_identifier != Rml::Input::KI_UNKNOWN) {
+            scheduler->go([context, key_identifier, key_modifier_state](){
+              if (context == nullptr) return;
+              context->ProcessKeyUp(key_identifier, key_modifier_state);
+            });
+		}
+        return true;
 	}
 	break;
 	default:

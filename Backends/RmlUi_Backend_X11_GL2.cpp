@@ -47,6 +47,24 @@
 #include <sys/types.h>
 #include <time.h>
 #include <unistd.h>
+#include <unordered_map>
+
+
+static co::mutex mutex;
+static std::unordered_map<Rml::String, Rml::Pair<Rml::Context*, co::Scheduler*>> register_contexts;
+
+void Backend::RegisterContext(Rml::Context* context, co::Scheduler* scheduler) {
+	auto g = co::mutex_guard(mutex);
+	auto it = register_contexts.find(context->GetName());
+	if (it == register_contexts.end()) {
+		register_contexts[context->GetName()] = std::make_pair(context, scheduler);
+	}
+}
+
+void Backend::UnRegisterContext(Rml::Context* context) {
+    auto g = co::mutex_guard(mutex);
+    register_contexts.erase(context->GetName());
+}
 
 // Attach the OpenGL context to the window.
 static bool AttachToNative(GLXContext& out_gl_context, Display* display, Window window, XVisualInfo* visual_info)
@@ -205,9 +223,9 @@ Rml::RenderInterface* Backend::GetRenderInterface()
 	return &data->render_interface;
 }
 
-bool Backend::ProcessEvents(Rml::Context* context, KeyDownCallback key_down_callback)
+bool Backend::ProcessEvents()
 {
-	RMLUI_ASSERT(data && context);
+	RMLUI_ASSERT(data);
 
 	Display* display = data->display;
 	bool result = data->running;
@@ -234,8 +252,11 @@ bool Backend::ProcessEvents(Rml::Context* context, KeyDownCallback key_down_call
 		{
 			int x = ev.xconfigure.width;
 			int y = ev.xconfigure.height;
-
-			context->SetDimensions({x, y});
+            auto g = co::mutex_guard(mutex);
+            for(auto& [_, context] : register_contexts)
+            {
+                context.first->SetDimensions({x, y});
+            }
 			data->render_interface.SetViewport(x, y);
 		}
 		break;
@@ -246,14 +267,20 @@ bool Backend::ProcessEvents(Rml::Context* context, KeyDownCallback key_down_call
 			const float native_dp_ratio = 1.f;
 
 			// See if we have any global shortcuts that take priority over the context.
-			if (key_down_callback && !key_down_callback(context, key, key_modifier, native_dp_ratio, true))
-				break;
+//			if (key_down_callback && !key_down_callback(context, key, key_modifier, native_dp_ratio, true))
+//				break;
 			// Otherwise, hand the event over to the context by calling the input handler as normal.
-			if (!RmlX11::HandleInputEvent(context, display, ev))
-				break;
+			{
+				auto g = co::mutex_guard(mutex);
+				for(auto& [_, context] : register_contexts)
+				{
+					RmlX11::HandleInputEvent(context.first, context.second, display, ev);
+				}
+			}
+			break;
 			// The key was not consumed by the context either, try keyboard shortcuts of lower priority.
-			if (key_down_callback && !key_down_callback(context, key, key_modifier, native_dp_ratio, false))
-				break;
+//			if (key_down_callback && !key_down_callback(context, key, key_modifier, native_dp_ratio, false))
+//				break;
 		}
 		break;
 		case SelectionRequest:
@@ -263,8 +290,14 @@ bool Backend::ProcessEvents(Rml::Context* context, KeyDownCallback key_down_call
 		break;
 		default:
 		{
-			// Pass unhandled events to the platform layer's input handler.
-			RmlX11::HandleInputEvent(context, display, ev);
+            {
+                auto g = co::mutex_guard(mutex);
+                for(auto& [_, context] : register_contexts)
+                {
+                    // Pass unhandled events to the platform layer's input handler.
+                    RmlX11::HandleInputEvent(context.first, context.second, display, ev);
+                }
+            }
 		}
 		break;
 		}

@@ -48,6 +48,7 @@ bool MainWindow::Initialize() {
 
     // Fonts should be loaded before any documents are loaded.
     Shell::LoadFonts();
+    ProcessEvent();
 	return true;
 }
 
@@ -67,6 +68,19 @@ void MainWindow::Close() {
 void MainWindow::WaitForClose() {
 	close_event_.wait();
     co::sleep(500);
+}
+
+void MainWindow::ProcessEvent() {
+	go([&](){
+		bool running = Backend::ProcessEvents();
+		if (running) {
+			go([&](){
+				ProcessEvent();
+			});
+		} else {
+			Close();
+		}
+	});
 }
 
 void OpenInCurrentTab(Context* context, const URL& url) {
@@ -96,8 +110,22 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 }
 }
 
+#define DEF_main2(argc, argv) \
+int _co_main(int argc, char** argv); \
+int main(int argc, char** argv) {    \
+    flag::init(argc, argv);   \
+    int r; \
+    co::WaitGroup wg(1); \
+    go([&](){ \
+        r = _co_main(argc, argv); \
+        wg.done(); \
+    }); \
+    wg.wait(); \
+    return r; \
+} \
+int _co_main(int argc, char** argv)
 
-DEF_main(argc, argv) {
+DEF_main2(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
 	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
