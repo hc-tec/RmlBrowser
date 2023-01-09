@@ -64,7 +64,7 @@ Context::Context(const String& name) : name(name), dimensions(0, 0), density_ind
 	root->SetOffset(Vector2f(0, 0), nullptr);
 	root->SetProperty(PropertyId::ZIndex, Property(0, Property::NUMBER));
 
-	cursor_proxy = Factory::InstanceElement(nullptr, documents_base_tag, documents_base_tag, XMLAttributes());
+	cursor_proxy =  MakeUnique<ElementDocument>("body");// Factory::InstanceElement(nullptr, "div", "div", XMLAttributes());
 	ElementDocument* cursor_proxy_document = rmlui_dynamic_cast< ElementDocument* >(cursor_proxy.get());
 	RMLUI_ASSERT(cursor_proxy_document);
 	cursor_proxy_document->context = this;

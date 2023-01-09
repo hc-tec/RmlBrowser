@@ -321,7 +321,7 @@ private:
 	bool enable_cursor;
 	String cursor_name;
 	// Document attached to cursor (e.g. while dragging).
-	ElementPtr cursor_proxy;
+	UniquePtr<Element> cursor_proxy;
 
 	// The element that is currently being dragged (or about to be dragged).
 	Element* drag;
