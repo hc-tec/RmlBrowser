@@ -21,7 +21,7 @@
                         <p class="icon-text">Rml</p>
                         <h1 class="line"></h1>
                     </div>
-                    <input class="search-input" type="text" name="search"/>
+                    <input id="search-input" class="search-input" type="text" name="search"/>
                 </div>
             </div>
         </div>

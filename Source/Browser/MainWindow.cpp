@@ -12,6 +12,7 @@
 #include <co/co.h>
 #include "TabManager.h"
 #include "BrowserWidget.h"
+#include "Glue.h"
 
 const int window_width = 1550;
 const int window_height = 760;
@@ -22,6 +23,7 @@ namespace Browser {
 MainWindow::MainWindow()
     : tab_manager_(MakeUnique<TabManager>(this)),
       browser_widget_(MakeUnique<BrowserWidget>(this)){
+	RegisterBrowserGlueFunc();
 	Initialize();
     browser_widget_->Run();
 }
@@ -86,17 +88,45 @@ void MainWindow::ProcessEvent() {
 
 void MainWindow::OnTabRun(Tab* tab) {
 	qjs::Context* js_context = browser_widget_->js_context();
-	auto add_tab = (std::function<void(const String&, const String&)>) js_context->eval("TAB_MANAGER_ADD_TAB");
-	add_tab(tab->tab_id(), tab->title());
+	auto add_tab = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_ADD_TAB");
+	auto obj = js_context->newObject();
+	obj["id"] = tab->tab_id();
+    obj["title"] = tab->title();
+    obj["url"] = tab->document()->GetSourceURL();
+	add_tab(obj);
 }
 
-void MainWindow::OnTabFresh(Tab* tab) {}
+void MainWindow::OnTabFresh(Tab* tab) {
+    qjs::Context* js_context = browser_widget_->js_context();
+    auto add_tab = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_FRESH_TAB");
+    auto obj = js_context->newObject();
+    obj["id"] = tab->tab_id();
+    obj["title"] = tab->title();
+    obj["url"] = tab->url().GetURL();
+    add_tab(obj);
+}
 
 void MainWindow::OnTabStopRunning(Tab* tab) {
     qjs::Context* js_context = browser_widget_->js_context();
-    auto add_tab = (std::function<void(const String&)>) js_context->eval("tab_manager.remove_tab");
+    auto add_tab = (std::function<void(const String&)>) js_context->eval("TAB_MANAGER_REMOVE_TAB");
     add_tab(tab->tab_id());
 }
+
+void MainWindow::OnTabActive(Tab* tab) {
+    qjs::Context* js_context = browser_widget_->js_context();
+    auto add_tab = (std::function<void(const String&)>) js_context->eval("TAB_MANAGER_ON_TAB_ACTIVE");
+	try
+	{
+		add_tab(tab->tab_id());
+	}catch (qjs::exception) {
+        auto exc = js_context->getException();
+        Log::Message(Log::LT_DEBUG, "%s", ((std::string) exc).data());
+        if((bool) exc["stack"])
+            Log::Message(Log::LT_DEBUG, "%s", ((std::string) exc["stack"]).data());
+    }
+}
+
+void MainWindow::OnTabUnActive(Tab* tab) {}
 
 void MainWindow::DoTabFocus(const String& tab_id) {
     tab_manager_->FocusTab(tab_id);
@@ -105,6 +135,7 @@ void MainWindow::DoTabFocus(const String& tab_id) {
 void MainWindow::DoTabRemove(const String& tab_id) {
     tab_manager_->RemoveTab(tab_id);
 }
+
 
 void OpenInCurrentTab(Context* context, const URL& url) {
     MainWindow* window = MainWindow::GetInstance();
@@ -136,10 +167,10 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
-	Rml::Browser::Tab* tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
-    tab->Run(true);
-    tab = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
-    tab->Run();
+	Rml::Browser::Tab* tab1 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/basic/animation/data/animation.rml");
+    tab1->Run(false);
+    Rml::Browser::Tab* tab2 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
+    tab2->Run(true);
 	window->WaitForClose();
 	delete window;
 }

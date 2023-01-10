@@ -5,9 +5,14 @@
 #ifndef RMLUI_GLUE_H
 #define RMLUI_GLUE_H
 
-#include "RunTime.h"
+#include "quickjspp.hpp"
+#include "RmlUi/Core/Types.h"
 
 namespace Rml {
+
+typedef void (*GlueFunc)(qjs::Context* context);
+static Vector<GlueFunc> GLUE_FUNC_LIST;
+void RegisterGlueFunc(GlueFunc func);
 
 namespace Script {
 

@@ -52,7 +52,7 @@ int Tab::Initialize() {
 
     qjs::Context* js_context = script_plugin_->js_context();
     js_context->global()["log"] = [](const Rml::String& str){
-      std::cout << str << std::endl;
+      LOG << str;
     };
     js_context->global()["reload"] = [&](){
       this->Fresh();
@@ -74,12 +74,7 @@ int Tab::Initialize() {
 }
 
 void Tab::Render() {
-    // Handle input and window events.
-//    bool is_backend_running = Backend::ProcessEvents(context_, &Shell::ProcessKeyDownShortcuts);
-//    if (!is_backend_running) {
-//        rendering_ = false;
-//        running_ = false;
-//    }
+	if (!rendering_) return;
 
     // This is a good place to update your game or application.
     // Always update the context before rendering.
@@ -108,7 +103,7 @@ void Tab::Destroy() {
 }
 
 void Tab::Run(bool show) {
-	scheduler->go([&](){
+	scheduler->go([&, show](){
         Initialize();
         if (show) Show();
 	});
@@ -148,6 +143,7 @@ void Tab::Show() {
 }
 
 void Tab::Hide() {
+	Backend::ClearFrame();
 	active_ = false;
 	rendering_ = false;
 	scheduler->go([&](){

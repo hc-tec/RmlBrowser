@@ -1,58 +1,180 @@
 
 
-class TabManager {
+class Subject {
+    constructor() {
+        this.observers = []
+    }
+    attach(observer) {
+        this.observers.push(observer)
+    }
+    detach(observer) {
+        let index = -1
+        this.observers.some((obs,i) => {
+            if (obs === observer) {
+                index = i
+                return true
+            }
+            return false
+        })
+        if (index !== -1) {
+            this.observers.splice(index, 1)
+        }
+    }
+}
+
+class TabManager extends Subject {
 
     constructor(tab_parent_el) {
+        super()
         this.tab_parent_el = tab_parent_el
         this.tabs = {}
+        this.tab_num = 0
+        this.active_tab = null
     }
 
-    add_tab(id, title_) {
+    add_tab(params) {
+        const id = params.id
         if (this.tabs[id]) return
-        this.tabs[id] = 1
+        this.tab_num++
+        this.tabs[id] = params
         const tab = document.createElement(document, 'div')
         tab.setClassNames('tab')
         tab.setId(id)
-        if (Object.keys(this.tabs).length === 1) {
+        if (this.tab_num === 1) {
             tab.setClassNames('tab tab-active')
+            this.active_tab = id
         }
         tab.addEventListener(tab, 'click', e => {
             const el = e.getCurrentElement()
             const tab_id = el.getId()
             CFocusTab(tab_id)
+            // this.on_tab_active(tab_id)
         })
         const title = document.createElement(document, 'p')
-        title.innerRML = title_
+        title.innerRML = params.title
         const close_icon = document.createElement(document, 'p')
         close_icon.setClassNames('close-icon')
         close_icon.innerRML = 'x'
         close_icon.addEventListener(close_icon, 'click', e => {
-            const el = e.getCurrentElement()
+            const el = e.getTargetElement().getParentNode()
             const tab_id = el.getId()
-            CRemoveTab(tab_id)
+            this.remove_tab(id)
+            const focus_id = Object.keys(this.tabs)[this.tab_num-1]
+            CRemoveTab(tab_id, focus_id)
         })
         tab.appendChild(tab, title)
         tab.appendChild(tab, close_icon)
         this.tab_parent_el.appendChild(this.tab_parent_el, tab)
-        log(`Id: ${id} title: ${title_} added to Tabs`)
+        this.NotifyTabAdd(tab)
+        log(`Id: ${id} title: ${params.title} added to Tabs`)
     }
 
     remove_tab(id) {
+        if (!this.tabs[id]) return
+        log(`remove_tab ${id}`)
         delete this.tabs[id]
+        this.tab_num--
         const tab = document.getElementById(id)
-        tab_parent_el.removeChild(tab_parent_el, tab)
-        log('remove tab')
+        this.NotifyTabRemove(tab)
+        this.tab_parent_el.removeChild(tab_parent_el, tab)
+    }
+
+    on_tab_active(id) {
+        if (!this.tabs[id]) return
+        // if (id === this.active_tab) return
+        log(`on_tab_active ${this.active_tab} -> ${id}`)
+        this.unfocus_tab(this.active_tab)
+        this.focus_tab(id)
+    }
+
+    on_tab_fresh(params) {
+        // const old_params = this.tabs[params.id]
+        this.tabs[params.id] = params
+    }
+
+    unfocus_tab(id) {
+        const tabs = this.tab_parent_el.getElementsByClassName('tab')
+        for (let i = 0; i < this.tab_num; i++) {
+            const tab = tabs[i]
+            if (tab.getId() === id) {
+                tab.setClassNames('tab')
+                break
+            }
+        }
+    }
+
+    focus_tab(id) {
+        this.active_tab = id
+        const tabs = this.tab_parent_el.getElementsByClassName('tab')
+        for (let i = 0; i < this.tab_num; i++) {
+            const tab = tabs[i]
+            if (tab.getId() === id) {
+                tab.setClassNames('tab tab-active')
+                this.NotifyTabFocus(tab)
+                break
+            }
+        }
+    }
+
+    NotifyTabAdd(tab) {
+        const params = this.tabs[tab.getId()]
+        this.observers.forEach(observer => {
+            observer.onTabAdd(tab, params)
+        })
+    }
+
+    NotifyTabRemove(tab) {
+        const params = this.tabs[tab.getId()]
+        this.observers.forEach(observer => {
+            observer.onTabRemove(tab, params)
+        })
+    }
+
+    NotifyTabFocus(tab) {
+        const params = this.tabs[tab.getId()]
+        this.observers.forEach(observer => {
+            observer.onTabFocus(tab, params)
+        })
     }
 
 }
+
+class TabManagerObserver {
+    onTabAdd(tab, params) {}
+    onTabRemove(tab, params) {}
+    onTabFocus(tab, params) {}
+}
+
+class SearchInputObserver extends TabManagerObserver {
+    onTabFocus(tab, params) {
+        log('SearchInputObserver')
+        let search_input = document.getElementById('search-input')
+        search_input = dom.ToElementFormControl(search_input)
+        search_input.setValue(params.url)
+    }
+}
+
 const tab_parent_el = document.getElementsByClassName('tabs')[0]
 const tab_manager = new TabManager(tab_parent_el)
 
-function TAB_MANAGER_ADD_TAB(id, title) {
-    tab_manager.add_tab(id, title)
+const search_input = new SearchInputObserver()
+tab_manager.attach(search_input)
+
+function TAB_MANAGER_ADD_TAB(params) {
+    tab_manager.add_tab(params)
 }
 
+function TAB_MANAGER_REMOVE_TAB(id) {
+    tab_manager.remove_tab(id)
+}
 
+function TAB_MANAGER_ON_TAB_ACTIVE(id) {
+    tab_manager.on_tab_active(id)
+}
+
+function TAB_MANAGER_FRESH_TAB(params) {
+    tab_manager.on_tab_fresh(params)
+}
 
 
 

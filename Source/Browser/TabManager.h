@@ -22,6 +22,8 @@ public:
         virtual void OnTabRun(Tab* tab) = 0;
         virtual void OnTabFresh(Tab* tab) = 0;
         virtual void OnTabStopRunning(Tab* tab) = 0;
+		virtual void OnTabActive(Tab* tab) = 0;
+        virtual void OnTabUnActive(Tab* tab) = 0;
 	};
     TabManager(Delegate* delegate);
 

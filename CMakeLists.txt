@@ -1084,7 +1084,7 @@ add_executable(browser
         Source/Browser/TabManager.cpp
 		Source/Browser/TabManager.h
 		Source/Browser/BrowserWidget.cpp
-		Source/Browser/BrowserWidget.h)
+		Source/Browser/BrowserWidget.h Source/Browser/Glue.cpp Source/Browser/Glue.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

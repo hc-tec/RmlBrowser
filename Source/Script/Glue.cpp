@@ -10,6 +10,10 @@
 
 namespace Rml {
 
+void RegisterGlueFunc(GlueFunc func) {
+    GLUE_FUNC_LIST.push_back(func);
+}
+
 namespace Script {
 
 void Glue(qjs::Context* context) {
@@ -17,6 +21,10 @@ void Glue(qjs::Context* context) {
     Event::Glue(dom);
     Element::Glue(dom);
 	Document::Glue(dom);
+	for (auto func : GLUE_FUNC_LIST) {
+		func(context);
+	}
+	context->eval("import * as dom from 'dom';globalThis.dom = dom;", "<eval>", JS_EVAL_TYPE_MODULE);
 }
 
 }

@@ -52,13 +52,14 @@ void TabManager::OnStopRunning(Tab* tab) {
 	String tab_id = tab->tab_id();
 	auto it = tab_map_.find(tab_id);
 	if (it == tab_map_.end()) return;
-	it->second.reset();
+	tab_map_.erase(it);
     if (delegate_) delegate_->OnTabStopRunning(tab);
 }
 
 void TabManager::CloseTab(const String& tab_id) {
     auto it = tab_map_.find(tab_id);
     if (it == tab_map_.end()) return;
+	if (tab_id == active_tab_->tab_id()) active_tab_ = nullptr;
     it->second->StopRunning();
 }
 
@@ -70,14 +71,22 @@ void TabManager::CloseAllTabs() {
 
 void TabManager::OnActive(Tab* tab) {
     active_tab_ = tab;
+    if (delegate_) delegate_->OnTabActive(tab);
 }
 
-void TabManager::OnUnActive(Tab* tab) {}
+void TabManager::OnUnActive(Tab* tab) {
+    if (delegate_) delegate_->OnTabUnActive(tab);
+}
 
 void TabManager::FocusTab(const String& tab_id) {
-	active_tab_->Hide();
 	auto it = tab_map_.find(tab_id);
 	if (it == tab_map_.end()) return;
+	if (active_tab_)
+	{
+		if (tab_id == active_tab_->tab_id())
+			return;
+		active_tab_->Hide();
+	}
 	it->second->Show();
 }
 

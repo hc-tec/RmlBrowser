@@ -47,10 +47,14 @@ public:
 	void OnTabRun(Tab* tab) override;
 	void OnTabFresh(Tab* tab) override;
 	void OnTabStopRunning(Tab* tab) override;
+    void OnTabActive(Tab* tab) override;
+    void OnTabUnActive(Tab* tab) override;
+
 
 	/* BrowserWidget Delegate */
 	void DoTabFocus(const String& tab_id) override;
 	void DoTabRemove(const String& tab_id) override;
+
 
 private:
 

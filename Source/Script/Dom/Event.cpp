@@ -13,7 +13,7 @@ namespace Script {
 
 void Event::Glue(qjs::Context::Module& m) {
 
-	m.class_<Rml::SmallUnorderedMap< String, Variant >>("Dictionary");
+//	m.class_<Rml::SmallUnorderedMap< String, Variant >>("Dictionary");
 //        .fun<>("find", [](Rml::SmallUnorderedMap< String, Variant >* dictionary, const String& param){
 //            auto it = dictionary->find(param);
 //            if (it == dictionary->end()) return VARIANT_NONE.get()->Get(0);

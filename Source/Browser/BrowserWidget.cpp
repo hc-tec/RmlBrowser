@@ -9,7 +9,6 @@
 #include <RmlUi_Backend.h>
 #include <co/co.h>
 
-#include "MainWindow.h"
 #include "../Script/ScriptPlugin.h"
 
 
@@ -42,15 +41,14 @@ int BrowserWidget::Initialize() {
     js_context->global()["log"] = [](const Rml::String& str){
       std::cout << str << std::endl;
     };
-    js_context->global()["CFocusTab"] = [](const Rml::String& tab_id){
-		auto window = MainWindow::GetInstance();
-		window->DoTabFocus(tab_id);
+    js_context->global()["CFocusTab"] = [&](const Rml::String& tab_id){
+		delegate_->DoTabFocus(tab_id);
 		std::cout << tab_id << std::endl;
     };
-    js_context->global()["CRemoveTab"] = [](const Rml::String& tab_id){
-      auto window = MainWindow::GetInstance();
-      window->DoTabRemove(tab_id);
-      std::cout << tab_id << std::endl;
+    js_context->global()["CRemoveTab"] = [&](const Rml::String& tab_id, const Rml::String& focus_id){
+        delegate_->DoTabRemove(tab_id);
+        delegate_->DoTabFocus(focus_id);
+        std::cout << tab_id << std::endl;
     };
 
     // Load the demo document.
@@ -64,11 +62,6 @@ int BrowserWidget::Initialize() {
 
 void BrowserWidget::Render() {
 	RMLUI_ASSERT(context_)
-// Handle input and window events.
-//    bool is_backend_running = Backend::ProcessEvents(context_, &Shell::ProcessKeyDownShortcuts);
-//    if (!is_backend_running) {
-//        running_ = false;
-//    }
 
     // This is a good place to update your game or application.
     // Always update the context before rendering.

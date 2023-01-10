@@ -7,6 +7,7 @@
 #include "RmlUi/Core/Element.h"
 #include "RmlUi/Core/Property.h"
 #include "RmlUi/Core/StyleSheet.h"
+#include "RmlUi/Core/Elements/ElementFormControlInput.h"
 #include "Ownership.h"
 #include "SelfListener.h"
 
@@ -77,8 +78,23 @@ void Element::Glue(qjs::Context::Module& m) {
             _this->RemoveEventListener(listener->GetEvent(), listener);
 			GetOwnership<SelfListener>()->GetOwner(listener).release();
 		})
+//		.fun("setValue", [](Rml::Element* _this, const String& value){
+//			_this->GetContext();
+//		})
         .property<&Rml::Element::_GetInnerRML, &Rml::Element::SetInnerRML>("innerRML");
 
+        m.class_<Rml::ElementFormControl>("ElementFormControl")
+            .base<Rml::Element>()
+            .fun<&Rml::ElementFormControl::SetValue>("setValue");
+
+        m.class_<Rml::ElementFormControlInput>("ElementFormControlInput")
+            .base<Rml::ElementFormControl>();
+
+		m.function("ToElementFormControl", [](Rml::Element* el) -> ElementFormControl* {
+			return reinterpret_cast<ElementFormControl*>(el);
+		});
+
+//        .property<&Rml::ElementFormControl::GetValue, &Rml::ElementFormControl::SetValue>("value");
 }
 
 }

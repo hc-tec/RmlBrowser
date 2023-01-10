@@ -59,6 +59,7 @@ public:
 	Rml::Context* context() { return context_; }
     qjs::Context* js_context();
 	const String& title();
+	Rml::ElementDocument* document() { return document_; }
 private:
     void Destroy();
 

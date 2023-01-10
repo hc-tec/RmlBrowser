@@ -13,6 +13,7 @@
 
 #include <co/co/mutex.h>
 #include "Glue.h"
+#include "RunTime.h"
 #include "Dom/JsDocumentElementInstancer.h"
 #include "Dom/XMLNodeHandlerAnchor.h"
 
