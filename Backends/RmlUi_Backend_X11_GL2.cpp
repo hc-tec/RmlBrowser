@@ -327,3 +327,7 @@ void Backend::PresentFrame()
 	// Flips the OpenGL buffers.
 	glXSwapBuffers(data->display, data->window);
 }
+
+void Backend::ClearFrame() {
+    data->render_interface.Clear();
+}

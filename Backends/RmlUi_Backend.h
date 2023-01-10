@@ -51,6 +51,8 @@ void RegisterContext(Rml::Context* context, co::Scheduler* scheduler);
 
 void UnRegisterContext(Rml::Context* context);
 
+void ClearFrame();
+
 // Initializes the backend, including the custom system and render interfaces, and opens a window for rendering the RmlUi context.
 bool Initialize(const char* window_name, int width, int height, bool allow_resize);
 // Closes the window and release all resources owned by the backend, including the system and render interfaces.
