@@ -9,10 +9,13 @@
 #include "RmlUi/Core/Context.h"
 #include "RmlUi/Core/ElementDocument.h"
 #include "RmlUi/Core/SystemInterface.h"
+#include "SelfListener.h"
+#include "Ownership.h"
 
 namespace Rml {
 
 namespace Script {
+
 
 static String Absolutepath(const String& source, const String& base)
 {
@@ -21,20 +24,9 @@ static String Absolutepath(const String& source, const String& base)
     return StringUtilities::Replace(joined_path, ':', '|');
 }
 
-
-Rml::Element* XMLNodeHandlerAnchor::ElementStart(Rml::XMLParser* parser, const Rml::String& name, const Rml::XMLAttributes& attributes)
-{
-    ElementPtr element = Factory::InstanceElement(parser->GetParseFrame()->element, name, name, attributes);
-    // Add click event listener
-    element->AddEventListener(EventId::Click, this);
-    // Add the Select element into the document
-    Element* result = parser->GetParseFrame()->element->AppendChild(std::move(element));
-    return result;
-}
-
-void XMLNodeHandlerAnchor::ProcessEvent(Rml::Event& event) {
-    if (event.GetId() == EventId::Click) {
-        Element* element = event.GetCurrentElement();
+void ProcessEvent(Rml::Event* event) {
+    if (event->GetId() == EventId::Click) {
+        Element* element = event->GetCurrentElement();
         Context* context = element->GetContext();
         String href = element->GetAttribute<String>("href", "");
         if (href.empty()) return;
@@ -44,16 +36,33 @@ void XMLNodeHandlerAnchor::ProcessEvent(Rml::Event& event) {
         } else if (target == "_blank") {
             OpenInNewTab(context, href);
         }
+    } else if (event->GetId() == EventId::Unload) {
+        Element* element = event->GetCurrentElement();
+//        element->RemoveEventListener(EventId::Click, this);
+//        element->RemoveEventListener(EventId::Unload, this);
     }
 }
 
-void XMLNodeHandlerAnchor::OpenInCurrentTab(Context* context, const Rml::String& href) {
+
+Rml::Element* XMLNodeHandlerAnchor::ElementStart(Rml::XMLParser* parser, const Rml::String& name, const Rml::XMLAttributes& attributes)
+{
+    ElementPtr element = Factory::InstanceElement(nullptr, name, name, attributes);
+    // Add click event listener
+	UniquePtr<SelfListener> listener = MakeUnique<SelfListener>("click", &ProcessEvent);
+    element->AddEventListener(EventId::Click, listener.get());
+	GetOwnershipMgr<SelfListener>()->ShiftOwner(std::move(listener));
+    // Add the Select element into the document
+    Element* result = parser->GetParseFrame()->element->AppendChild(std::move(element));
+    return result;
+}
+
+void OpenInCurrentTab(Context* context, const Rml::String& href) {
     Log::Message(Log::LT_DEBUG, "Open in Current Tab");
 	String url = context->GetDocument(context->GetName())->GetSourceURL();
 	AnchorOpenInCurrentTabCallback(context, URL(Absolutepath(href, url)));
 }
 
-void XMLNodeHandlerAnchor::OpenInNewTab(Context* context, const Rml::String& href) {
+void OpenInNewTab(Context* context, const Rml::String& href) {
     Log::Message(Log::LT_DEBUG, "Open in New Tab");
     String url = context->GetDocument(context->GetName())->GetSourceURL();
     AnchorOpenInNewTabCallback(context, URL(Absolutepath(href, url)));

@@ -61,20 +61,21 @@ void Element::Glue(qjs::Context::Module& m) {
 //			_this->SetAttribute(name, value);
 //		})
 		.fun<&Rml::Element::AppendChild>("appendChild")
-        .fun<>("removeChild", [](Rml::Element* _this, Rml::Element* child) {
-			_this->RemoveChild(child);
-			GetOwnership<Rml::Element>()->GetOwner(child).reset();
-        })
+        .fun<&Rml::Element::RemoveChild>("removeChild")
+//        .fun<>("removeChild", [](Rml::Element* _this, Rml::Element* child) {
+//			_this->RemoveChild(child);
+//			GetOwnership<Rml::Element>()->GetOwner(child).reset();
+//        })
         .fun<>("addEventListener", [](Rml::Element* _this, const String& event, const std::function<void(Event*)>& callback) {
 			UniquePtr<SelfListener> listener_ptr = MakeUnique<SelfListener>(event, callback);
 			SelfListener* listener = listener_ptr.get();
-            GetOwnership<SelfListener>()->ShiftOwner(std::move(listener_ptr));
+            GetOwnershipMgr<SelfListener>()->ShiftOwner(std::move(listener_ptr));
             _this->AddEventListener(event, listener);
 			return listener;
 		})
 		.fun<>("removeEventListener", [](Rml::Element* _this, SelfListener* listener) {
             _this->RemoveEventListener(listener->GetEvent(), listener);
-			GetOwnership<SelfListener>()->GetOwner(listener).reset();
+//            GetOwnershipMgr<SelfListener>()->GetOwner(listener).reset();
 		})
 //		.fun("setValue", [](Rml::Element* _this, const String& value){
 //			_this->GetContext();
@@ -85,8 +86,8 @@ void Element::Glue(qjs::Context::Module& m) {
             .base<Rml::Element>()
             .property<&Rml::ElementFormControl::GetValue, &Rml::ElementFormControl::SetValue>("value");
 
-        m.class_<Rml::ElementFormControlInput>("ElementFormControlInput")
-            .base<Rml::ElementFormControl>();
+//        m.class_<Rml::ElementFormControlInput>("ElementFormControlInput")
+//            .base<Rml::ElementFormControl>();
 
 		m.function("ToElementFormControl", [](Rml::Element* el) -> ElementFormControl* {
 			return reinterpret_cast<ElementFormControl*>(el);

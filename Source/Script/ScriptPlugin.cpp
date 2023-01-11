@@ -64,6 +64,7 @@ void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
     try {
 //        static co::mutex js_mutex;
 //        auto _ = co::mutex_guard(js_mutex);
+        js_context->global()["executing"] = true;
         for (auto& script : scripts) {
             if (script.is_inline) {
                 js_context->eval(script.content, script.path.data());
@@ -71,6 +72,7 @@ void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
 				js_context->evalFile(script.path.data());
 			}
         }
+        js_context->global()["executing"] = false;
     } catch (qjs::exception) {
         auto exc = js_context->getException();
         std::cerr << (std::string) exc << std::endl;

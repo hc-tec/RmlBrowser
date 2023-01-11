@@ -12,7 +12,6 @@
 #include <co/co.h>
 
 #include "../Script/RunTime.h"
-#include "../Script/Dom/Ownership.h"
 #include "../Script/ScriptPlugin.h"
 #include "MainWindow.h"
 
@@ -37,7 +36,7 @@ Tab::Tab(const String& tab_id, const URL& url)
 }
 
 int Tab::Initialize() {
-
+    Rml::Script::RegisterOwnershipObserver(this);
     // Create the main RmlUi context.
     context_ = Rml::CreateContext(tab_id_, Rml::Vector2i(window_width, window_height));
     if (!context_)
@@ -93,8 +92,10 @@ void Tab::Render() {
 
 void Tab::Destroy() {
     Backend::UnRegisterContext(context_);
+    Rml::Script::UnRegisterOwnershipObserver(this);
+    Rml::Script::ClearOwners(js_owner_list_);
+	js_owner_list_.clear();
     Rml::RemoveContext(tab_id_);
-    Rml::Script::ClearAllOwner();
     Rml::UnregisterPlugin(script_plugin_.get());
 	script_plugin_.reset();
 //    Rml::Debugger::Shutdown();
@@ -161,6 +162,16 @@ Tab::~Tab() {
 qjs::Context* Tab::js_context() { return script_plugin_->js_context(); }
 
 const String& Tab::title() { return document_->GetTitle(); }
+
+void Tab::OnOwnerShift(std::any ptr) {
+	if (script_plugin_ == nullptr) return;
+    qjs::Context* js_ctx = js_context();
+	auto executing = js_ctx->global()["executing"];
+	if (executing.as<bool>())
+	{
+		js_owner_list_.push_back(ptr);
+	}
+}
 
 }
 }

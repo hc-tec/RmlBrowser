@@ -113,12 +113,12 @@ struct js_traits<Rml::UniqueReleaserPtr<T>> {
             return ptr;
         }
         auto shared_ptr = js_traits<std::shared_ptr<T>>::unwrap(ctx, v);
-        return std::move(Rml::Script::GetOwnership<T, UniqueReleaserPtr>()->GetOwner(shared_ptr.get()));
+        return std::move(Rml::Script::GetOwnershipMgr<T>()->GetOwner(shared_ptr.get()));
     }
 
     static JSValue wrap(JSContext* ctx, UniqueReleaserPtr val) noexcept {
 		T* raw_ptr = val.get();
-		Rml::Script::GetOwnership<T, UniqueReleaserPtr>()->ShiftOwner(std::move(val));
+		Rml::Script::GetOwnershipMgr<T>()->ShiftOwner(std::move(val));
 		return js_traits<T*>::wrap(ctx, raw_ptr);
 	}
 };
@@ -136,12 +136,12 @@ struct js_traits<Rml::UniqueReleaserPtr<T>> {
 //        }
 //        auto class_id = JS_GetClassID(v);
 //        T* opaque = reinterpret_cast<T*>(JS_GetOpaque2(ctx, v, class_id));
-//        return std::move(Rml::Script::GetOwnership<T>()->GetOwner(opaque));
+//        return std::move(Rml::Script::GetOwnershipMgr<T>()->GetOwner(opaque));
 //    }
 //
 //    static JSValue wrap(JSContext* ctx, std::unique_ptr<T> val) noexcept {
 //        T* raw_ptr = val.get();
-//        Rml::Script::GetOwnership<T>()->ShiftOwner(val);
+//        Rml::Script::GetOwnershipMgr<T>()->ShiftOwner(val);
 //        return js_traits<T*>::wrap(ctx, raw_ptr);
 //    }
 //};

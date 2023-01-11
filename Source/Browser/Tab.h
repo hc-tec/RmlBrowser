@@ -8,6 +8,8 @@
 #include <co/co.h>
 #include "RmlUi/Config/Config.h"
 #include "RmlUi/Core/URL.h"
+#include "../Script/Dom/Ownership.h"
+#include <any>
 
 namespace qjs {
 
@@ -27,7 +29,7 @@ class ScriptPlugin;
 
 namespace Browser {
 
-class Tab {
+class Tab : public Script::OwnershipObserver {
 public:
 	class Delegate {
 	public:
@@ -60,9 +62,14 @@ public:
     qjs::Context* js_context();
 	const String& title();
 	Rml::ElementDocument* document() { return document_; }
+
+	/* OwnershipObserver */
+	void OnOwnerShift(std::any ptr) override;
+
 private:
     void Destroy();
 
+	Vector<std::any> js_owner_list_;
     co::Scheduler* scheduler;
 	Delegate* delegate_;
 	String tab_id_;

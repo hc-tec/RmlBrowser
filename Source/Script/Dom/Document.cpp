@@ -6,7 +6,6 @@
 
 #include "RmlUi/Core/Context.h"
 #include "RmlUi/Core/ElementDocument.h"
-#include "Ownership.h"
 
 namespace Rml {
 
