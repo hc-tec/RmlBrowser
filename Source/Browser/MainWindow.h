@@ -54,7 +54,7 @@ public:
 	/* BrowserWidget Delegate */
 	void DoTabFocus(const String& tab_id) override;
 	void DoTabRemove(const String& tab_id) override;
-
+	void DoTabEnterUrl(const String& tab_id, const String& url) override;
 
 private:
 

@@ -136,6 +136,11 @@ void MainWindow::DoTabRemove(const String& tab_id) {
     tab_manager_->RemoveTab(tab_id);
 }
 
+void MainWindow::DoTabEnterUrl(const String& tab_id, const String& url) {
+	Tab* tab = tab_manager_->GetTabById(tab_id);
+    tab->SetUrl(url);
+    tab->Fresh();
+}
 
 void OpenInCurrentTab(Context* context, const URL& url) {
     MainWindow* window = MainWindow::GetInstance();

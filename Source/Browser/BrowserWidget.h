@@ -42,6 +42,7 @@ public:
 	public:
 		virtual void DoTabFocus(const String& tab_id) = 0;
         virtual void DoTabRemove(const String& tab_id) = 0;
+        virtual void DoTabEnterUrl(const String& tab_id, const String& url) = 0;
 	};
 
     BrowserWidget(Delegate* delegate);

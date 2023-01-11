@@ -32,6 +32,8 @@ class TabManager extends Subject {
         this.active_tab = null
     }
 
+    get_active_tab_params() { return this.tabs[this.active_tab] }
+
     add_tab(params) {
         const id = params.id
         if (this.tabs[id]) return
@@ -145,20 +147,8 @@ class TabManagerObserver {
     onTabFocus(tab, params) {}
 }
 
-class SearchInputObserver extends TabManagerObserver {
-    onTabFocus(tab, params) {
-        log('SearchInputObserver')
-        let search_input = document.getElementById('search-input')
-        search_input = dom.ToElementFormControl(search_input)
-        search_input.setValue(params.url)
-    }
-}
-
 const tab_parent_el = document.getElementsByClassName('tabs')[0]
 const tab_manager = new TabManager(tab_parent_el)
-
-const search_input = new SearchInputObserver()
-tab_manager.attach(search_input)
 
 function TAB_MANAGER_ADD_TAB(params) {
     tab_manager.add_tab(params)
@@ -175,6 +165,35 @@ function TAB_MANAGER_ON_TAB_ACTIVE(id) {
 function TAB_MANAGER_FRESH_TAB(params) {
     tab_manager.on_tab_fresh(params)
 }
+
+
+/* Search Input */
+let search_input = document.getElementById('search-input')
+search_input = dom.ToElementFormControl(search_input)
+
+// observe tab focus
+class SearchInputObserver extends TabManagerObserver {
+    onTabFocus(tab, params) {
+        log('SearchInputObserver')
+        search_input.value = params.url
+    }
+}
+const search_input_observer = new SearchInputObserver()
+tab_manager.attach(search_input_observer)
+
+// listen keydown event
+search_input.addEventListener(search_input, 'keydown', e => {
+    const params = e.getParameters()
+    const key_identifier = params['key_identifier']
+    // press enter
+    if (key_identifier === 72) {
+        const input_value = search_input.value
+        log(`input_value ${input_value}`)
+        const params = tab_manager.get_active_tab_params()
+        if (params.url === input_value) return
+        CToInputUrl(params.id, input_value)
+    }
+})
 
 
 

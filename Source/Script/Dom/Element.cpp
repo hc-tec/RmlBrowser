@@ -85,7 +85,7 @@ void Element::Glue(qjs::Context::Module& m) {
 
         m.class_<Rml::ElementFormControl>("ElementFormControl")
             .base<Rml::Element>()
-            .fun<&Rml::ElementFormControl::SetValue>("setValue");
+            .property<&Rml::ElementFormControl::GetValue, &Rml::ElementFormControl::SetValue>("value");
 
         m.class_<Rml::ElementFormControlInput>("ElementFormControlInput")
             .base<Rml::ElementFormControl>();
@@ -94,7 +94,6 @@ void Element::Glue(qjs::Context::Module& m) {
 			return reinterpret_cast<ElementFormControl*>(el);
 		});
 
-//        .property<&Rml::ElementFormControl::GetValue, &Rml::ElementFormControl::SetValue>("value");
 }
 
 }
