@@ -39,7 +39,7 @@ class TabManager extends Subject {
         if (this.tabs[id]) return
         this.tab_num++
         this.tabs[id] = params
-        const tab = document.createElement(document, 'div')
+        const tab = document.createElement('div')
         tab.setClassNames('tab')
         tab.setId(id)
         if (this.tab_num === 1) {
@@ -52,9 +52,9 @@ class TabManager extends Subject {
             CFocusTab(tab_id)
             // this.on_tab_active(tab_id)
         })
-        const title = document.createElement(document, 'p')
+        const title = document.createElement('p')
         title.innerRML = params.title
-        const close_icon = document.createElement(document, 'p')
+        const close_icon = document.createElement('p')
         close_icon.setClassNames('close-icon')
         close_icon.innerRML = 'x'
         close_icon.addEventListener(close_icon, 'click', e => {
@@ -64,9 +64,9 @@ class TabManager extends Subject {
             const focus_id = Object.keys(this.tabs)[this.tab_num-1]
             CRemoveTab(tab_id, focus_id)
         })
-        tab.appendChild(tab, title)
-        tab.appendChild(tab, close_icon)
-        this.tab_parent_el.appendChild(this.tab_parent_el, tab)
+        tab.appendChild(title, true)
+        tab.appendChild(close_icon, true)
+        this.tab_parent_el.appendChild(tab, true)
         this.NotifyTabAdd(tab)
         log(`Id: ${id} title: ${params.title} added to Tabs`)
     }

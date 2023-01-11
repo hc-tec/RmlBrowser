@@ -60,12 +60,10 @@ void Element::Glue(qjs::Context::Module& m) {
 //		.fun<>("setAttribute", [](Rml::Element* _this, const String& name, const String& value) {
 //			_this->SetAttribute(name, value);
 //		})
-        .fun<>("appendChild", [](Rml::Element* _this, Rml::Element* child) {
-			return _this->AppendChild(GetOwnership<Rml::Element, ElementPtr>()->GetOwner(child), true);
-        })
+		.fun<&Rml::Element::AppendChild>("appendChild")
         .fun<>("removeChild", [](Rml::Element* _this, Rml::Element* child) {
 			_this->RemoveChild(child);
-			GetOwnership<Rml::Element>()->GetOwner(child).release();
+			GetOwnership<Rml::Element>()->GetOwner(child).reset();
         })
         .fun<>("addEventListener", [](Rml::Element* _this, const String& event, const std::function<void(Event*)>& callback) {
 			UniquePtr<SelfListener> listener_ptr = MakeUnique<SelfListener>(event, callback);
@@ -76,7 +74,7 @@ void Element::Glue(qjs::Context::Module& m) {
 		})
 		.fun<>("removeEventListener", [](Rml::Element* _this, SelfListener* listener) {
             _this->RemoveEventListener(listener->GetEvent(), listener);
-			GetOwnership<SelfListener>()->GetOwner(listener).release();
+			GetOwnership<SelfListener>()->GetOwner(listener).reset();
 		})
 //		.fun("setValue", [](Rml::Element* _this, const String& value){
 //			_this->GetContext();

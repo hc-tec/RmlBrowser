@@ -94,6 +94,12 @@ void TabManager::RemoveTab(const String& tab_id) {
 	CloseTab(tab_id);
 }
 
+Tab* TabManager::GetTabById(const String& tab_id) {
+    auto it = tab_map_.find(tab_id);
+    if (it == tab_map_.end()) return nullptr;
+	return it->second.get();
+}
+
 }
 
 }

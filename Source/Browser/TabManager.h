@@ -31,6 +31,8 @@ public:
 
 	Tab* GetTabByContext(Context* context);
 
+	Tab* GetTabById(const String& tab_id);
+
 	void FocusTab(const String& tab_id);
     void RemoveTab(const String& tab_id);
 

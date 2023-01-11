@@ -8,6 +8,8 @@
 #include "quickjspp.hpp"
 #include "RmlUi/Config/Config.h"
 #include "RmlUi/Core/Variant.h"
+#include "RmlUi/Core/Types.h"
+#include "Dom/Ownership.h"
 
 namespace qjs {
 
@@ -51,19 +53,7 @@ struct js_traits<SmallUnorderedMap> {
     /// @throws exception
     SmallUnorderedMap unwrap(JSContext* ctx, JSValueConst v)
     {
-//        int e = JS_IsObject(v);
-//        if(e == 0)
-//            JS_ThrowTypeError(ctx, "js_traits<SmallUnorderedMap>::unwrap expects object");
-//        if(e <= 0)
-//            throw exception{ctx};
-//		Value obj{ctx, JS_DupValue(ctx, v)};
         SmallUnorderedMap map;
-
-//        auto len = static_cast<int32_t>(obj["length"]);
-
-//		JS_ReadObject()
-//        if (JS_ToFloat64(ctx, &r, v))
-//            throw exception{ctx};
         return map;
     }
 
@@ -108,6 +98,56 @@ struct js_traits<SmallUnorderedMap> {
 		return v.v;
 	}
 };
+
+
+/** Conversion traits for UniqueReleaserPtr<T>.
+ */
+template <class T>
+struct js_traits<Rml::UniqueReleaserPtr<T>> {
+    using UniqueReleaserPtr = Rml::UniqueReleaserPtr<T>;
+    /// @throws exception
+    static UniqueReleaserPtr unwrap(JSContext* ctx, JSValueConst v)
+    {
+        UniqueReleaserPtr ptr = nullptr;
+        if (JS_IsNull(v)) {
+            return ptr;
+        }
+        auto shared_ptr = js_traits<std::shared_ptr<T>>::unwrap(ctx, v);
+        return std::move(Rml::Script::GetOwnership<T, UniqueReleaserPtr>()->GetOwner(shared_ptr.get()));
+    }
+
+    static JSValue wrap(JSContext* ctx, UniqueReleaserPtr val) noexcept {
+		T* raw_ptr = val.get();
+		Rml::Script::GetOwnership<T, UniqueReleaserPtr>()->ShiftOwner(std::move(val));
+		return js_traits<T*>::wrap(ctx, raw_ptr);
+	}
+};
+
+/** Conversion traits for std::unique_ptr<T>.
+ */
+//template <class T>
+//struct js_traits<std::unique_ptr<T>> {
+//    /// @throws exception
+//    static std::unique_ptr<T> unwrap(JSContext* ctx, JSValueConst v)
+//    {
+//        std::unique_ptr<T> ptr = nullptr;
+//        if (JS_IsNull(v)) {
+//            return ptr;
+//        }
+//        auto class_id = JS_GetClassID(v);
+//        T* opaque = reinterpret_cast<T*>(JS_GetOpaque2(ctx, v, class_id));
+//        return std::move(Rml::Script::GetOwnership<T>()->GetOwner(opaque));
+//    }
+//
+//    static JSValue wrap(JSContext* ctx, std::unique_ptr<T> val) noexcept {
+//        T* raw_ptr = val.get();
+//        Rml::Script::GetOwnership<T>()->ShiftOwner(val);
+//        return js_traits<T*>::wrap(ctx, raw_ptr);
+//    }
+//};
+
+
+
 
 }
 
