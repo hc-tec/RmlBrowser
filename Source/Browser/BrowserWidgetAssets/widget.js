@@ -58,6 +58,7 @@ class TabManager extends Subject {
         close_icon.setClassNames('close-icon')
         close_icon.innerRML = 'x'
         close_icon.addEventListener(close_icon, 'click', e => {
+            e.stopPropagation()
             const el = e.getTargetElement().getParentNode()
             const tab_id = el.getId()
             this.remove_tab(id)
@@ -78,7 +79,7 @@ class TabManager extends Subject {
         this.tab_num--
         const tab = document.getElementById(id)
         this.NotifyTabRemove(tab)
-        this.tab_parent_el.removeChild(tab_parent_el, tab)
+        this.tab_parent_el.removeChild(tab)
     }
 
     on_tab_active(id) {
@@ -95,6 +96,7 @@ class TabManager extends Subject {
     }
 
     unfocus_tab(id) {
+        if (!this.tabs[id]) return
         const tabs = this.tab_parent_el.getElementsByClassName('tab')
         for (let i = 0; i < this.tab_num; i++) {
             const tab = tabs[i]
