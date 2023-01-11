@@ -51,10 +51,11 @@
 
 
 static co::mutex mutex;
-static std::unordered_map<Rml::String, Rml::Pair<Rml::Context*, co::Scheduler*>> register_contexts;
+
+std::unordered_map<Rml::String, Rml::Pair<Rml::Context*, co::Scheduler*>> register_contexts;
 
 void Backend::RegisterContext(Rml::Context* context, co::Scheduler* scheduler) {
-	auto g = co::mutex_guard(mutex);
+//	auto g = co::mutex_guard(mutex);
 	auto it = register_contexts.find(context->GetName());
 	if (it == register_contexts.end()) {
 		register_contexts[context->GetName()] = std::make_pair(context, scheduler);
@@ -62,7 +63,7 @@ void Backend::RegisterContext(Rml::Context* context, co::Scheduler* scheduler) {
 }
 
 void Backend::UnRegisterContext(Rml::Context* context) {
-    auto g = co::mutex_guard(mutex);
+//    auto g = co::mutex_guard(mutex);
     register_contexts.erase(context->GetName());
 }
 

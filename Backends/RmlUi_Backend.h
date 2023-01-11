@@ -35,6 +35,9 @@
 #include <RmlUi/Core/Types.h>
 #include <co/co.h>
 
+
+extern std::unordered_map<Rml::String, Rml::Pair<Rml::Context*, co::Scheduler*>> register_contexts;
+
 using KeyDownCallback = bool (*)(Rml::Context* context, Rml::Input::KeyIdentifier key, int key_modifier, float native_dp_ratio, bool priority);
 
 /**
@@ -46,6 +49,7 @@ using KeyDownCallback = bool (*)(Rml::Context* context, Rml::Input::KeyIdentifie
     backend are intended to be re-usable as is.
  */
 namespace Backend {
+
 
 void RegisterContext(Rml::Context* context, co::Scheduler* scheduler);
 
