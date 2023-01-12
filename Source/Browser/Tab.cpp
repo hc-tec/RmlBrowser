@@ -93,13 +93,14 @@ void Tab::Render() {
 void Tab::Destroy() {
     Backend::UnRegisterContext(context_);
     Rml::Script::UnRegisterOwnershipObserver(this);
-    Rml::Script::ClearOwners(js_owner_list_);
-	js_owner_list_.clear();
     Rml::RemoveContext(tab_id_);
+    Rml::Script::ClearOwners(js_owner_list_);
+    js_owner_list_.clear();
     Rml::UnregisterPlugin(script_plugin_.get());
 	script_plugin_.reset();
 //    Rml::Debugger::Shutdown();
     Factory::ClearStyleSheetCache();
+
     if (delegate_) delegate_->OnDestroy(this);
 }
 

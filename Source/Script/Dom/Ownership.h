@@ -8,7 +8,6 @@
 #include <any>
 
 #include "RmlUi/Core/Types.h"
-#include <set>
 
 namespace Rml {
 
@@ -40,7 +39,10 @@ inline void UnRegisterOwnershipObserver(OwnershipObserver* observer) {
 	ownershipObservers.erase(std::find(ownershipObservers.begin(), ownershipObservers.end(), observer));
 }
 
-class BaseOwnership {};
+class BaseOwnership {
+public:
+	virtual ~BaseOwnership() {};
+};
 
 template <typename T, typename UT>
 class Ownership : public BaseOwnership {
@@ -53,15 +55,21 @@ public:
 	}
 	UT GetOwner(T* ele) {
         auto it = owner_map_.find(ele);
-        if (it == owner_map_.end()) return std::move(UT());
-        return std::move(it->second);
+        if (it == owner_map_.end()) return nullptr;// std::move(UT());
+		UT u_ptr = std::move(it->second);
+        owner_map_.erase(it);
+        return std::move(u_ptr);
 	}
 
-    virtual void NotifyOwnerShift(std::any ptr) {
+    void NotifyOwnerShift(std::any ptr) {
 		for(auto obs : ownershipObservers) {
 			obs->OnOwnerShift(ptr);
 		}
 	};
+
+	~Ownership() override {
+		owner_map_.clear();
+	}
 private:
 	UnorderedMap<T*, UT> owner_map_;
 
@@ -94,6 +102,8 @@ inline Ownership<T, typename unique_traits<T>::uni_ptr>* GetOwnershipMgr(T val) 
 }
 
 extern void ClearOwners(Vector<std::any> vec);
+
+extern void ClearAllOwners();
 
 }
 

@@ -61,7 +61,7 @@ private:
     Rml::ElementDocument* document_;
     UniquePtr<Rml::Script::ScriptPlugin> script_plugin_;
 
-	bool running_ = true;
+	bool running_;
 };
 
 }

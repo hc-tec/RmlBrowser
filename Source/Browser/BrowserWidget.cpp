@@ -23,7 +23,8 @@ BrowserWidget::BrowserWidget(Delegate* delegate)
 		: delegate_(delegate),
 		scheduler(co::schedulers().at(0)),
 		context_(nullptr),
-		document_(nullptr) {}
+		document_(nullptr),
+		running_(true) {}
 
 int BrowserWidget::Initialize() {
     // Create the main RmlUi context.
@@ -65,8 +66,8 @@ int BrowserWidget::Initialize() {
 }
 
 void BrowserWidget::Render() {
+    if (!running_) return;
 	RMLUI_ASSERT(context_)
-
     // This is a good place to update your game or application.
     // Always update the context before rendering.
     context_->Update();
@@ -89,9 +90,10 @@ void BrowserWidget::Run() {
 }
 
 BrowserWidget::~BrowserWidget() {
-    Rml::UnregisterPlugin(script_plugin_.get());
-	script_plugin_.reset();
+	running_ = false;
     Rml::RemoveContext(BROWSER_WIDGET_ID);
+    Rml::UnregisterPlugin(script_plugin_.get());
+    script_plugin_.reset();
 }
 
 qjs::Context* BrowserWidget::js_context() { return script_plugin_->js_context(); }

@@ -5,6 +5,8 @@
 #include "Ownership.h"
 
 #include "RmlUi/Core/Element.h"
+#include "RmlUi/Core/ElementInstancer.h"
+#include "RmlUi/Core/Factory.h"
 #include "SelfListener.h"
 
 namespace Rml {
@@ -16,10 +18,12 @@ UnorderedMap<String, UniquePtr<BaseOwnership>> instance;
 
 void ClearOwners(Vector<std::any> vec) {
     for(auto el : vec) {
-        if (el.type() == typeid(Rml::Element)) {
+        if (el.type() == typeid(Rml::Element*)) {
             Rml::Element* ptr = std::any_cast<Rml::Element*>(el);
+//            ElementInstancer* instancer = Factory::GetElementInstancer(ptr->GetTagName());
+//			instancer->ReleaseElement(ptr);
             GetOwnershipMgr(ptr)->GetOwner(&ptr).reset();
-        } else if (el.type() == typeid(Rml::Script::SelfListener))
+        } else if (el.type() == typeid(Rml::Script::SelfListener*))
         {
             Rml::Script::SelfListener* ptr = std::any_cast<Rml::Script::SelfListener*>(el);
             GetOwnershipMgr(ptr)->GetOwner(&ptr).reset();
@@ -27,6 +31,9 @@ void ClearOwners(Vector<std::any> vec) {
     }
 }
 
+void ClearAllOwners() {
+	instance.clear();
+}
 
 }
 

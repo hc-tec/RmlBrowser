@@ -13,6 +13,7 @@
 #include "TabManager.h"
 #include "BrowserWidget.h"
 #include "Glue.h"
+#include "../Script/Dom/Ownership.h"
 
 const int window_width = 1550;
 const int window_height = 760;
@@ -22,7 +23,7 @@ namespace Browser {
 
 MainWindow::MainWindow()
     : tab_manager_(MakeUnique<TabManager>(this)),
-      browser_widget_(MakeUnique<BrowserWidget>(this)){
+      browser_widget_(MakeUnique<BrowserWidget>(this)) {
 	RegisterBrowserGlueFunc();
 	Initialize();
     browser_widget_->Run();
@@ -60,6 +61,7 @@ MainWindow::~MainWindow() {
     Rml::Shutdown();
     Backend::Shutdown();
     Shell::Shutdown();
+    Script::ClearAllOwners();
 }
 
 void MainWindow::Close() {
