@@ -5,10 +5,18 @@
     </head>
     <body>
         <div class="tabs">
-<!--            <div class="tab tab-active">-->
-<!--                <p>title</p>-->
-<!--                <p class="close-icon">x</p>-->
-<!--            </div>-->
+            <div style="position: relative;">
+                <div class="tabs-container">
+    <!--            <div class="tab tab-active">-->
+    <!--                <p>title</p>-->
+    <!--                <p class="close-icon">x</p>-->
+    <!--            </div>-->
+                    <div class="add-icon">
+                        +
+                    </div>
+                </div>
+
+            </div>
         </div>
         <div class="components">
             <img class="icon" src="images/left_arrow.png"></img>

@@ -16,9 +16,13 @@ TabManager::TabManager(Delegate* delegate)
 		tab_id_(1) {}
 
 Tab* TabManager::NewTab(const URL& url) {
+	URL new_url = url;
+	if (url.GetURL().empty()) {
+		new_url.SetURL("/home/titto/CProjects/RmlUi5.0/Source/Browser/BlankTabAssets/index.rml");
+	}
 	String new_tab_id("Tab-");
 	new_tab_id.append(std::to_string(tab_id_++));
-	UniquePtr<Tab> new_tab_ptr = MakeUnique<Tab>(new_tab_id, url);
+	UniquePtr<Tab> new_tab_ptr = MakeUnique<Tab>(new_tab_id, new_url);
 	new_tab_ptr->SetDelegate(this);
 	Tab* new_tab = new_tab_ptr.get();
 	tab_map_[new_tab_id] = std::move(new_tab_ptr);

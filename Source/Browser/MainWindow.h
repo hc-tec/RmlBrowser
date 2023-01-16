@@ -55,6 +55,7 @@ public:
 	void DoTabFocus(const String& tab_id) override;
 	void DoTabRemove(const String& tab_id) override;
 	void DoTabEnterUrl(const String& tab_id, const String& url) override;
+	void DoTabOpenNew(const String& url) override;
 
 private:
 

@@ -13,7 +13,6 @@
 #include "TabManager.h"
 #include "BrowserWidget.h"
 #include "Glue.h"
-#include "../Script/Dom/Ownership.h"
 
 const int window_width = 1550;
 const int window_height = 760;
@@ -142,6 +141,12 @@ void MainWindow::DoTabEnterUrl(const String& tab_id, const String& url) {
 	Tab* tab = tab_manager_->GetTabById(tab_id);
     tab->SetUrl(url);
     tab->Fresh();
+}
+
+void MainWindow::DoTabOpenNew(const String& url) {
+    Rml::Browser::Tab* tab = tab_manager_->NewTab("");
+    tab->Run();
+    DoTabFocus(tab->tab_id());
 }
 
 void OpenInCurrentTab(Context* context, const URL& url) {

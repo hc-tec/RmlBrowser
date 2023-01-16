@@ -12,8 +12,12 @@ body {
 .tabs {
   height: 33px;
   background-color: #cdcdcd;
+}
+
+.tabs-container {
   display: flex;
   flex-direction: row;
+  position: relative;
 }
 
 .tab {
@@ -37,6 +41,7 @@ body {
 }
 
 .close-icon {
+  display: inline-block;
   width: 15px;
   height: 15px;
   position: absolute;
@@ -47,6 +52,23 @@ body {
 
 .close-icon:hover {
   background-color: #cdcdcd;
+}
+
+.add-icon {
+  background-color: #cdcdcd;
+  margin-left: 10px;
+  font-size: 18px;
+  width: 33px;
+  height: 33px;
+  text-align: center;
+  line-height: 38px;
+  transition: background-color 0.3s;
+}
+.add-icon:hover {
+  background-color: #ADADAD;
+}
+.add-icon:active {
+  background-color: #A2A2A2;
 }
 
 .components {

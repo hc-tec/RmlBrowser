@@ -67,7 +67,9 @@ class TabManager extends Subject {
         })
         tab.appendChild(title, true)
         tab.appendChild(close_icon, true)
-        this.tab_parent_el.appendChild(tab, true)
+
+        const add_icon = document.getElementsByClassName('add-icon')[0]
+        this.tab_parent_el.insertChild(tab, add_icon)
         this.NotifyTabAdd(tab)
         log(`Id: ${id} title: ${params.title} added to Tabs`)
     }
@@ -149,8 +151,13 @@ class TabManagerObserver {
     onTabFocus(tab, params) {}
 }
 
-const tab_parent_el = document.getElementsByClassName('tabs')[0]
+const tab_parent_el = document.getElementsByClassName('tabs-container')[0]
 const tab_manager = new TabManager(tab_parent_el)
+
+const add_icon = document.getElementsByClassName('add-icon')[0]
+add_icon.addEventListener(add_icon, 'click', e => {
+    COpenTabWithUrl('-1', '')
+})
 
 function TAB_MANAGER_ADD_TAB(params) {
     tab_manager.add_tab(params)
@@ -193,7 +200,7 @@ search_input.addEventListener(search_input, 'keydown', e => {
         log(`input_value ${input_value}`)
         const params = tab_manager.get_active_tab_params()
         if (params.url === input_value) return
-        CToInputUrl(params.id, input_value)
+        COpenTabWithUrl(params.id, input_value)
     }
 })
 

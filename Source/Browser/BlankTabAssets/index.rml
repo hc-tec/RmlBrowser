@@ -1,0 +1,11 @@
+<rml>
+    <head>
+        <title>Blank Tab</title>
+        <link type="text/rcss" href="main.rcss" />
+    </head>
+    <body>
+        Default Blank Tab
+
+        <script src="main.js"></script>
+    </body>
+</rml>
