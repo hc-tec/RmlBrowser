@@ -53,6 +53,7 @@ class TabManager extends Subject {
             // this.on_tab_active(tab_id)
         })
         const title = document.createElement('p')
+        title.setClassNames('title')
         title.innerRML = params.title
         const close_icon = document.createElement('p')
         close_icon.setClassNames('close-icon')
@@ -93,8 +94,10 @@ class TabManager extends Subject {
     }
 
     on_tab_fresh(params) {
+        log(`on_tab_fresh ${JSON.stringify(params)}`)
         // const old_params = this.tabs[params.id]
         this.tabs[params.id] = params
+        this.focus_tab(params.id)
     }
 
     unfocus_tab(id) {
@@ -116,6 +119,8 @@ class TabManager extends Subject {
             const tab = tabs[i]
             if (tab.getId() === id) {
                 tab.setClassNames('tab tab-active')
+                const title = tab.getElementsByClassName('title')[0]
+                title.innerRML = this.tabs[id].title
                 this.NotifyTabFocus(tab)
                 break
             }
@@ -159,6 +164,7 @@ add_icon.addEventListener(add_icon, 'click', e => {
     COpenTabWithUrl('-1', '')
 })
 
+// called by c++
 function TAB_MANAGER_ADD_TAB(params) {
     tab_manager.add_tab(params)
 }

@@ -89,36 +89,36 @@ void MainWindow::ProcessEvent() {
 
 void MainWindow::OnTabRun(Tab* tab) {
 	qjs::Context* js_context = browser_widget_->js_context();
-	auto add_tab = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_ADD_TAB");
+	auto func = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_ADD_TAB");
 	auto obj = js_context->newObject();
 	obj["id"] = tab->tab_id();
     obj["title"] = tab->title();
     obj["url"] = tab->document()->GetSourceURL();
-	add_tab(obj);
+	func(obj);
 }
 
 void MainWindow::OnTabFresh(Tab* tab) {
     qjs::Context* js_context = browser_widget_->js_context();
-    auto add_tab = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_FRESH_TAB");
+    auto func = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_FRESH_TAB");
     auto obj = js_context->newObject();
     obj["id"] = tab->tab_id();
     obj["title"] = tab->title();
     obj["url"] = tab->url().GetURL();
-    add_tab(obj);
+    func(obj);
 }
 
 void MainWindow::OnTabStopRunning(Tab* tab) {
     qjs::Context* js_context = browser_widget_->js_context();
-    auto add_tab = (std::function<void(const String&)>) js_context->eval("TAB_MANAGER_REMOVE_TAB");
-    add_tab(tab->tab_id());
+    auto func = (std::function<void(const String&)>) js_context->eval("TAB_MANAGER_REMOVE_TAB");
+    func(tab->tab_id());
 }
 
 void MainWindow::OnTabActive(Tab* tab) {
     qjs::Context* js_context = browser_widget_->js_context();
-    auto add_tab = (std::function<void(const String&)>) js_context->eval("TAB_MANAGER_ON_TAB_ACTIVE");
+    auto func = (std::function<void(const String&)>) js_context->eval("TAB_MANAGER_ON_TAB_ACTIVE");
 	try
 	{
-		add_tab(tab->tab_id());
+		func(tab->tab_id());
 	}catch (qjs::exception) {
         auto exc = js_context->getException();
         Log::Message(Log::LT_DEBUG, "%s", ((std::string) exc).data());

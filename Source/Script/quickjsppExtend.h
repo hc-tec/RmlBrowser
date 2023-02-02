@@ -105,6 +105,13 @@ struct js_traits<SmallUnorderedMap> {
 template <class T>
 struct js_traits<Rml::UniqueReleaserPtr<T>> {
     using UniqueReleaserPtr = Rml::UniqueReleaserPtr<T>;
+
+    static JSValue wrap(JSContext* ctx, UniqueReleaserPtr val) noexcept {
+		T* raw_ptr = val.get();
+		Rml::Script::GetOwnershipMgr<T>()->ShiftOwner(std::move(val));
+		return js_traits<T*>::wrap(ctx, raw_ptr);
+	}
+
     /// @throws exception
     static UniqueReleaserPtr unwrap(JSContext* ctx, JSValueConst v)
     {
@@ -113,14 +120,8 @@ struct js_traits<Rml::UniqueReleaserPtr<T>> {
             return ptr;
         }
         auto shared_ptr = js_traits<std::shared_ptr<T>>::unwrap(ctx, v);
-        return std::move(Rml::Script::GetOwnershipMgr<T>()->GetOwner(shared_ptr.get()));
+        return Rml::Script::GetOwnershipMgr<T>()->GetOwner(shared_ptr.get());
     }
-
-    static JSValue wrap(JSContext* ctx, UniqueReleaserPtr val) noexcept {
-		T* raw_ptr = val.get();
-		Rml::Script::GetOwnershipMgr<T>()->ShiftOwner(std::move(val));
-		return js_traits<T*>::wrap(ctx, raw_ptr);
-	}
 };
 
 /** Conversion traits for std::unique_ptr<T>.
