@@ -106,6 +106,7 @@ void ElementDocument::ProcessHeader(const DocumentHeader* document_header)
 			auto stream = MakeUnique<StreamMemory>((const byte*)rcss.content.c_str(), rcss.content.size());
 			stream->SetSourceURL(rcss.path);
 
+			// @titto load css file and parse it
 			if (inline_sheet->LoadStyleSheetContainer(stream.get(), rcss.line))
 			{
 				if (new_style_sheet)
@@ -118,6 +119,7 @@ void ElementDocument::ProcessHeader(const DocumentHeader* document_header)
 		}
 		else
 		{
+            // @titto load css file and parse it
 			const StyleSheetContainer* sub_sheet = StyleSheetFactory::GetStyleSheetContainer(rcss.path);
 			if (sub_sheet)
 			{
@@ -358,6 +360,9 @@ void ElementDocument::Close()
 ElementPtr ElementDocument::CreateElement(const String& name)
 {
 	return Factory::InstanceElement(nullptr, name, name, XMLAttributes());
+//    ElementPtr el = ElementPtr(new Element(name));
+//    PluginRegistry::NotifyElementCreate(element.get());
+//	return el;
 }
 
 // Create a text element.
