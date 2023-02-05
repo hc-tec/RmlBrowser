@@ -38,14 +38,14 @@ namespace Rml {
 	@author Peter Curry
  */
 
-class StreamFile final : public Stream
+class StreamFile : public Stream
 {
 public:
 	StreamFile();
 	virtual ~StreamFile();
 
 	/// Attempts to open the stream pointing at a given location.
-	bool Open(const String& path);
+	virtual bool Open(const String& path);
 	/// Closes the stream.
 	void Close() override;
 
