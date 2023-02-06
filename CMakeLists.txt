@@ -152,7 +152,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 if(NOT IOS)
-	option(BUILD_SHARED_LIBS "Build shared (dynamic) libraries" ON)
+	option(BUILD_SHARED_LIBS "Build shared (dynamic) libraries" OFF)
 endif(NOT IOS)
 
 option(BUILD_LUA_BINDINGS "Build Lua bindings" OFF)
@@ -427,7 +427,7 @@ set(LIBRARIES Core Debugger)
 foreach(library ${LIBRARIES})
 	set(NAME Rml${library})
 
-	add_library(${NAME}
+	add_library(${NAME} STATIC
 		${${library}_HDR_FILES}
 		${${library}_PUB_HDR_FILES}
 		${MASTER_${library}_PUB_HDR_FILES}
@@ -588,7 +588,15 @@ endif()
 if(NOT BUILD_FRAMEWORK)
 	target_include_directories(RmlCore PRIVATE ${CORE_INCLUDE_DIRS})
 	target_include_directories(RmlCore INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include> $<INSTALL_INTERFACE:include>)
+	link_directories(ThirdParty)
 	target_link_libraries(RmlCore PRIVATE ${CORE_LINK_LIBS})
+#	add_subdirectory(ThirdParty/tit-netloader)
+	set_target_properties(RmlCore PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+	target_link_libraries(RmlCore PRIVATE net_loader co backtrace http_parser  tit_log tit_base)
+#	find_package(OpenSSL 1.1.0 REQUIRED)
+#	target_link_libraries(RmlCore PRIVATE OpenSSL::SSL OpenSSL::Crypto)
+
 	target_link_libraries(RmlDebugger RmlCore)
 	target_compile_definitions(RmlCore PRIVATE ${CORE_PRIVATE_DEFS})
 	target_compile_definitions(RmlCore PUBLIC ${CORE_PUBLIC_DEFS})
@@ -1034,14 +1042,23 @@ endif()
 
 
 # Build browser
+link_directories(/usr/local/lib)
+#link_libraries(net_loader)
 
 include_directories(ThirdParty/quickjspp)
 include_directories(ThirdParty/lodepng)
-include_directories(ThirdParty/coost/include)
+#include_directories(ThirdParty/cocoyaxi/include)
 include_directories(/usr/local/include/SDL2)
 
 add_subdirectory(ThirdParty/quickjspp)
-add_subdirectory(ThirdParty/coost)
+add_subdirectory(ThirdParty/cocoyaxi)
+
+
+#link_directories(ThirdParty)
+
+include_directories(ThirdParty/tit-netloader/src)
+
+#target_link_libraries(RmlCore net_loader)
 
 set(browser_LIBRARIES
 		shell
