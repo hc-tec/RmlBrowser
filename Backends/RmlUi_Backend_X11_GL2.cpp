@@ -50,7 +50,7 @@
 #include <unordered_map>
 
 
-static co::mutex mutex;
+static co::Mutex mutex;
 
 std::unordered_map<Rml::String, Rml::Pair<Rml::Context*, co::Scheduler*>> register_contexts;
 
@@ -253,7 +253,7 @@ bool Backend::ProcessEvents()
 		{
 			int x = ev.xconfigure.width;
 			int y = ev.xconfigure.height;
-            auto g = co::mutex_guard(mutex);
+            auto g = co::MutexGuard(mutex);
             for(auto& [_, context] : register_contexts)
             {
                 context.first->SetDimensions({x, y});
@@ -272,7 +272,7 @@ bool Backend::ProcessEvents()
 //				break;
 			// Otherwise, hand the event over to the context by calling the input handler as normal.
 			{
-				auto g = co::mutex_guard(mutex);
+				auto g = co::MutexGuard(mutex);
 				for(auto& [_, context] : register_contexts)
 				{
 					RmlX11::HandleInputEvent(context.first, context.second, display, ev);
@@ -292,7 +292,7 @@ bool Backend::ProcessEvents()
 		default:
 		{
             {
-                auto g = co::mutex_guard(mutex);
+                auto g = co::MutexGuard(mutex);
                 for(auto& [_, context] : register_contexts)
                 {
                     // Pass unhandled events to the platform layer's input handler.

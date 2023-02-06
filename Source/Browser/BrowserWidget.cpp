@@ -21,7 +21,7 @@ namespace Browser {
 
 BrowserWidget::BrowserWidget(Delegate* delegate)
 		: delegate_(delegate),
-		scheduler(co::schedulers().at(0)),
+		scheduler(co::schedulers()[0]),
 		context_(nullptr),
 		document_(nullptr),
 		running_(true) {}

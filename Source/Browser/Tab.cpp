@@ -24,7 +24,7 @@ namespace Rml {
 namespace Browser {
 
 Tab::Tab(const String& tab_id, const URL& url)
-    : scheduler(co::schedulers().at(0)),
+    : scheduler(co::schedulers()[0]),
 		delegate_(nullptr),
 		tab_id_(tab_id),
 		url_(url),
