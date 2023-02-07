@@ -2,7 +2,7 @@
     <head>
         <title>Widget</title>
         <link type="text/rcss" href="widget.rcss" />
-        <link type="text/rcss" href="https://baidu.com/main.css" />
+        <link type="text/rcss" href="http://127.0.0.1:8000/main.rcss" />
     </head>
     <body>
         <div class="tabs">

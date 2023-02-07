@@ -32,3 +32,4 @@ Win32/
 x64/
 CMakeSettings.json
 /cmake-build-debug/
+ServerAssets
