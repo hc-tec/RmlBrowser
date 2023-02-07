@@ -441,15 +441,15 @@ foreach(library ${LIBRARIES})
 	)
 	
 	add_common_target_options(${NAME})
-
+	# EXPORT RmlUiTargets
 	install(TARGETS ${NAME}
-		EXPORT RmlUiTargets
+
 		LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 		ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
 		RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
 	)
 
-	set(RMLUI_EXPORTED_TARGETS ${RMLUI_EXPORTED_TARGETS} ${NAME})
+#	set(RMLUI_EXPORTED_TARGETS ${RMLUI_EXPORTED_TARGETS} ${NAME})
 endforeach(library)
 
 if( CUSTOM_CONFIGURATION )
@@ -588,15 +588,10 @@ endif()
 if(NOT BUILD_FRAMEWORK)
 	target_include_directories(RmlCore PRIVATE ${CORE_INCLUDE_DIRS})
 	target_include_directories(RmlCore INTERFACE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/Include> $<INSTALL_INTERFACE:include>)
-	link_directories(ThirdParty)
 	target_link_libraries(RmlCore PRIVATE ${CORE_LINK_LIBS})
 #	add_subdirectory(ThirdParty/tit-netloader)
-	set_target_properties(RmlCore PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
-	target_link_libraries(RmlCore PRIVATE net_loader co backtrace http_parser  tit_log tit_base)
-#	find_package(OpenSSL 1.1.0 REQUIRED)
-#	target_link_libraries(RmlCore PRIVATE OpenSSL::SSL OpenSSL::Crypto)
-
+#	target_link_libraries(RmlCore PRIVATE net_loader)
 	target_link_libraries(RmlDebugger RmlCore)
 	target_compile_definitions(RmlCore PRIVATE ${CORE_PRIVATE_DEFS})
 	target_compile_definitions(RmlCore PUBLIC ${CORE_PUBLIC_DEFS})
@@ -1017,8 +1012,8 @@ if(PkgHelpers_AVAILABLE)
 	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/install/RmlUiConfig.cmake
 		${CMAKE_CURRENT_BINARY_DIR}/install/RmlUiConfigVersion.cmake
 		DESTINATION ${LIB_INSTALL_DIR}/RmlUi/cmake )
-	install(EXPORT RmlUiTargets
-		DESTINATION ${LIB_INSTALL_DIR}/RmlUi/cmake)
+#	install(EXPORT RmlUiTargets
+#		DESTINATION ${LIB_INSTALL_DIR}/RmlUi/cmake)
 
 	# generate configuration for build tree
 	configure_package_config_file(${PROJECT_SOURCE_DIR}/CMake/RmlUiConfig.cmake.build.in
@@ -1049,9 +1044,9 @@ include_directories(ThirdParty/quickjspp)
 include_directories(ThirdParty/lodepng)
 #include_directories(ThirdParty/cocoyaxi/include)
 include_directories(/usr/local/include/SDL2)
-
 add_subdirectory(ThirdParty/quickjspp)
-add_subdirectory(ThirdParty/cocoyaxi)
+add_subdirectory(ThirdParty/tit-netloader)
+
 
 
 #link_directories(ThirdParty)
@@ -1065,7 +1060,7 @@ set(browser_LIBRARIES
 		RmlCore
 		RmlDebugger
 		quickjspp
-		co
+		net_loader
 		)
 
 add_executable(browser
