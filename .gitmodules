@@ -1,1 +1,10 @@
 
+[submodule "ThirdParty/lodepng"]
+	path = ThirdParty/lodepng
+	url = git@github.com:lvandeve/lodepng.git
+[submodule "ThirdParty/quickjspp"]
+	path = ThirdParty/quickjspp
+	url = git@github.com:ftk/quickjspp.git
+[submodule "ThirdParty/tit-netloader"]
+	path = ThirdParty/tit-netloader
+	url = git@github.com:hc-tec/tit-netloader.git
