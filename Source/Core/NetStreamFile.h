@@ -7,33 +7,16 @@
 
 #include "StreamFile.h"
 
+#include "core/http/http_request_observer.h"
+#include "core/http/response/http_response_body.h"
+
+using namespace tit;
+
 namespace Rml {
 
-class IOBuffer {
-public:
-
-    IOBuffer();
-
-    virtual ~IOBuffer();
-
-    virtual void Reset();
-
-    virtual void SetPosition(int pos);
-
-    virtual void Forward(int offset);
-
-    virtual size_t ReadRemainAll(std::string_view* buf);
-
-    virtual size_t Read(std::string_view* buf, size_t buf_size);
-    virtual size_t Buffer(char* buf, size_t buf_size);
-    virtual size_t GetSize();
-
-protected:
-    size_t pos_;
-    std::string buffer_;
-};
-
-class NetStreamFile : public StreamFile {
+class NetStreamFile : public StreamFile,
+					  public net::HttpRequestObserver,
+					  public std::enable_shared_from_this<NetStreamFile> {
 public:
 	NetStreamFile();
 	~NetStreamFile() override;
@@ -45,8 +28,13 @@ public:
 	bool Seek(long offset, int origin) const override;
 	size_t Read(void* buffer, size_t bytes) const override;
 
+	// HttpRequestObserver
+	void OnResponseAllReceived(net::HttpNetworkSession* session,
+		net::HttpRequestInfo* request_info,
+		net::HttpResponseInfo* response_info) override;
+
 private:
-	IOBuffer buffer_;
+	std::shared_ptr<net::HttpResponseBufferBody> buffer_;
 };
 
 }
