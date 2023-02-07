@@ -33,6 +33,7 @@
 #include "StyleSheetNode.h"
 #include "StyleSheetParser.h"
 #include "StyleSheetSelector.h"
+#include "NetStreamFile.h"
 
 namespace Rml {
 
@@ -214,9 +215,16 @@ StructuralSelector StyleSheetFactory::GetSelector(const String& name)
 UniquePtr<const StyleSheetContainer> StyleSheetFactory::LoadStyleSheetContainer(const String& sheet)
 {
 	UniquePtr<StyleSheetContainer> new_style_sheet;
-
-	// Open stream, construct new sheet and pass the stream into the sheet
-	auto stream = MakeUnique<StreamFile>();
+    URL sheet_url(sheet);
+	UniquePtr<StreamFile> stream;
+	if (sheet_url.GetProtocol() == "file")
+	{
+		// Open stream, construct new sheet and pass the stream into the sheet
+		stream = MakeUnique<StreamFile>();
+	} else {
+		// Network resource stream
+		stream = MakeUnique<NetStreamFile>();
+	}
 	if (stream->Open(sheet))
 	{
 		new_style_sheet = MakeUnique<StyleSheetContainer>();

@@ -62,6 +62,7 @@ void Element::Glue(qjs::Context::Module& m) {
 //		})
 		.fun<&Rml::Element::AppendChild>("appendChild")
         .fun<&Rml::Element::RemoveChild>("removeChild")
+        .fun<&Rml::Element::InsertBefore>("insertChild")
 //        .fun<>("removeChild", [](Rml::Element* _this, Rml::Element* child) {
 //			_this->RemoveChild(child);
 //			GetOwnership<Rml::Element>()->GetOwner(child).reset();
