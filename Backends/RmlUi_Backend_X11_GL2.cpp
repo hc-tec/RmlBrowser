@@ -49,7 +49,6 @@
 #include <unistd.h>
 #include <unordered_map>
 
-
 static co::Mutex mutex;
 
 std::unordered_map<Rml::String, Rml::Pair<Rml::Context*, co::Scheduler*>> register_contexts;

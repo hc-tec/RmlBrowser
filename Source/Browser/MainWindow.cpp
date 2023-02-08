@@ -75,12 +75,11 @@ void MainWindow::WaitForClose() {
 }
 
 void MainWindow::ProcessEvent() {
-	go([&](){
+	co::Scheduler* scheduler = co::schedulers()[0];
+    scheduler->go([&](){
 		bool running = Backend::ProcessEvents();
 		if (running) {
-			go([&](){
-				ProcessEvent();
-			});
+            ProcessEvent();
 		} else {
 			Close();
 		}
@@ -187,6 +186,9 @@ DEF_main(argc, argv) {
     tab3->Run();
     Rml::Browser::Tab* tab4 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
     tab4->Run(true);
+
 	window->WaitForClose();
 	delete window;
 }
+
+
