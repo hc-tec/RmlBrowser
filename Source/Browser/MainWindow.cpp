@@ -175,6 +175,7 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 }
 }
 
+// int main
 DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();

@@ -7,6 +7,7 @@
 #include <cmath>
 
 #include "core/http/request/http_request_body.h"
+#include "core/http/response/http_response_info.h"
 #include "core/network/network_service.h"
 #include "core/network/request_params.h"
 
@@ -53,8 +54,6 @@ bool NetStreamFile::Open(const String& path)
     SetStreamDetails(URL(path), Stream::MODE_READ);
 
     net::NetworkService* service = net::GetNetworkService();
-    service->AddHttpRequestObserver(shared_from_this());
-
 
     net::RequestParams params;
     params.request_info.url = net::URL(path);
@@ -67,6 +66,7 @@ bool NetStreamFile::Open(const String& path)
     headers.PutHeaders("host", params.request_info.url.host());
     headers.PutHeaders("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53");
     std::unique_ptr<net::URLLoader> loader = service->CreateURLLoader(params);
+    loader->AddHttpRequestObserver(shared_from_this());
     loader->Start();
 	return true;
 }
@@ -76,8 +76,8 @@ void NetStreamFile::OnResponseAllReceived(
 	net::HttpRequestInfo* request_info,
 	net::HttpResponseInfo* response_info)
 {
-	buffer_ = std::move(std::dynamic_pointer_cast<net::HttpResponseBufferBody>(
-		response_info->body));
+	buffer_ = std::dynamic_pointer_cast<net::HttpResponseBufferBody>(
+		response_info->body);
 }
 
 }
