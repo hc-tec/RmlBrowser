@@ -6,10 +6,13 @@
 
 #include <iostream>
 
+#include "core/http/response/http_response_info.h"
+
 #include "RmlUi/Core/Context.h"
 #include "RmlUi/Core/Element.h"
 #include "RmlUi/Core/Factory.h"
 #include "RmlUi/Core/ElementDocument.h"
+#include "Net/Network.h"
 
 #include <co/co/mutex.h>
 #include "Glue.h"
@@ -69,7 +72,7 @@ void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
             if (script.is_inline) {
                 js_context->eval(script.content, script.path.data());
             } else {
-				js_context->evalFile(script.path.data());
+				LoadExternJs(js_context, script.path);
 			}
         }
         js_context->global()["executing"] = false;
@@ -99,11 +102,30 @@ ScriptPlugin::~ScriptPlugin() {
     js_context_.reset();
 }
 
-//void ScriptPlugin::FreshJsContext() {
-//	js_context_.reset();
-//    js_context_ = MakeUnique<qjs::Context>(*GetRunTime());
-//    Glue(js_context_.get());
-//}
+void ScriptPlugin::LoadExternJs(qjs::Context* js_context, const std::string& path) {
+    URL url(path);
+	if (url.GetProtocol() == "file")
+	{
+		js_context->evalFile(path.data());
+	} else {
+        Net::Network* service = Net::Network::GetInstance();
+        net::RequestParams params;
+        params.request_info.url = net::URL(path);
+        params.request_info.method = net::Method::GET;
+        std::unique_ptr<net::URLLoader> loader = service->CreateURLLoader(params);
+        loader->AddHttpRequestObserver(this);
+        loader->Start();
+        loader->RemoveHttpRequestObserver(this);
+		js_context->eval(js_buffer_.data(), url.GetFileName().data());
+	}
+}
+
+void ScriptPlugin::OnResponseAllReceived(net::HttpNetworkSession* session, net::HttpRequestInfo* request_info, net::HttpResponseInfo* response_info)
+{
+	std::string_view buf;
+	response_info->body->Read(&buf, response_info->body->GetSize());
+	js_buffer_.append(buf.data());
+}
 
 }
 

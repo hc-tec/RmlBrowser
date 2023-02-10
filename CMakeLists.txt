@@ -1040,11 +1040,12 @@ endif()
 link_directories(/usr/local/lib)
 #link_libraries(net_loader)
 
+include_directories(Source)
 include_directories(ThirdParty/quickjspp)
 include_directories(ThirdParty/lodepng)
 #include_directories(ThirdParty/cocoyaxi/include)
 include_directories(ThirdParty/tit-netloader/third_party/cocoyaxi/include)
-include_directories(/usr/local/include/SDL2)
+#include_directories(/usr/local/include/SDL2)
 add_subdirectory(ThirdParty/quickjspp)
 add_subdirectory(ThirdParty/tit-netloader)
 
@@ -1097,7 +1098,7 @@ add_executable(browser
         Source/Browser/TabManager.cpp
 		Source/Browser/TabManager.h
 		Source/Browser/BrowserWidget.cpp
-		Source/Browser/BrowserWidget.h Source/Browser/Glue.cpp Source/Browser/Glue.h)
+		Source/Browser/BrowserWidget.h Source/Browser/Glue.cpp Source/Browser/Glue.h Source/Net/Network.cc Source/Net/Network.h Source/Net/URLLoaderProxy.cc Source/Net/URLLoaderProxy.h Source/Net/NetworkObserverContext.cc Source/Net/NetworkObserverContext.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

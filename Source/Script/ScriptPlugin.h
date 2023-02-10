@@ -6,9 +6,12 @@
 #define RMLUI_SCRIPTPLUGIN_H
 
 
+#include "core/http/http_request_observer.h"
+
 #include "RmlUi/Core/Plugin.h"
 #include "Dom/Document.h"
 
+using namespace tit;
 
 namespace Rml {
 
@@ -17,7 +20,8 @@ namespace Script {
 class Document;
 class JsDocumentElementInstancer;
 
-class ScriptPlugin : public Rml::Plugin {
+class ScriptPlugin : public Rml::Plugin,
+                     public net::HttpRequestObserver {
 public:
 
 	ScriptPlugin(Context* context);
@@ -36,11 +40,17 @@ public:
 
 	qjs::Context* js_context() { return js_context_.get(); }
 
+	void LoadExternJs(qjs::Context* js_context, const std::string& path);
+	void OnResponseAllReceived(net::HttpNetworkSession* session, net::HttpRequestInfo* request_info, net::HttpResponseInfo* response_info) override;
+
 private:
 	Context* context_;
 	qjs::Runtime* js_runtime_;
     UniquePtr<qjs::Context> js_context_;
     SharedPtr<JsDocumentElementInstancer> js_document_element_instancer_;
+
+	// js buffer from network
+	std::string js_buffer_;
 };
 
 
