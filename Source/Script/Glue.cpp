@@ -4,9 +4,13 @@
 
 #include "Glue.h"
 
+#include <iostream>
+
 #include "Dom/Document.h"
 #include "Dom/Element.h"
 #include "Dom/Event.h"
+
+#include "log/logging.h"
 
 namespace Rml {
 
@@ -17,6 +21,9 @@ void RegisterGlueFunc(GlueFunc func) {
 namespace Script {
 
 void Glue(qjs::Context* context) {
+    context->global()["log"] = [](const Rml::String& str){
+      std::cout << str << std::endl;
+    };
     qjs::Context::Module& dom = context->addModule("dom");
     Event::Glue(dom);
     Element::Glue(dom);

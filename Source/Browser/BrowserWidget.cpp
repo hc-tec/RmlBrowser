@@ -39,9 +39,6 @@ int BrowserWidget::Initialize() {
     Rml::RegisterPlugin(script_plugin_.get());
 
     qjs::Context* js_context = script_plugin_->js_context();
-    js_context->global()["log"] = [](const Rml::String& str){
-      std::cout << str << std::endl;
-    };
     js_context->global()["CFocusTab"] = [&](const Rml::String& tab_id){
 		delegate_->DoTabFocus(tab_id);
 		std::cout << tab_id << std::endl;

@@ -50,9 +50,6 @@ int Tab::Initialize() {
     Rml::RegisterPlugin(script_plugin_.get());
 
     qjs::Context* js_context = script_plugin_->js_context();
-    js_context->global()["log"] = [](const Rml::String& str){
-      LOG << str;
-    };
     js_context->global()["reload"] = [&](){
       this->Fresh();
     };
