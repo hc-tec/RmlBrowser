@@ -276,7 +276,12 @@ bool ElementImage::LoadTexture()
 		if (ElementDocument* document = GetOwnerDocument())
 			source_url.SetURL(document->GetSourceURL());
 
-		texture.Set(source_name, source_url.GetPath());
+		if (source_url.GetProtocol() == "file")
+		{
+			texture.Set(source_name, source_url.GetPath());
+		} else {
+            texture.Set(source_name, source_url.GetURL());
+		}
 
 		dimensions_scale = dp_ratio;
 	}

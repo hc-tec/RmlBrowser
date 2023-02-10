@@ -31,6 +31,7 @@
 #include <RmlUi/Core/FileInterface.h>
 #include <RmlUi/Core/Log.h>
 #include <RmlUi/Core/Platform.h>
+#include <Core/NetStreamFile.h>
 #include <string.h>
 
 #if defined RMLUI_PLATFORM_WIN32
@@ -205,108 +206,133 @@ struct TGAHeader {
 
 bool RenderInterface_GL2::LoadTexture(Rml::TextureHandle& texture_handle, Rml::Vector2i& texture_dimensions, const Rml::String& source)
 {
-	Rml::FileInterface* file_interface = Rml::GetFileInterface();
-	Rml::FileHandle file_handle = file_interface->Open(source);
-	if (!file_handle)
+	if (source[0] == '/')
 	{
-		return false;
-	}
-
-	file_interface->Seek(file_handle, 0, SEEK_END);
-	size_t buffer_size = file_interface->Tell(file_handle);
-	file_interface->Seek(file_handle, 0, SEEK_SET);
-
-	int len = source.size();
-    if (source.substr(len-3, len) == "png") {
-        Rml::FileInterface* file_interface = Rml::GetFileInterface();
-        Rml::FileHandle file_handle = file_interface->Open(source);
-        if (!file_handle) return false;
-        file_interface->Seek(file_handle, 0, SEEK_END);
-        size_t buffer_size = file_interface->Tell(file_handle);
-        file_interface->Seek(file_handle, 0, SEEK_SET);
-        char* buffer = new char[buffer_size];
-        file_interface->Read(buffer, buffer_size, file_handle);
-        file_interface->Close(file_handle);
-        std::vector<unsigned char> png(buffer, buffer+buffer_size);
-        std::vector<unsigned char> image;
-        unsigned width, height;
-        unsigned error = lodepng::decode(image, width, height, png);
-        if (error) {
-            Rml::Log::Message(Rml::Log::LT_ERROR, "load png error: %s", lodepng_error_text(error));
-            delete[] buffer;
-            return false;
-        }
-        texture_dimensions.x = width;
-        texture_dimensions.y = height;
-        bool success = GenerateTexture(texture_handle, &image[0], texture_dimensions);
-        delete[] buffer;
-        return success;
-	}
-
-	if (buffer_size <= sizeof(TGAHeader))
-	{
-		Rml::Log::Message(Rml::Log::LT_ERROR, "Texture file size is smaller than TGAHeader, file is not a valid TGA image.");
-		file_interface->Close(file_handle);
-		return false;
-	}
-
-	char* buffer = new char[buffer_size];
-	file_interface->Read(buffer, buffer_size, file_handle);
-	file_interface->Close(file_handle);
-
-	TGAHeader header;
-	memcpy(&header, buffer, sizeof(TGAHeader));
-
-	int color_mode = header.bitsPerPixel / 8;
-	int image_size = header.width * header.height * 4; // We always make 32bit textures
-
-	if (header.dataType != 2)
-	{
-		Rml::Log::Message(Rml::Log::LT_ERROR, "Only 24/32bit uncompressed TGAs are supported.");
-		delete[] buffer;
-		return false;
-	}
-
-	// Ensure we have at least 3 colors
-	if (color_mode < 3)
-	{
-		Rml::Log::Message(Rml::Log::LT_ERROR, "Only 24 and 32bit textures are supported.");
-		delete[] buffer;
-		return false;
-	}
-
-	const char* image_src = buffer + sizeof(TGAHeader);
-	unsigned char* image_dest = new unsigned char[image_size];
-
-	// Targa is BGR, swap to RGB and flip Y axis
-	for (long y = 0; y < header.height; y++)
-	{
-		long read_index = y * header.width * color_mode;
-		long write_index = ((header.imageDescriptor & 32) != 0) ? read_index : (header.height - y - 1) * header.width * color_mode;
-		for (long x = 0; x < header.width; x++)
+		Rml::FileInterface* file_interface = Rml::GetFileInterface();
+		Rml::FileHandle file_handle = file_interface->Open(source);
+		if (!file_handle)
 		{
-			image_dest[write_index] = image_src[read_index + 2];
-			image_dest[write_index + 1] = image_src[read_index + 1];
-			image_dest[write_index + 2] = image_src[read_index];
-			if (color_mode == 4)
-				image_dest[write_index + 3] = image_src[read_index + 3];
-			else
-				image_dest[write_index + 3] = 255;
-
-			write_index += 4;
-			read_index += color_mode;
+			return false;
 		}
+
+		file_interface->Seek(file_handle, 0, SEEK_END);
+		size_t buffer_size = file_interface->Tell(file_handle);
+		file_interface->Seek(file_handle, 0, SEEK_SET);
+
+		int len = source.size();
+		if (source.substr(len - 3, len) == "png")
+		{
+			char* buffer = new char[buffer_size];
+			file_interface->Read(buffer, buffer_size, file_handle);
+			file_interface->Close(file_handle);
+			std::vector<unsigned char> png(buffer, buffer + buffer_size);
+			std::vector<unsigned char> image;
+			unsigned width, height;
+			unsigned error = lodepng::decode(image, width, height, png);
+			if (error)
+			{
+				Rml::Log::Message(Rml::Log::LT_ERROR, "load png error: %s", lodepng_error_text(error));
+				delete[] buffer;
+				return false;
+			}
+			texture_dimensions.x = width;
+			texture_dimensions.y = height;
+			bool success = GenerateTexture(texture_handle, &image[0], texture_dimensions);
+			delete[] buffer;
+			return success;
+		}
+
+		if (buffer_size <= sizeof(TGAHeader))
+		{
+			Rml::Log::Message(Rml::Log::LT_ERROR, "Texture file size is smaller than TGAHeader, file is not a valid TGA image.");
+			file_interface->Close(file_handle);
+			return false;
+		}
+
+		char* buffer = new char[buffer_size];
+		file_interface->Read(buffer, buffer_size, file_handle);
+		file_interface->Close(file_handle);
+
+		TGAHeader header;
+		memcpy(&header, buffer, sizeof(TGAHeader));
+
+		int color_mode = header.bitsPerPixel / 8;
+		int image_size = header.width * header.height * 4; // We always make 32bit textures
+
+		if (header.dataType != 2)
+		{
+			Rml::Log::Message(Rml::Log::LT_ERROR, "Only 24/32bit uncompressed TGAs are supported.");
+			delete[] buffer;
+			return false;
+		}
+
+		// Ensure we have at least 3 colors
+		if (color_mode < 3)
+		{
+			Rml::Log::Message(Rml::Log::LT_ERROR, "Only 24 and 32bit textures are supported.");
+			delete[] buffer;
+			return false;
+		}
+
+		const char* image_src = buffer + sizeof(TGAHeader);
+		unsigned char* image_dest = new unsigned char[image_size];
+
+		// Targa is BGR, swap to RGB and flip Y axis
+		for (long y = 0; y < header.height; y++)
+		{
+			long read_index = y * header.width * color_mode;
+			long write_index = ((header.imageDescriptor & 32) != 0) ? read_index : (header.height - y - 1) * header.width * color_mode;
+			for (long x = 0; x < header.width; x++)
+			{
+				image_dest[write_index] = image_src[read_index + 2];
+				image_dest[write_index + 1] = image_src[read_index + 1];
+				image_dest[write_index + 2] = image_src[read_index];
+				if (color_mode == 4)
+					image_dest[write_index + 3] = image_src[read_index + 3];
+				else
+					image_dest[write_index + 3] = 255;
+
+				write_index += 4;
+				read_index += color_mode;
+			}
+		}
+
+		texture_dimensions.x = header.width;
+		texture_dimensions.y = header.height;
+
+		bool success = GenerateTexture(texture_handle, image_dest, texture_dimensions);
+
+		delete[] image_dest;
+		delete[] buffer;
+
+		return success;
 	}
-
-	texture_dimensions.x = header.width;
-	texture_dimensions.y = header.height;
-
-	bool success = GenerateTexture(texture_handle, image_dest, texture_dimensions);
-
-	delete[] image_dest;
-	delete[] buffer;
-
-	return success;
+	else {
+        int len = source.size();
+        if (source.substr(len - 3, len) == "png")
+        {
+			Rml::UniquePtr<Rml::NetStreamFile> file = Rml::MakeUnique<Rml::NetStreamFile>();
+			if(!file->Open(source)) return false;
+            size_t buffer_size = file->GetSize();
+            char* buffer = new char[buffer_size];
+			file->Read(buffer, buffer_size);
+            std::vector<unsigned char> png(buffer, buffer + buffer_size);
+            std::vector<unsigned char> image;
+            unsigned width, height;
+            unsigned error = lodepng::decode(image, width, height, png);
+            if (error)
+            {
+                Rml::Log::Message(Rml::Log::LT_ERROR, "load png error: %s", lodepng_error_text(error));
+                delete[] buffer;
+                return false;
+            }
+            texture_dimensions.x = width;
+            texture_dimensions.y = height;
+            bool success = GenerateTexture(texture_handle, &image[0], texture_dimensions);
+            delete[] buffer;
+            return success;
+        }
+	}
 }
 
 bool RenderInterface_GL2::GenerateTexture(Rml::TextureHandle& texture_handle, const Rml::byte* source, const Rml::Vector2i& source_dimensions)

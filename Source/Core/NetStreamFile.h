@@ -28,6 +28,7 @@ public:
 	bool Seek(long offset, int origin) const override;
 	size_t Read(void* buffer, size_t bytes) const override;
 
+	size_t GetSize();
 	// HttpRequestObserver
 	void OnResponseAllReceived(net::HttpNetworkSession* session,
 		net::HttpRequestInfo* request_info,

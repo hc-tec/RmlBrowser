@@ -6,6 +6,7 @@
 
 #include <cmath>
 
+#include "Net/Network.h"
 #include "core/http/request/http_request_body.h"
 #include "core/http/response/http_response_info.h"
 #include "core/network/network_service.h"
@@ -52,22 +53,15 @@ size_t NetStreamFile::Read(void* buffer, size_t bytes) const
 bool NetStreamFile::Open(const String& path)
 {
     SetStreamDetails(URL(path), Stream::MODE_READ);
-
-    net::NetworkService* service = net::GetNetworkService();
+    Net::Network* service = Net::Network::GetInstance();
 
     net::RequestParams params;
     params.request_info.url = net::URL(path);
     params.request_info.method = net::Method::GET;
-    net::HttpRequestHeaders& headers = params.request_info.headers;
-    headers.PutHeaders("accept-encoding", "");
-    headers.PutHeaders("accept", "*/*");
-//    headers.PutHeaders(net::HttpHeaders::CONNECTION,
-//                       net::HttpHeaders::Value::CONNECTION_KEEP_ALIVE);
-    headers.PutHeaders("host", params.request_info.url.host());
-    headers.PutHeaders("user-agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36 Edg/101.0.1210.53");
     std::unique_ptr<net::URLLoader> loader = service->CreateURLLoader(params);
-    loader->AddHttpRequestObserver(shared_from_this());
+    loader->AddHttpRequestObserver(this);
     loader->Start();
+    loader->RemoveHttpRequestObserver(this);
 	return true;
 }
 
@@ -78,6 +72,11 @@ void NetStreamFile::OnResponseAllReceived(
 {
 	buffer_ = std::dynamic_pointer_cast<net::HttpResponseBufferBody>(
 		response_info->body);
+}
+
+size_t NetStreamFile::GetSize()
+{
+	return buffer_->GetSize();
 }
 
 }
