@@ -27,8 +27,8 @@
  */
 
 #include "../../Include/RmlUi/Core/Context.h"
-#include "../../Include/RmlUi/Core/ContextInstancer.h"
 #include "../../Include/RmlUi/Core/ComputedValues.h"
+#include "../../Include/RmlUi/Core/ContextInstancer.h"
 #include "../../Include/RmlUi/Core/Core.h"
 #include "../../Include/RmlUi/Core/DataModelHandle.h"
 #include "../../Include/RmlUi/Core/ElementDocument.h"
@@ -38,14 +38,13 @@
 #include "../../Include/RmlUi/Core/RenderInterface.h"
 #include "../../Include/RmlUi/Core/StreamMemory.h"
 #include "../../Include/RmlUi/Core/SystemInterface.h"
-#include "../../Include/RmlUi/Core/StreamMemory.h"
 #include "DataModel.h"
 #include "EventDispatcher.h"
+#include "NetStreamFile.h"
 #include "PluginRegistry.h"
 #include "StreamFile.h"
 #include <algorithm>
 #include <iterator>
-
 
 namespace Rml {
 
@@ -270,8 +269,17 @@ ElementDocument* Context::CreateDocument(const String& instancer_name)
 
 // Load a document into the context.
 ElementDocument* Context::LoadDocument(const String& document_path)
-{	
-	auto stream = MakeUnique<StreamFile>();
+{
+    URL url(document_path);
+    UniquePtr<StreamFile> stream;
+    if (url.GetProtocol() == "file")
+    {
+        // Open stream, construct new sheet and pass the stream into the sheet
+        stream = MakeUnique<StreamFile>();
+    } else {
+        // Network resource stream
+        stream = MakeUnique<NetStreamFile>();
+    }
 
 	if (!stream->Open(document_path))
 		return nullptr;

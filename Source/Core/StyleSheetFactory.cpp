@@ -216,14 +216,14 @@ UniquePtr<const StyleSheetContainer> StyleSheetFactory::LoadStyleSheetContainer(
 {
 	UniquePtr<StyleSheetContainer> new_style_sheet;
     URL sheet_url(sheet);
-	SharedPtr<StreamFile> stream;
+	UniquePtr<StreamFile> stream;
 	if (sheet_url.GetProtocol() == "file")
 	{
 		// Open stream, construct new sheet and pass the stream into the sheet
-		stream = MakeShared<StreamFile>();
+		stream = MakeUnique<StreamFile>();
 	} else {
 		// Network resource stream
-		stream = MakeShared<NetStreamFile>();
+		stream = MakeUnique<NetStreamFile>();
 	}
 	if (stream->Open(sheet))
 	{
