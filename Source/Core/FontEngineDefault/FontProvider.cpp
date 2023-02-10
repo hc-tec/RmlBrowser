@@ -75,17 +75,43 @@ FontProvider& FontProvider::Get()
 	return *g_font_provider;
 }
 
+void split(const std::string& s, std::string& delim,std::vector< std::string >* ret)
+{
+    size_t last = 0;  //size_t 类型
+    size_t index=s.find_first_of(delim,last);  //找第一个匹配的分隔符
+    while (index!=std::string::npos)           //string::npos是find找不到时返回的值
+    {
+        ret->push_back(s.substr(last,index-last));
+        last=index+1;
+        index=s.find_first_of(delim,last);
+    }
+    if (index-last>0)
+    {
+        ret->push_back(s.substr(last,index-last));
+    }
+}
+
 FontFaceHandleDefault* FontProvider::GetFontFaceHandle(const String& family, Style::FontStyle style, Style::FontWeight weight, int size)
 {
+
 	RMLUI_ASSERTMSG(family == StringUtilities::ToLower(family), "Font family name must be converted to lowercase before entering here.");
+    FontFamilyMap& families = Get().font_families;
 
-	FontFamilyMap& families = Get().font_families;
+    std::vector< std::string > font_families;
+	String delim(", ");
+	split(family, delim, &font_families);
+    font_families.push_back("latolatin");
 
-	auto it = families.find(family);
-	if (it == families.end())
-		return nullptr;
+	for (auto& font : font_families)
+	{
+		if (font.empty()) continue;
+		auto it = families.find(font);
+		if (it == families.end())
+			return nullptr;
 
-	return it->second->GetFaceHandle(style, weight, size);
+		return it->second->GetFaceHandle(style, weight, size);
+	}
+	return nullptr;
 }
 
 int FontProvider::CountFallbackFontFaces()
