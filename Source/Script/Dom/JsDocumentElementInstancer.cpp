@@ -18,7 +18,7 @@ static String Absolutepath(const String& source, const String& base)
 {
     String joined_path;
     Rml::GetSystemInterface()->JoinPath(joined_path, StringUtilities::Replace(base, '|', ':'), StringUtilities::Replace(source, '|', ':'));
-    return StringUtilities::Replace(joined_path, ':', '|');
+    return joined_path;//StringUtilities::Replace(joined_path, ':', '|');
 }
 
 static DocumentHeader::Resource MakeInlineResource(XMLParser* parser, const String& data)
@@ -35,7 +35,13 @@ static DocumentHeader::Resource MakeExternalResource(XMLParser* parser, const St
 {
     DocumentHeader::Resource resource;
     resource.is_inline = false;
-    resource.path = Absolutepath(path, parser->GetSourceURL().GetURL());
+    URL url(path);
+    if (url.GetProtocol().substr(0, 4) == "file")
+    {
+        resource.path = Absolutepath(path, parser->GetSourceURL().GetURL());
+    } else {
+        resource.path = path;
+    }
     return resource;
 }
 

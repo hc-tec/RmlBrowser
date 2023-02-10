@@ -21,7 +21,7 @@ static String Absolutepath(const String& source, const String& base)
 {
     String joined_path;
     Rml::GetSystemInterface()->JoinPath(joined_path, StringUtilities::Replace(base, '|', ':'), StringUtilities::Replace(source, '|', ':'));
-    return StringUtilities::Replace(joined_path, ':', '|');
+    return joined_path;
 }
 
 void ProcessEvent(Rml::Event* event) {
