@@ -156,7 +156,7 @@ void BaseXMLParser::HandleDataInternal(const String& data, XMLDataType type)
 
 void BaseXMLParser::ReadHeader()
 {
-	if (PeekString("<?"))
+	if (PeekString("<?") || PeekString("<!"))
 	{
 		String temp;
 		FindString(">", temp);
