@@ -112,12 +112,12 @@ Element* XMLNodeHandlerHead::ElementStart(XMLParser* parser, const String& name,
 
 			else
 			{
-				Log::ParseError(parser->GetSourceURL().GetURL(), parser->GetLineNumber(), "Invalid link type '%s'", type.c_str());
+//				Log::ParseError(parser->GetSourceURL().GetURL(), parser->GetLineNumber(), "Invalid link type '%s'", type.c_str());
 			}
 		}
 		else
 		{
-			Log::ParseError(parser->GetSourceURL().GetURL(), parser->GetLineNumber(), "Link tag requires type and href attributes");
+//			Log::ParseError(parser->GetSourceURL().GetURL(), parser->GetLineNumber(), "Link tag requires type and href attributes");
 		}
 	}
 
