@@ -92,6 +92,7 @@ void MainWindow::OnTabRun(Tab* tab) {
 	auto obj = js_context->newObject();
 	obj["id"] = tab->tab_id();
     obj["title"] = tab->title();
+    obj["icon"] = tab->document()->GetIcon();
     obj["url"] = tab->document()->GetSourceURL();
 	func(obj);
 }
@@ -102,6 +103,7 @@ void MainWindow::OnTabFresh(Tab* tab) {
     auto obj = js_context->newObject();
     obj["id"] = tab->tab_id();
     obj["title"] = tab->title();
+    obj["icon"] = tab->document()->GetIcon();
     obj["url"] = tab->url().GetURL();
     func(obj);
 }
@@ -128,6 +130,16 @@ void MainWindow::OnTabActive(Tab* tab) {
 
 void MainWindow::OnTabUnActive(Tab* tab) {}
 
+void MainWindow::OnDocumentLoad(Tab* tab, ElementDocument* document) {
+    qjs::Context* js_context = browser_widget_->js_context();
+    auto func = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_UPDATE_TAB_PARAMS");
+    auto obj = js_context->newObject();
+    obj["id"] = tab->tab_id();
+    obj["title"] = document->GetTitle();
+    obj["url"] = tab->url().GetURL();
+//    func(obj);
+}
+
 void MainWindow::DoTabFocus(const String& tab_id) {
     tab_manager_->FocusTab(tab_id);
 }
@@ -143,10 +155,12 @@ void MainWindow::DoTabEnterUrl(const String& tab_id, const String& url) {
 }
 
 void MainWindow::DoTabOpenNew(const String& url) {
-    Rml::Browser::Tab* tab = tab_manager_->NewTab("");
+    Rml::Browser::Tab* tab = tab_manager_->NewTab(url);
     tab->Run();
     DoTabFocus(tab->tab_id());
 }
+
+
 
 void OpenInCurrentTab(Context* context, const URL& url) {
     MainWindow* window = MainWindow::GetInstance();
@@ -182,11 +196,9 @@ DEF_main(argc, argv) {
 //    Rml::Browser::Tab* tab2 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/basic/animation/data/animation.rml");
 //    tab2->Run();
     Rml::Browser::Tab* tab1 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/thread.rml");
-    tab1->Run();
-//    Rml::Browser::Tab* tab3 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/index.rml");
-//    tab3->Run();
-    Rml::Browser::Tab* tab4 = tab_manager->NewTab("http://127.0.0.1:8000/thread.rml");
-    tab4->Run(true);
+    tab1->Run(true);
+//    Rml::Browser::Tab* tab3 = tab_manager->NewTab("http://127.0.0.1:8000/thread.rml");
+//    tab3->Run(true);
 
 	window->WaitForClose();
 	delete window;

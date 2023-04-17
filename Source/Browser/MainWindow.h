@@ -23,7 +23,8 @@ static MainWindow* instance;
 void OpenInCurrentTab(Context* context, const URL& url);
 void OpenInNewTab(Context* context, const URL& url);
 
-class MainWindow : public TabManager::Delegate, public BrowserWidget::Delegate {
+class MainWindow : public TabManager::Delegate,
+				   public BrowserWidget::Delegate {
 public:
 	MainWindow();
 	~MainWindow();
@@ -49,13 +50,14 @@ public:
 	void OnTabStopRunning(Tab* tab) override;
     void OnTabActive(Tab* tab) override;
     void OnTabUnActive(Tab* tab) override;
-
+    void OnDocumentLoad(Tab* tab, ElementDocument* document) override;
 
 	/* BrowserWidget Delegate */
 	void DoTabFocus(const String& tab_id) override;
 	void DoTabRemove(const String& tab_id) override;
 	void DoTabEnterUrl(const String& tab_id, const String& url) override;
 	void DoTabOpenNew(const String& url) override;
+
 
 private:
 

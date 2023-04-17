@@ -10,6 +10,7 @@
 #include "RmlUi/Core/Variant.h"
 #include "RmlUi/Core/Types.h"
 #include "Dom/Ownership.h"
+#include "Browser/Collections.h"
 
 namespace qjs {
 
@@ -124,30 +125,49 @@ struct js_traits<Rml::UniqueReleaserPtr<T>> {
     }
 };
 
-/** Conversion traits for std::unique_ptr<T>.
+
+/** Conversion traits for Variant*.
  */
-//template <class T>
-//struct js_traits<std::unique_ptr<T>> {
-//    /// @throws exception
-//    static std::unique_ptr<T> unwrap(JSContext* ctx, JSValueConst v)
-//    {
-//        std::unique_ptr<T> ptr = nullptr;
-//        if (JS_IsNull(v)) {
-//            return ptr;
-//        }
-//        auto class_id = JS_GetClassID(v);
-//        T* opaque = reinterpret_cast<T*>(JS_GetOpaque2(ctx, v, class_id));
-//        return std::move(Rml::Script::GetOwnershipMgr<T>()->GetOwner(opaque));
-//    }
-//
-//    static JSValue wrap(JSContext* ctx, std::unique_ptr<T> val) noexcept {
-//        T* raw_ptr = val.get();
-//        Rml::Script::GetOwnershipMgr<T>()->ShiftOwner(val);
-//        return js_traits<T*>::wrap(ctx, raw_ptr);
-//    }
-//};
+template <>
+struct js_traits<Rml::Variant*> {
+    /// @throws exception
+    static double unwrap(JSContext* ctx, JSValueConst v)
+    {
+        double r;
+        if (JS_ToFloat64(ctx, &r, v))
+            throw exception{ctx};
+        return r;
+    }
 
+    static JSValue wrap(JSContext* ctx, Rml::Variant* v) noexcept {
+		auto type = v->GetType();
+		switch (type)
+		{
+		case Rml::Variant::Type::STRING:
+			return js_traits<Rml::String>::wrap(ctx, v->Get<Rml::String>());
+		}
+	}
+};
 
+template <>
+struct js_traits<Rml::Browser::Star> {
+    /// @throws exception
+    Rml::Browser::Star unwrap(JSContext* ctx, JSValueConst v)
+    {
+        Rml::Browser::Star map;
+        return map;
+    }
+
+    // transform Star to JsObject directly, so we can use Star as JsObject
+    static JSValue wrap(JSContext* ctx, Rml::Browser::Star s) noexcept {
+        JSValue obj = JS_NewObject(ctx);
+        Value v {ctx, JS_DupValue(ctx, obj)};
+        v["title"] = s.title;
+        v["icon"] = s.icon;
+        v["url"] = s.url;
+        return v.v;
+    }
+};
 
 
 }

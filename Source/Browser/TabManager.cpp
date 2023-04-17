@@ -104,6 +104,10 @@ Tab* TabManager::GetTabById(const String& tab_id) {
 	return it->second.get();
 }
 
+void TabManager::OnDocumentLoad(Tab* tab, ElementDocument* document) {
+	delegate_->OnDocumentLoad(tab, document);
+}
+
 }
 
 }

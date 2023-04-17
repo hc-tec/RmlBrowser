@@ -53,6 +53,7 @@
 #include "../../Include/RmlUi/Core/Elements/ElementDataGridCell.h"
 #include "../../Include/RmlUi/Core/Elements/ElementDataGridRow.h"
 
+#include "DocumentHeader.h"
 #include "ContextInstancerDefault.h"
 #include "DataControllerDefault.h"
 #include "DataViewDefault.h"
@@ -493,6 +494,8 @@ ElementPtr Factory::InstanceDocumentStream(Context* context, Stream* stream, con
 
 	XMLParser parser(element.get());
 	parser.Parse(stream);
+
+	document->SetIcon(parser.GetDocumentHeader()->icon);
 
 	return element;
 }

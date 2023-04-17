@@ -81,6 +81,11 @@ public:
 	/// Returns the title of this document.
 	const String& GetTitle() const;
 
+    /// Sets the document's icon.
+    void SetIcon(const String& icon);
+    /// Returns the icon of this document.
+    const String& GetIcon() const;
+
 	/// Returns the source address of this document.
 	const String& GetSourceURL() const;
 
@@ -177,6 +182,9 @@ private:
 
 	// Title of the document
 	String title;
+
+    // Icon path of the document
+    String icon;
 
 	// The original path this document came from
 	String source_url;

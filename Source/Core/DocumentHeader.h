@@ -51,7 +51,8 @@ public:
 	String title;	
 	/// A list of template resources that can used while parsing the document
 	StringList template_resources;
-
+    /// The icon of the document
+	String icon;
 	struct Resource {
 		String path; // Content path for inline resources, source path for external resources.
 		String content; // Only set for inline resources.

@@ -12,7 +12,7 @@
 #include <co/co.h>
 
 #include "../Script/RunTime.h"
-#include "../Script/ScriptPlugin.h"
+
 #include "MainWindow.h"
 
 
@@ -46,7 +46,7 @@ int Tab::Initialize() {
     }
     Backend::RegisterContext(context_, scheduler);
 
-    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_);
+    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_, this);
     Rml::RegisterPlugin(script_plugin_.get());
 
     qjs::Context* js_context = script_plugin_->js_context();
@@ -111,9 +111,9 @@ void Tab::Run(bool show) {
 void Tab::Fresh() {
     rendering_ = false;
     scheduler->go([&](){
-        if (delegate_) delegate_->OnFresh(this);
         Destroy();
         Initialize();
+        if (delegate_) delegate_->OnFresh(this);
 		if (active_) Show();
     });
     Log::Message(Log::LT_DEBUG, "[Tab = %s] Reload", tab_id_.data());
@@ -169,6 +169,10 @@ void Tab::OnOwnerShift(std::any ptr) {
 	{
 		js_owner_list_.push_back(ptr);
 	}
+}
+
+void Tab::OnDocumentLoad(ElementDocument* document) {
+    delegate_->OnDocumentLoad(this, document);
 }
 
 }

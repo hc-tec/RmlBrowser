@@ -24,8 +24,9 @@ namespace Rml {
 
 namespace Script {
 
-ScriptPlugin::ScriptPlugin(Context* context)
+ScriptPlugin::ScriptPlugin(Context* context, Delegate* delegate)
 		: context_(context),
+		delegate_(delegate),
 		js_runtime_(nullptr) {
 //    static co::mutex js_mutex;
 //    auto _ = co::mutex_guard(js_mutex);
@@ -64,6 +65,7 @@ void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
     qjs::Context* js_context = js_context_.get();
     js_context->global()["document"] = document;
 	DocumentHeader::ResourceList scripts = js_document_element_instancer_->GetScripts();
+	if (delegate_ != nullptr) delegate_->OnDocumentLoad(document);
     try {
 //        static co::mutex js_mutex;
 //        auto _ = co::mutex_guard(js_mutex);

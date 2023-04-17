@@ -24,6 +24,8 @@ public:
         virtual void OnTabStopRunning(Tab* tab) = 0;
 		virtual void OnTabActive(Tab* tab) = 0;
         virtual void OnTabUnActive(Tab* tab) = 0;
+
+        virtual void OnDocumentLoad(Tab* tab, ElementDocument* document) = 0;
 	};
     TabManager(Delegate* delegate);
 
@@ -46,6 +48,7 @@ public:
 	void OnStopRunning(Tab* tab) override;
 	void OnActive(Tab* tab) override;
 	void OnUnActive(Tab* tab) override;
+	void OnDocumentLoad(Tab* tab, ElementDocument* document) override;
 
 private:
     Delegate* delegate_;

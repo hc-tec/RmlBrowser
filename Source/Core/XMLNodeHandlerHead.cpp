@@ -110,6 +110,10 @@ Element* XMLNodeHandlerHead::ElementStart(XMLParser* parser, const String& name,
 				parser->GetDocumentHeader()->template_resources.push_back(href);
 			}
 
+			else if (type == "image/x-icon") {
+				parser->GetDocumentHeader()->icon = href;
+			}
+
 			else
 			{
 //				Log::ParseError(parser->GetSourceURL().GetURL(), parser->GetLineNumber(), "Invalid link type '%s'", type.c_str());

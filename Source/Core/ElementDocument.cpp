@@ -663,4 +663,13 @@ Element* ElementDocument::SearchFocusSubtree(Element* element, bool forward)
 	return nullptr;
 }
 
+void ElementDocument::SetIcon(const String& icon_) {
+	icon = icon_;
+}
+
+const String& ElementDocument::GetIcon() const
+{
+	return icon;
+}
+
 } // namespace Rml

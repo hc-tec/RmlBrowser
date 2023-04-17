@@ -23,8 +23,13 @@ class JsDocumentElementInstancer;
 class ScriptPlugin : public Rml::Plugin,
                      public net::HttpRequestObserver {
 public:
+	class Delegate {
+	public:
+		virtual void OnDocumentLoad(ElementDocument* document) = 0;
+	};
+public:
 
-	ScriptPlugin(Context* context);
+	ScriptPlugin(Context* context, Delegate* delegate);
 
     int GetEventClasses() override;
     void OnInitialise() override;
@@ -44,6 +49,7 @@ public:
 	void OnResponseAllReceived(net::HttpNetworkSession* session, net::HttpRequestInfo* request_info, net::HttpResponseInfo* response_info) override;
 
 private:
+	Delegate* delegate_;
 	Context* context_;
 	qjs::Runtime* js_runtime_;
     UniquePtr<qjs::Context> js_context_;
