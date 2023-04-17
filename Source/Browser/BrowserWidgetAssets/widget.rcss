@@ -9,6 +9,18 @@ body {
   font-family: LatoLatin;
 }
 
+.active-btn {
+  transition: background-color 0.3s;
+}
+
+.active-btn:hover {
+  background-color: #e4e4e4;
+}
+
+.active-btn:active {
+  background-color: #cdcdcd;
+}
+
 .tabs {
   height: 33px;
   background-color: #cdcdcd;
@@ -30,6 +42,15 @@ body {
 
 .tab:hover {
   background-color: #e4e4e4;
+}
+
+
+.tab-icon {
+  width: 15px;
+  height: 15px;
+  margin-right: 5px;
+  position: relative;
+  top: 2px;
 }
 
 .tab-active {
@@ -72,7 +93,7 @@ body {
 }
 
 .components {
-  height: 40px;
+  height: 36px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -83,14 +104,6 @@ body {
   height: 21px;
   padding: 5px 20px;
   transition: background-color 0.3s;
-}
-
-.components .icon:hover {
-  background-color: #e4e4e4;
-}
-
-.components .icon:active {
-  background-color: #cdcdcd;
 }
 
 .search-bar {
@@ -145,6 +158,35 @@ body {
   margin-right: 20px;
 }
 
+.components .star-icon {
+  position: relative;
+  left: -55px;
+  width: 50px;
+  height: 35px;
+  padding: 0;
+}
+
 .stars {
-  height: 27px;
+  height: 30px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.star {
+  padding: 0px 15px 4px 10px;
+  position: relative;
+  font-size: 14px;
+}
+
+.star .star-icon {
+  margin-right: 10px;
+  width: 20px;
+  height: 20px;
+  position: relative;
+  top: 6px;
+}
+
+.star p {
+
 }

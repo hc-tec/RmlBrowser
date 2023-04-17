@@ -5,6 +5,7 @@
 #include "BrowserWidget.h"
 
 #include <iostream>
+#include <utility>
 #include <RmlUi/Core.h>
 #include <RmlUi_Backend.h>
 #include <co/co.h>
@@ -24,6 +25,7 @@ BrowserWidget::BrowserWidget(Delegate* delegate)
 		scheduler(co::schedulers()[0]),
 		context_(nullptr),
 		document_(nullptr),
+		collections_(MakeUnique<Collections>()),
 		running_(true) {}
 
 int BrowserWidget::Initialize() {
@@ -35,10 +37,18 @@ int BrowserWidget::Initialize() {
     }
     Backend::RegisterContext(context_, scheduler);
 
-    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_);
+    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_, nullptr);
     Rml::RegisterPlugin(script_plugin_.get());
 
     qjs::Context* js_context = script_plugin_->js_context();
+    js_context->global()["CStarAdd"] = [&](String title, String icon, String url){
+      Star s = {
+			.title = std::move(title),
+			.icon = std::move(icon),
+			.url = std::move(url)
+		};
+	  collections_->Collect(s);
+    };
     js_context->global()["CFocusTab"] = [&](const Rml::String& tab_id){
 		delegate_->DoTabFocus(tab_id);
 		std::cout << tab_id << std::endl;
@@ -57,6 +67,7 @@ int BrowserWidget::Initialize() {
 		}
         std::cout << tab_id << std::endl;
     };
+
     // Load the demo document.
     document_ = context_->LoadDocument(widget_rml_);
 	if (document_)
@@ -64,6 +75,13 @@ int BrowserWidget::Initialize() {
         document_->Show();
 		document_->SetId(BROWSER_WIDGET_ID);
 	}
+
+    auto func = (std::function<void(qjs::Value)>) js_context->eval("STARS_LOADED");
+    Vector<Star> stars;
+    collections_->Get(stars);
+    JSValue obj = qjs::js_traits<Vector<Star>>::wrap(js_context->ctx, stars);
+    qjs::Value v {js_context->ctx, JS_DupValue(js_context->ctx, obj)};
+    func(v);
 }
 
 void BrowserWidget::Render() {
@@ -95,6 +113,7 @@ BrowserWidget::~BrowserWidget() {
     Rml::RemoveContext(BROWSER_WIDGET_ID);
     Rml::UnregisterPlugin(script_plugin_.get());
     script_plugin_.reset();
+	collections_.reset();
 }
 
 qjs::Context* BrowserWidget::js_context() { return script_plugin_->js_context(); }

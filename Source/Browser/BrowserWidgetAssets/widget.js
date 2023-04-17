@@ -35,6 +35,7 @@ class TabManager extends Subject {
     get_active_tab_params() { return this.tabs[this.active_tab] }
 
     add_tab(params) {
+        log(`add_tab ${JSON.stringify(params)}`)
         const id = params.id
         if (this.tabs[id]) return
         this.tab_num++
@@ -52,6 +53,9 @@ class TabManager extends Subject {
             CFocusTab(tab_id)
             // this.on_tab_active(tab_id)
         })
+        const icon = document.createElement('img')
+        icon.setClassNames('tab-icon')
+        icon.setAttribute('src', params.icon)
         const title = document.createElement('p')
         title.setClassNames('title')
         title.innerRML = params.title
@@ -66,6 +70,7 @@ class TabManager extends Subject {
             const focus_id = Object.keys(this.tabs)[this.tab_num-1]
             CRemoveTab(tab_id, focus_id)
         })
+        tab.appendChild(icon, true)
         tab.appendChild(title, true)
         tab.appendChild(close_icon, true)
 
@@ -100,6 +105,19 @@ class TabManager extends Subject {
         this.focus_tab(params.id)
     }
 
+    update_tab_params(params) {
+        this.tabs[params.id] = params
+        const tabs = this.tab_parent_el.getElementsByClassName('tab')
+        for (let i = 0; i < this.tab_num; i++) {
+            const tab = tabs[i]
+            if (tab.getId() === id) {
+                const title = tab.getElementsByClassName('title')[0]
+                title.innerRML = this.tabs[id].title
+                break
+            }
+        }
+    }
+
     unfocus_tab(id) {
         if (!this.tabs[id]) return
         const tabs = this.tab_parent_el.getElementsByClassName('tab')
@@ -121,6 +139,8 @@ class TabManager extends Subject {
                 tab.setClassNames('tab tab-active')
                 const title = tab.getElementsByClassName('title')[0]
                 title.innerRML = this.tabs[id].title
+                const icon = tab.getElementsByClassName('tab-icon')[0]
+                icon.setAttribute('src', this.tabs[id].icon)
                 this.NotifyTabFocus(tab)
                 break
             }
@@ -181,6 +201,10 @@ function TAB_MANAGER_FRESH_TAB(params) {
     tab_manager.on_tab_fresh(params)
 }
 
+function TAB_MANAGER_UPDATE_TAB_PARAMS(params) {
+    tab_manager.update_tab_params(params)
+}
+
 
 /* Search Input */
 let search_input = document.getElementById('search-input')
@@ -210,7 +234,66 @@ search_input.addEventListener(search_input, 'keydown', e => {
     }
 })
 
+class Stars {
+    constructor() {
+        this.stars = []
+        this.el = document.getElementsByClassName('stars')[0]
+    }
 
+    set_stars(stars) {
+        this.stars = stars
+    }
 
+    render() {
+        this.stars.forEach(el => {
+            const star = this.render_one(el)
+            this.el.appendChild(star, true)
+        })
+    }
+
+    render_one(params) {
+        const star = document.createElement('div')
+        star.setClassNames('star active-btn')
+        const icon = document.createElement('img')
+        icon.setClassNames('star-icon')
+        icon.setAttribute('src', params.icon)
+        const p = document.createElement('p')
+        p.innerRML = params.title
+        star.appendChild(icon, true)
+        star.appendChild(p, true)
+        star.setAttribute('url', params.url)
+        star.addEventListener(star, 'click', e => {
+            const url = star.getAttribute('url')
+            COpenTabWithUrl("-1", url)
+        })
+
+        return star
+    }
+
+    push(params) {
+        this.stars.push(params)
+        this.el.appendChild(this.render_one(params), true)
+    }
+
+}
+const STARS = new Stars()
+// collection ops
+const star_icon = document.getElementsByClassName('star-icon')[0]
+star_icon.addEventListener(star_icon, 'click', e => {
+    const src = star_icon.getAttribute('src')
+    if (src === 'images/star.png') {
+        const tab = tab_manager.get_active_tab_params()
+        CStarAdd(tab.title, tab.icon, tab.url)
+        STARS.push(tab)
+        star_icon.setAttribute('src', 'images/star-active.png')
+    } else {
+        star_icon.setAttribute('src', 'images/star.png')
+    }
+})
+
+const STARS_LOADED = (stars) => {
+    STARS.set_stars(stars)
+    STARS.render()
+}
 
 

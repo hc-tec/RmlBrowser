@@ -7,6 +7,8 @@
 
 #include <RmlUi/Core/Types.h>
 
+#include "Collections.h"
+
 namespace co {
 
 class Scheduler;
@@ -61,7 +63,7 @@ private:
     Rml::Context* context_;
     Rml::ElementDocument* document_;
     UniquePtr<Rml::Script::ScriptPlugin> script_plugin_;
-
+    UniquePtr<Collections> collections_;
 	bool running_;
 };
 
