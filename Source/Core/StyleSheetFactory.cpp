@@ -29,11 +29,12 @@
 #include "StyleSheetFactory.h"
 #include "../../Include/RmlUi/Core/Log.h"
 #include "../../Include/RmlUi/Core/StyleSheetContainer.h"
+#include "NetStreamFile.h"
+#include "ResourceLoader.h"
 #include "StreamFile.h"
 #include "StyleSheetNode.h"
 #include "StyleSheetParser.h"
 #include "StyleSheetSelector.h"
-#include "NetStreamFile.h"
 
 namespace Rml {
 
@@ -222,8 +223,10 @@ UniquePtr<const StyleSheetContainer> StyleSheetFactory::LoadStyleSheetContainer(
 		// Open stream, construct new sheet and pass the stream into the sheet
 		stream = MakeUnique<StreamFile>();
 	} else {
+        NetStreamFile file;
+		ResourceLoader::Get()->WaitForResource(sheet, &file);
 		// Network resource stream
-		stream = MakeUnique<NetStreamFile>();
+		stream = MakeUnique<NetStreamFile>(file);
 	}
 	if (stream->Open(sheet))
 	{

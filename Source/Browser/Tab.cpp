@@ -110,7 +110,7 @@ void Tab::Run(bool show) {
 
 void Tab::Fresh() {
     rendering_ = false;
-    scheduler->go([&](){
+    scheduler->go([=](){
         Destroy();
         Initialize();
         if (delegate_) delegate_->OnFresh(this);
@@ -124,7 +124,7 @@ void Tab::Fresh() {
 void Tab::StopRunning() {
 	rendering_ = false;
 	running_ = false;
-    scheduler->go([&](){
+    scheduler->go([=](){
 		Destroy();
 		if (delegate_) delegate_->OnStopRunning(this);
 	});
@@ -133,9 +133,13 @@ void Tab::StopRunning() {
 void Tab::Show() {
 	active_ = true;
 	rendering_ = true;
-	scheduler->go([&](){
+	scheduler->go([=](){
         RMLUI_ASSERT(document_)
-		document_->Show();
+		while (document_ == nullptr) {
+			Show();
+			return;
+		}
+        document_->Show();
 		if (delegate_) delegate_->OnActive(this);
 		Render();
 	});
@@ -145,7 +149,7 @@ void Tab::Hide() {
 	Backend::ClearFrame();
 	active_ = false;
 	rendering_ = false;
-	scheduler->go([&](){
+	scheduler->go([=](){
 		RMLUI_ASSERT(document_)
 		document_->Hide();
 		if (delegate_) delegate_->OnUnActive(this);

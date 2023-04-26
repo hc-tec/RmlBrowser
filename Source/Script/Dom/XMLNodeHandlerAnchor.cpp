@@ -47,6 +47,7 @@ Rml::Element* XMLNodeHandlerAnchor::ElementStart(Rml::XMLParser* parser, const R
 	GetOwnershipMgr<SelfListener>()->ShiftOwner(std::move(listener));
     // Add the Select element into the document
     Element* result = parser->GetParseFrame()->element->AppendChild(std::move(element));
+    result->SetAttributes(attributes);
     return result;
 }
 

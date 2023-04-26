@@ -8,7 +8,7 @@
 </head>
 <body>
     <div class="intro-header-wrapper">
-        <a class="intro-header" href="articles/ipc_1.html">
+        <a class="intro-header" href="../index.rml">
             <img id="logo" src="../images/chromium.png"></img>
             <p>Chromium</p>
         </a>
@@ -38,9 +38,9 @@
         <div class="float-right"><img style="width: 300px" src="../images/ICtmZ85CWgSJ7UZjomd1.png"></img></div>
         <div class="clear"></div>
         <p>When you start an application, a process is created. The program might create thread(s) to help it do work, but that's optional. The Operating System gives the process a "slab" of memory to work with and all application state is kept in that private memory space. When you close the application, the process also goes away and the Operating System frees up the memory.</p>
-        <img style="width: 80%" src="../images/QQ截图20230425200927.png"></img>
+        <img style="width: 80%" src="../images/QQ20230425200927.png"></img>
         <p>A process can ask the Operating System to spin up another process to run different tasks. When this happens, different parts of the memory are allocated for the new process. If two processes need to talk, they can do so by using <strong>I</strong>nter <strong>P</strong>rocess <strong>C</strong>ommunication (<strong>IPC</strong>). Many applications are designed to work this way so that if a worker process get unresponsive, it can be restarted without stopping other processes which are running different parts of the application.</p>
-        <img style="width: 80%" src="../images/QQ截图20230425201105.png"></img>
+        <img style="width: 80%" src="../images/QQ20230425201105.png"></img>
         <h2 id="Browser-Architecture" tabindex="-1">Browser Architecture</h2>
         <p>So how is a web browser built using processes and threads? Well, it could be one process with many different threads or many different processes with a few threads communicating over IPC.</p>
         <img src="../images/BG4tvT7y95iPAelkeadP.png"></img>

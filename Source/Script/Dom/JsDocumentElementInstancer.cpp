@@ -3,14 +3,13 @@
 //
 
 #include "JsDocumentElementInstancer.h"
-#include "RmlUi/Core/XMLParser.h"
-#include "RmlUi/Core/SystemInterface.h"
-#include "RmlUi/Core/Utils.h"
-#include "RmlUi/Core/URL.h"
-
-#include "JsDocumentElement.h"
 #include "../RunTime.h"
-
+#include "JsDocumentElement.h"
+#include "RmlUi/Core/SystemInterface.h"
+#include "RmlUi/Core/URL.h"
+#include "RmlUi/Core/Utils.h"
+#include "RmlUi/Core/XMLParser.h"
+#include "Core/ResourceLoader.h"
 
 namespace Rml {
 namespace Script {
@@ -60,7 +59,10 @@ Element* JsDocumentElementInstancer::ElementStart(XMLParser* parser, const Strin
     String src = Get<String>(attributes, "src", "");
     if (src.size() > 0)
     {
-        scripts_.push_back(MakeExternalResource(parser, src));
+        DocumentHeader::Resource r = MakeExternalResource(parser, src);
+        ResourceLoader* loader = ResourceLoader::Get();
+        loader->Load(r.path);
+        scripts_.push_back(r);
     }
 	return element;
 }

@@ -35,6 +35,8 @@
 #include "../../../Include/RmlUi/Core/StyleSheet.h"
 #include "../../../Include/RmlUi/Core/URL.h"
 #include "../TextureDatabase.h"
+#include <RmlUi/Core/Utils.h>
+#include <Core/ResourceLoader.h>
 
 namespace Rml {
 
@@ -109,6 +111,23 @@ void ElementImage::OnAttributeChange(const ElementAttributes& changed_attributes
 	{
 		texture_dirty = true;
 		dirty_layout = true;
+		if (changed_attributes.find("src") != changed_attributes.end()) {
+            String src;
+            changed_attributes.find("src")->second.GetInto(src);
+			ElementDocument* document = GetOwnerDocument();
+			if (document != nullptr)
+			{
+				const String& url = document->GetSourceURL();
+				URL u(src);
+				String path = src;
+				if (u.GetProtocol() != "http" || u.GetProtocol() != "https")
+				{
+					path = Absolutepath(src, url);
+				}
+				ResourceLoader* loader = ResourceLoader::Get();
+				loader->Load(path);
+			}
+		}
 	}
 
 	// Check for a changed 'width' attribute. If this changes, a layout is forced which will

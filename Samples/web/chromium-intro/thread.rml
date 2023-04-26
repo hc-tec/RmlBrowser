@@ -2,6 +2,8 @@
     <head>
         <title>Thread</title>
         <link type="text/rcss" href="css/main.rcss" />
+        <link type="text/rcss" href="css/header.rcss" />
+        <link type="text/rcss" href="css/section.rcss" />
         <link type="image/x-icon" href="images/favicon-1.png" />
     </head>
     <body>

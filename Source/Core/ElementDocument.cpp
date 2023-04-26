@@ -38,6 +38,7 @@
 #include "ElementStyle.h"
 #include "EventDispatcher.h"
 #include "LayoutEngine.h"
+#include "ResourceLoader.h"
 #include "StreamFile.h"
 #include "StyleSheetFactory.h"
 #include "Template.h"

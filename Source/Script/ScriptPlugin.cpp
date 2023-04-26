@@ -3,22 +3,20 @@
 //
 
 #include "ScriptPlugin.h"
-
-#include <iostream>
-
-#include "core/http/response/http_response_info.h"
-
-#include "RmlUi/Core/Context.h"
-#include "RmlUi/Core/Element.h"
-#include "RmlUi/Core/Factory.h"
-#include "RmlUi/Core/ElementDocument.h"
-#include "Net/Network.h"
-
-#include <co/co/mutex.h>
-#include "Glue.h"
-#include "RunTime.h"
 #include "Dom/JsDocumentElementInstancer.h"
 #include "Dom/XMLNodeHandlerAnchor.h"
+#include "Dom/XMLNodeHandlerImg.h"
+#include "Glue.h"
+#include "Net/Network.h"
+#include "RmlUi/Core/Context.h"
+#include "RmlUi/Core/Element.h"
+#include "RmlUi/Core/ElementDocument.h"
+#include "RmlUi/Core/Factory.h"
+#include "RunTime.h"
+#include "core/http/response/http_response_info.h"
+#include <Core/ResourceLoader.h>
+#include <co/co/mutex.h>
+#include <iostream>
 
 namespace Rml {
 
@@ -36,6 +34,7 @@ ScriptPlugin::ScriptPlugin(Context* context, Delegate* delegate)
     js_document_element_instancer_ = MakeShared<JsDocumentElementInstancer>();
     Factory::RegisterElementInstancer("body", js_document_element_instancer_.get());
     XMLParser::RegisterNodeHandler("a", MakeShared<XMLNodeHandlerAnchor>());
+    XMLParser::RegisterNodeHandler("img", MakeShared<XMLNodeHandlerImg>());
     XMLParser::RegisterNodeHandler("script", js_document_element_instancer_);
 }
 
@@ -110,24 +109,17 @@ void ScriptPlugin::LoadExternJs(qjs::Context* js_context, const std::string& pat
 	{
 		js_context->evalFile(path.data());
 	} else {
-        Net::Network* service = Net::Network::GetInstance();
-        net::RequestParams params;
-        params.request_info.url = net::URL(path);
-        params.request_info.method = net::Method::GET;
-        std::unique_ptr<net::URLLoader> loader = service->CreateURLLoader(params);
-        loader->AddHttpRequestObserver(this);
-        loader->Start();
-        loader->RemoveHttpRequestObserver(this);
-		js_context->eval(js_buffer_.data(), url.GetFileName().data());
+		ResourceLoader* resource_loader = ResourceLoader::Get();
+		NetStreamFile file;
+		resource_loader->WaitForResource(path, &file);
+        file.Open(path);
+        char* buf = new char[file.GetSize()];
+        file.Read(buf, file.GetSize());
+        js_context->eval(buf, url.GetFileName().data());
+		delete[] buf;
 	}
 }
 
-void ScriptPlugin::OnResponseAllReceived(net::HttpNetworkSession* session, net::HttpRequestInfo* request_info, net::HttpResponseInfo* response_info)
-{
-	std::string_view buf;
-	response_info->body->Read(&buf, response_info->body->GetSize());
-	js_buffer_.append(buf.data());
-}
 
 }
 

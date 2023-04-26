@@ -20,8 +20,7 @@ namespace Script {
 class Document;
 class JsDocumentElementInstancer;
 
-class ScriptPlugin : public Rml::Plugin,
-                     public net::HttpRequestObserver {
+class ScriptPlugin : public Rml::Plugin {
 public:
 	class Delegate {
 	public:
@@ -46,7 +45,6 @@ public:
 	qjs::Context* js_context() { return js_context_.get(); }
 
 	void LoadExternJs(qjs::Context* js_context, const std::string& path);
-	void OnResponseAllReceived(net::HttpNetworkSession* session, net::HttpRequestInfo* request_info, net::HttpResponseInfo* response_info) override;
 
 private:
 	Delegate* delegate_;
@@ -54,9 +52,6 @@ private:
 	qjs::Runtime* js_runtime_;
     UniquePtr<qjs::Context> js_context_;
     SharedPtr<JsDocumentElementInstancer> js_document_element_instancer_;
-
-	// js buffer from network
-	std::string js_buffer_;
 };
 
 

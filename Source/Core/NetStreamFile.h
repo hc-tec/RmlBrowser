@@ -19,7 +19,11 @@ class NetStreamFile : public StreamFile,
 					  public std::enable_shared_from_this<NetStreamFile> {
 public:
 	NetStreamFile();
-	~NetStreamFile() override;
+
+    NetStreamFile(const NetStreamFile& file)
+		: is_open_(file.is_open_),
+		buffer_(file.buffer_) {}
+
     /// Attempts to open the stream pointing at a given location.
     bool Open(const String& path) override;
 	void Close() override;
@@ -34,7 +38,10 @@ public:
 		net::HttpRequestInfo* request_info,
 		net::HttpResponseInfo* response_info) override;
 
+    bool is_open() const { return is_open_; }
+
 private:
+	bool is_open_;
 	std::shared_ptr<net::HttpResponseBufferBody> buffer_;
 };
 

@@ -27,17 +27,17 @@
  */
 
 #include "XMLNodeHandlerHead.h"
-#include "DocumentHeader.h"
-#include "TemplateCache.h"
 #include "../../Include/RmlUi/Core/Core.h"
 #include "../../Include/RmlUi/Core/Element.h"
 #include "../../Include/RmlUi/Core/ElementDocument.h"
 #include "../../Include/RmlUi/Core/StringUtilities.h"
 #include "../../Include/RmlUi/Core/SystemInterface.h"
-#include "../../Include/RmlUi/Core/XMLParser.h"
 #include "../../Include/RmlUi/Core/URL.h"
 #include "../../Include/RmlUi/Core/Utils.h"
-
+#include "../../Include/RmlUi/Core/XMLParser.h"
+#include "DocumentHeader.h"
+#include "ResourceLoader.h"
+#include "TemplateCache.h"
 
 namespace Rml {
 
@@ -95,7 +95,10 @@ Element* XMLNodeHandlerHead::ElementStart(XMLParser* parser, const String& name,
 			if (type == "text/rcss" ||
 				 type == "text/css")
 			{
-				parser->GetDocumentHeader()->rcss.push_back(MakeExternalResource(parser, href));
+				DocumentHeader::Resource r = MakeExternalResource(parser, href);
+                ResourceLoader* loader = ResourceLoader::Get();
+                loader->Load(r.path);
+				parser->GetDocumentHeader()->rcss.push_back(r);
 			}
 
 			// If its an template, add to the template fields

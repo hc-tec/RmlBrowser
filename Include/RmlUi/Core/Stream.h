@@ -43,7 +43,7 @@ class StreamListener;
 	@author Lloyd Weehuizen
  */
 
-class RMLUICORE_API Stream : public NonCopyMoveable
+class RMLUICORE_API Stream
 {
 public:
     // Stream modes.

@@ -216,12 +216,12 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
-    Rml::Browser::Tab* tab2 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Source/Browser/History/index.rml");
-    tab2->Run(true);
+//    Rml::Browser::Tab* tab2 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Source/Browser/History/index.rml");
+//    tab2->Run();
 //    Rml::Browser::Tab* tab1 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/thread.rml");
 //    tab1->Run(true);
-//    Rml::Browser::Tab* tab3 = tab_manager->NewTab("http://127.0.0.1:8000/thread.rml");
-//    tab3->Run(true);
+    Rml::Browser::Tab* tab3 = tab_manager->NewTab("http://127.0.0.1:8000/articles/ipc_1.rml");
+    tab3->Run(true);
 
 	window->WaitForClose();
 	delete window;

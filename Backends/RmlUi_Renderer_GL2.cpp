@@ -50,6 +50,7 @@
 	#include <GL/glu.h>
 	#include <GL/glx.h>
     #include "lodepng.h"
+    #include "../Source/Core/ResourceLoader.h"
 #endif
 
 #define GL_CLAMP_TO_EDGE 0x812F
@@ -311,7 +312,10 @@ bool RenderInterface_GL2::LoadTexture(Rml::TextureHandle& texture_handle, Rml::V
         int len = source.size();
         if (source.substr(len - 3, len) == "png")
         {
-			Rml::UniquePtr<Rml::NetStreamFile> file = Rml::MakeUnique<Rml::NetStreamFile>();
+			Rml::ResourceLoader* loader = Rml::ResourceLoader::Get();
+			Rml::NetStreamFile f;
+			loader->WaitForResource(source, &f);
+            Rml::UniquePtr<Rml::NetStreamFile> file = Rml::MakeUnique<Rml::NetStreamFile>(f);
 			if(!file->Open(source)) return false;
             size_t buffer_size = file->GetSize();
             char* buffer = new char[buffer_size];

@@ -17,9 +17,9 @@ using namespace tit;
 
 namespace Rml {
 
-NetStreamFile::NetStreamFile() {}
-
-NetStreamFile::~NetStreamFile() {}
+NetStreamFile::NetStreamFile()
+	: is_open_(false),
+	buffer_() {}
 
 void NetStreamFile::Close()
 {
@@ -52,6 +52,7 @@ size_t NetStreamFile::Read(void* buffer, size_t bytes) const
 
 bool NetStreamFile::Open(const String& path)
 {
+	if (is_open_) return buffer_ != nullptr;
     SetStreamDetails(URL(path), Stream::MODE_READ);
     Net::Network* service = Net::Network::GetInstance();
 
@@ -62,6 +63,7 @@ bool NetStreamFile::Open(const String& path)
     loader->AddHttpRequestObserver(this);
     loader->Start();
     loader->RemoveHttpRequestObserver(this);
+	is_open_ = true;
 	return true;
 }
 
