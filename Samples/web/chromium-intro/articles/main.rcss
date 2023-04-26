@@ -1,0 +1,36 @@
+
+body {
+  background-color: #fff;
+  color: #202124;
+  font-size: 20px;
+  line-height: 1.75;
+}
+
+.content {
+  width: 60%;
+  margin: 0 auto;
+  margin-top: 150px;
+}
+
+.content p,
+.content h1,
+.content h2,
+.content h3,
+.content .aside {
+  margin-bottom: 20px;
+}
+
+.content h1 {
+  font-size: 48px;
+  margin-bottom: 40px;
+}
+
+.aside p {
+  margin-bottom: 0;
+}
+
+.content a {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+

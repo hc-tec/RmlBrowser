@@ -36,17 +36,11 @@
 #include "../../Include/RmlUi/Core/SystemInterface.h"
 #include "../../Include/RmlUi/Core/XMLParser.h"
 #include "../../Include/RmlUi/Core/URL.h"
+#include "../../Include/RmlUi/Core/Utils.h"
 
 
 namespace Rml {
 
-static String Absolutepath(const String& source, const String& base)
-{
-	String joined_path;
-	::Rml::GetSystemInterface()->JoinPath(joined_path, StringUtilities::Replace(base, '|', ':'), StringUtilities::Replace(source, '|', ':'));
-//	return StringUtilities::Replace(joined_path, ':', '|');
-	return joined_path;
-}
 
 static DocumentHeader::Resource MakeInlineResource(XMLParser* parser, const String& data)
 {

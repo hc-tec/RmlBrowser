@@ -208,7 +208,7 @@ function TAB_MANAGER_UPDATE_TAB_PARAMS(params) {
 
 /* Search Input */
 let search_input = document.getElementById('search-input')
-search_input = dom.ToElementFormControl(search_input)
+search_input = dom.convertToElementFormControl(search_input)
 
 // observe tab focus
 class SearchInputObserver extends TabManagerObserver {
@@ -277,23 +277,10 @@ class Stars {
 
 }
 const STARS = new Stars()
-// collection ops
-const star_icon = document.getElementsByClassName('star-icon')[0]
-star_icon.addEventListener(star_icon, 'click', e => {
-    const src = star_icon.getAttribute('src')
-    if (src === 'images/star.png') {
-        const tab = tab_manager.get_active_tab_params()
-        CStarAdd(tab.title, tab.icon, tab.url)
-        STARS.push(tab)
-        star_icon.setAttribute('src', 'images/star-active.png')
-    } else {
-        star_icon.setAttribute('src', 'images/star.png')
-    }
-})
 
-const STARS_LOADED = (stars) => {
-    STARS.set_stars(stars)
-    STARS.render()
-}
+// const STARS_LOADED = (stars) => {
+    // STARS.set_stars(stars)
+    // STARS.render()
+// }
 
 

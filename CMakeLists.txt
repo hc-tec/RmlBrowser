@@ -1102,7 +1102,10 @@ add_executable(browser
         Source/Browser/TabManager.cpp
 		Source/Browser/TabManager.h
 		Source/Browser/BrowserWidget.cpp
-		Source/Browser/BrowserWidget.h Source/Browser/Glue.cpp Source/Browser/Glue.h Source/Net/Network.cc Source/Net/Network.h Source/Net/URLLoaderProxy.cc Source/Net/URLLoaderProxy.h Source/Net/NetworkObserverContext.cc Source/Net/NetworkObserverContext.h Source/Browser/Collections.cpp Source/Browser/Collections.h)
+		Source/Browser/BrowserWidget.h
+		Source/Browser/Glue.cpp
+		Source/Browser/Glue.h
+		Source/Net/Network.cc Source/Net/Network.h Source/Net/URLLoaderProxy.cc Source/Net/URLLoaderProxy.h Source/Net/NetworkObserverContext.cc Source/Net/NetworkObserverContext.h Source/Browser/Collections.cpp Source/Browser/Collections.h Source/Browser/History.cpp Source/Browser/History.h Source/Script/Net/Glue.cpp Source/Script/Net/Glue.h Source/Script/Net/NetHttp.cpp Source/Script/Net/NetHttp.h Source/Script/Net/Impl/NetHttpImpl.cpp Source/Script/Net/Impl/NetHttpImpl.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

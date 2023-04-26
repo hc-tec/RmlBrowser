@@ -9,6 +9,7 @@
 #include "RmlUi/Core/Context.h"
 #include "RmlUi/Core/ElementDocument.h"
 #include "RmlUi/Core/SystemInterface.h"
+#include "RmlUi/Core/Utils.h"
 #include "SelfListener.h"
 #include "Ownership.h"
 
@@ -16,13 +17,6 @@ namespace Rml {
 
 namespace Script {
 
-
-static String Absolutepath(const String& source, const String& base)
-{
-    String joined_path;
-    Rml::GetSystemInterface()->JoinPath(joined_path, StringUtilities::Replace(base, '|', ':'), StringUtilities::Replace(source, '|', ':'));
-    return joined_path;
-}
 
 void ProcessEvent(Rml::Event* event) {
     if (event->GetId() == EventId::Click) {

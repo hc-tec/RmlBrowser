@@ -58,7 +58,6 @@ public:
 	void DoTabEnterUrl(const String& tab_id, const String& url) override;
 	void DoTabOpenNew(const String& url) override;
 
-
 private:
 
     UniquePtr<TabManager> tab_manager_;

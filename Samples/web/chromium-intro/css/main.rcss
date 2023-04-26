@@ -16,6 +16,25 @@ body {
   right: 0;
   bottom: 0;
   overflow: hidden auto;
+  line-height: 1.25;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 36px;
+  display: block;
+}
+
+h2 {
+  font-weight: bold;
+  font-size: 32px;
+  display: block;
+}
+
+h3 {
+  font-weight: bold;
+  font-size: 28px;
+  display: block;
 }
 
 /* scroll bar style */
@@ -33,4 +52,26 @@ scrollbarhorizontal sliderbar:hover { background: #888; }
 scrollbarhorizontal sliderbar:active { background: #666; }
 
 
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+.aside {
+  background-color: #e8f0fe66;
+  border-radius: 6px;
+  color: #174ea6;
+  padding: 1.2rem;
+}
+
+.aside p {
+  margin-bottom: 0;
+}
+
+.clear {
+  clear:both;
+}
 

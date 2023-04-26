@@ -58,15 +58,7 @@ int BrowserWidget::Initialize() {
         delegate_->DoTabFocus(focus_id);
         std::cout << tab_id << std::endl;
     };
-    js_context->global()["COpenTabWithUrl"] = [&](const Rml::String& tab_id, const Rml::String& url){
-		if (tab_id == "-1") {
-			delegate_->DoTabOpenNew(url);
-		} else
-		{
-			delegate_->DoTabEnterUrl(tab_id, url);
-		}
-        std::cout << tab_id << std::endl;
-    };
+
 
     // Load the demo document.
     document_ = context_->LoadDocument(widget_rml_);

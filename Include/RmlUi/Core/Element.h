@@ -482,6 +482,7 @@ public:
     /// Gets the markup and content of the element.
     /// @return The content of the element.
     String _GetInnerRML() const;
+    String GetOuterRML();
 	/// Sets the markup and content of the element. All existing children will be replaced.
 	/// @param[in] rml The new content of the element.
 	void SetInnerRML(const String& rml);

@@ -211,6 +211,7 @@ set(Core_PUB_HDR_FILES
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/TypeConverter.h
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/TypeConverter.inl
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/Types.h
+    ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/Utils.h
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/URL.h
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/Utilities.h
     ${PROJECT_SOURCE_DIR}/Include/RmlUi/Core/Variant.h
@@ -392,6 +393,7 @@ set(Core_SRC_FILES
     ${PROJECT_SOURCE_DIR}/Source/Core/Tween.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/TypeConverter.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/URL.cpp
+    ${PROJECT_SOURCE_DIR}/Source/Core/Utils.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/Variant.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/WidgetScroll.cpp
     ${PROJECT_SOURCE_DIR}/Source/Core/XMLNodeHandler.cpp

@@ -6,9 +6,9 @@
         <link type="text/rcss" href="css/section.rcss" />
         <link type="image/x-icon" href="images/favicon.png" />
     </head>
-    <body>
+    <body id="app">
         <div class="intro-header-wrapper">
-            <a class="intro-header" href="thread.rml">
+            <a class="intro-header" href="articles/ipc_1.html">
                 <img id="logo" src="images/chromium.png"></img>
                 <p>Chromium</p>
             </a>
@@ -28,14 +28,78 @@
                 Chromium is an open-source browser project that aims to build a safer, faster, and more stable way for all Internet users to experience the web. This site contains design documents, architecture overviews, testing information, and more to help you learn to build and work with the Chromium source code.
             </p>
             <div class="intro-module-wrapper">
-<!--                <div class="intro-module" style="decorator: image(./images/rI6G204.png cover);">-->
-<!--                    <div class="intro-module-container">-->
-<!--                        <p class="title">Thread</p>-->
-<!--                        <p class="description">The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.</p>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <div class="intro-module"
+                     r-for="module in introModules"
+                     r-img="module.bg_img"
+                     style="decorator: image(./images/rI6G204.png cover);"
+                     r-load="loadIntroImg"
+                     r-click="moduleClick">
+                    <div class="intro-module-container">
+                        <p class="title">{{ module.title }}</p>
+                        <p class="description">{{ module.description }}</p>
+                    </div>
+                </div>
             </div>
         </div>
+        <script src="../../../Source/Script/rue.js"></script>
+        <script src="../../../Source/Script/Net/axios.js"></script>
+        <script>
+            const axios = new Axios()
+            const res = axios.post('https://aisys.globalcdn.top/v1/ai/chat2', {
+                "annal": [],
+                "dialogue": false,
+                "prompt": "你好"
+            }, {
+                'X-Token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTYwMjcsIlRlbCI6IjE4MDcwNTAyNzY3IiwiTWVtYmVyRXhwIjowLCJleHAiOjE2ODQ5ODQ1NDAsImlzcyI6IlRERCIsIm5iZiI6MTY4MjM5MjU0MH0.qgF2fRsELBcov5XlfNcD4N8sg5-cx71jTcHfylI6IRw'
+            })
+            log(JSON.stringify(res))
+        </script>
+        <script>
+            const rue = new Rue({
+                el: 'app',
+                data: {
+                    introModules: [],
+                },
+                methods: {
+                    loadIntroImg(el) {
+                        const img = el.getAttribute('img')
+                        el.setProperty('decorator', `image(${img} cover)`)
+                    },
+                    moduleClick(el) {
+
+                    }
+                },
+                onMounted() {
+                    this.introModules = [
+                        {
+                            bg_img: './images/rI6G204.png',
+                            title: 'Thread',
+                            description: 'The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.'
+                        },
+                        {
+                            bg_img: './images/ss3c252_ANI-4.png',
+                            title: 'Network',
+                            description: 'The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.'
+                        },
+                        {
+                            bg_img: './images/WAN2698_ANI-1-2.png',
+                            title: 'IPC',
+                            description: 'The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.'
+                        },
+                        {
+                            bg_img: './images/Snipaste_2023-01-04_20-48-41_prev_ui.png',
+                            title: 'Plugins',
+                            description: 'The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.'
+                        },
+                        {
+                            bg_img: './images/ndRm753_1212.png',
+                            title: 'Sandbox',
+                            description: 'The network stack is a mostly single-threaded cross-platform library primarily for resource fetching.'
+                        },
+                    ]
+                }
+            })
+        </script>
         <script src="js/intro_module.js"></script>
         <script src="js/main.js"></script>
     </body>

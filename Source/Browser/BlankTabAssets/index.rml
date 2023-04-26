@@ -1,6 +1,6 @@
 <rml>
     <head>
-        <title>Blank Tab</title>
+        <title>Rml Blank Tab</title>
         <link type="text/rcss" href="main.rcss" />
         <link type="image/x-icon" href="images/favicon_newtabpage.png" />
     </head>

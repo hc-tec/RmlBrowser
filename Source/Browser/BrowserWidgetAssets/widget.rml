@@ -3,7 +3,7 @@
         <title>Widget</title>
         <link type="text/rcss" href="widget.rcss" />
     </head>
-    <body>
+    <body id="app">
         <div class="tabs">
             <div style="position: relative;">
                 <div class="tabs-container">
@@ -33,14 +33,56 @@
                     <input id="search-input" class="search-input" type="text" name="search"/>
                 </div>
             </div>
-            <img class="icon star-icon active-btn" src="images/star.png"></img>
+            <div class="function-icons">
+                <img class="active-btn star-icon" src="images/star.png" r-click="starUrl"></img>
+                <img class="active-btn history-icon" src="images/history.png" r-click="toHistoryPage"></img>
+                <img class="active-btn history-icon" src="images/history.png"></img>
+            </div>
         </div>
         <div class="stars">
-<!--            <div class="star active-btn">-->
-<!--                <img class="star-icon" src="images/favicon-1.png"></img>-->
-<!--                <p>title</p>-->
-<!--            </div>-->
+            <div
+                class="star active-btn"
+                r-for="star in stars"
+                r-url="star.url"
+                r-click="handleStarClick">
+                <img class="star-icon" r-src="star.icon"></img>
+                <div class="text">
+                    <p>{{ star.title }}</p>
+                </div>
+            </div>
         </div>
+        <script src="../../Script/rue.js"></script>
+        <script>
+            const rue = new Rue({
+                el: 'app',
+                data: {
+                    stars: []
+                },
+                methods: {
+                    handleStarClick(el) {
+                        const url = el.getAttribute('url')
+                        COpenTabWithUrl("-1", url)
+                    },
+                    starUrl(star_icon) {
+                        const src = star_icon.getAttribute('src')
+                        if (src === 'images/star.png') {
+                            const tab = tab_manager.get_active_tab_params()
+                            CStarAdd(tab.title, tab.icon, tab.url)
+                            this.stars = [...this.stars, tab]
+                            star_icon.setAttribute('src', 'images/star-active.png')
+                        } else {
+                            star_icon.setAttribute('src', 'images/star.png')
+                        }
+                    },
+                    toHistoryPage() {
+                        COpenTabWithUrl("-1", "/home/titto/CProjects/RmlUi5.0/Source/Browser/History/index.rml")
+                    }
+                }
+            })
+            const STARS_LOADED = (stars) => {
+                rue.stars = stars
+            }
+        </script>
         <script src="widget.js"></script>
     </body>
 </rml>

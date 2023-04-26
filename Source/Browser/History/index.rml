@@ -1,0 +1,47 @@
+<rml>
+    <head>
+        <title>Rml History</title>
+        <link type="text/rcss" href="main.rcss" />
+        <link type="image/x-icon" href="images/favicon_newtabpage.png" />
+    </head>
+    <body id="app">
+        <div class="historys">
+            <div class="big-title">
+                History
+                <div class="big-title-line"></div>
+            </div>
+            <div>
+                <div
+                    class="history"
+                    r-for="item in arr"
+                    r-url="item.url"
+                    r-click="handleClick">
+                    <img class="icon" r-src="item.icon"></img>
+                    <div class="title">
+                        <p>{{ item.title }}</p>
+                    </div>
+                    <p class="url">{{ item.url }}</p>
+                    <p class="time">{{ item.time }}</p>
+                </div>
+            </div>
+        </div>
+        <script src="../../Script/rue.js"></script>
+        <script>
+            const rue = new Rue({
+                el: 'app',
+                data: {
+                    arr: []
+                },
+                methods: {
+                    handleClick(el) {
+                        const url = el.getAttribute('url')
+                        COpenTabWithUrl("-1", url)
+                    },
+                },
+                onMounted() {
+                    this.arr = CHistoryGet().reverse()
+                }
+            })
+        </script>
+    </body>
+</rml>

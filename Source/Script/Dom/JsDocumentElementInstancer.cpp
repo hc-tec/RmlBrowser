@@ -5,21 +5,15 @@
 #include "JsDocumentElementInstancer.h"
 #include "RmlUi/Core/XMLParser.h"
 #include "RmlUi/Core/SystemInterface.h"
-
+#include "RmlUi/Core/Utils.h"
 #include "RmlUi/Core/URL.h"
+
 #include "JsDocumentElement.h"
 #include "../RunTime.h"
 
 
 namespace Rml {
 namespace Script {
-
-static String Absolutepath(const String& source, const String& base)
-{
-    String joined_path;
-    Rml::GetSystemInterface()->JoinPath(joined_path, StringUtilities::Replace(base, '|', ':'), StringUtilities::Replace(source, '|', ':'));
-    return joined_path;//StringUtilities::Replace(joined_path, ':', '|');
-}
 
 static DocumentHeader::Resource MakeInlineResource(XMLParser* parser, const String& data)
 {

@@ -3007,5 +3007,11 @@ void Element::DirtyFontFaceRecursive()
 	for (int i = 0; i < num_children; ++i)
 		GetChild(i)->DirtyFontFaceRecursive();
 }
+String Element::GetOuterRML()
+{
+	String s;
+	GetRML(s);
+	return s;
+}
 
 } // namespace Rml

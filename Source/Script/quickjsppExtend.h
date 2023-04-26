@@ -11,6 +11,7 @@
 #include "RmlUi/Core/Types.h"
 #include "Dom/Ownership.h"
 #include "Browser/Collections.h"
+#include "core/http/http_headers.h"
 
 namespace qjs {
 
@@ -140,6 +141,11 @@ struct js_traits<Rml::Variant*> {
     }
 
     static JSValue wrap(JSContext* ctx, Rml::Variant* v) noexcept {
+		if (v == nullptr) {
+            JSValue obj = JS_NewString(ctx, "");
+            Value val {ctx, JS_DupValue(ctx, obj)};
+			return val.v;
+		}
 		auto type = v->GetType();
 		switch (type)
 		{
@@ -165,6 +171,26 @@ struct js_traits<Rml::Browser::Star> {
         v["title"] = s.title;
         v["icon"] = s.icon;
         v["url"] = s.url;
+        return v.v;
+    }
+};
+
+template <>
+struct js_traits<tit::net::HttpHeaders> {
+    /// @throws exception
+    tit::net::HttpHeaders unwrap(JSContext* ctx, JSValueConst v)
+    {
+        tit::net::HttpHeaders map;
+        return map;
+    }
+
+    static JSValue wrap(JSContext* ctx, tit::net::HttpHeaders s) noexcept {
+        JSValue obj = JS_NewObject(ctx);
+        Value v {ctx, JS_DupValue(ctx, obj)};
+		auto h = s.headers();
+        for (auto it = h.begin(); it != h.end(); ++it) {
+            v[it->first.c_str()] = it->second.c_str();
+        }
         return v.v;
     }
 };

@@ -3,16 +3,22 @@
 //
 
 #include "MainWindow.h"
+
+#include <co/co.h>
+
+#include "RmlUi/Core.h"
+#include "RmlUi/Core/Utils.h"
+#include "RmlUi/Config/Config.h"
+#include "RmlUi_Backend.h"
+#include "Shell.h"
+
 #include "../Script/RunTime.h"
 #include "../Script/ScriptPlugin.h"
-#include <RmlUi/Core.h>
-#include <RmlUi/Config/Config.h>
-#include <RmlUi_Backend.h>
-#include <Shell.h>
-#include <co/co.h>
+
 #include "TabManager.h"
 #include "BrowserWidget.h"
 #include "Glue.h"
+#include "History.h"
 
 const int window_width = 1550;
 const int window_height = 760;
@@ -24,6 +30,7 @@ MainWindow::MainWindow()
     : tab_manager_(MakeUnique<TabManager>(this)),
       browser_widget_(MakeUnique<BrowserWidget>(this)) {
 	RegisterBrowserGlueFunc();
+    RegisterHistoryGlueFunc();
 	Initialize();
     browser_widget_->Run();
 }
@@ -87,6 +94,21 @@ void MainWindow::ProcessEvent() {
 }
 
 void MainWindow::OnTabRun(Tab* tab) {
+
+    His h = {
+        .title = tab->title(),
+        .icon = tab->document()->GetIcon(),
+        .url = tab->url().GetURL()
+    };
+    URL url(h.icon);
+    if (url.GetProtocol().substr(0, 4) == "file")
+    {
+        h.icon = "/" + Absolutepath(h.icon, "/home/titto/CProjects/RmlUi5.0/Source/Browser/BrowserWidgetAssets/");
+    }
+
+    History history_;
+    history_.Collect(h);
+
 	qjs::Context* js_context = browser_widget_->js_context();
 	auto func = (std::function<void(qjs::Value)>) js_context->eval("TAB_MANAGER_ADD_TAB");
 	auto obj = js_context->newObject();
@@ -95,6 +117,7 @@ void MainWindow::OnTabRun(Tab* tab) {
     obj["icon"] = tab->document()->GetIcon();
     obj["url"] = tab->document()->GetSourceURL();
 	func(obj);
+
 }
 
 void MainWindow::OnTabFresh(Tab* tab) {
@@ -193,10 +216,10 @@ void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
 DEF_main(argc, argv) {
     Rml::Browser::MainWindow* window = Rml::Browser::MainWindow::GetInstance();
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
-//    Rml::Browser::Tab* tab2 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/basic/animation/data/animation.rml");
-//    tab2->Run();
-    Rml::Browser::Tab* tab1 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/thread.rml");
-    tab1->Run(true);
+    Rml::Browser::Tab* tab2 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Source/Browser/History/index.rml");
+    tab2->Run(true);
+//    Rml::Browser::Tab* tab1 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/thread.rml");
+//    tab1->Run(true);
 //    Rml::Browser::Tab* tab3 = tab_manager->NewTab("http://127.0.0.1:8000/thread.rml");
 //    tab3->Run(true);
 

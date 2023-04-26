@@ -3,13 +3,13 @@
 //
 
 #include "Element.h"
-
+#include "Ownership.h"
 #include "RmlUi/Core/Element.h"
+#include "RmlUi/Core/Elements/ElementFormControlInput.h"
 #include "RmlUi/Core/Property.h"
 #include "RmlUi/Core/StyleSheet.h"
-#include "RmlUi/Core/Elements/ElementFormControlInput.h"
-#include "Ownership.h"
 #include "SelfListener.h"
+#include <RmlUi/Core/ElementText.h>
 
 namespace Rml {
 
@@ -44,6 +44,7 @@ void Element::Glue(qjs::Context::Module& m) {
         .fun<&Rml::Element::_RemoveProperty>("removeProperty")
         .fun<&Rml::Element::_GetProperty>("getProperty")
         .fun<&Rml::Element::_GetAttribute>("getAttribute")
+        .fun<&Rml::Element::GetAttributes>("getAttributes")
         .fun<&Rml::Element::_SetAttribute>("setAttribute")
         .fun<&Rml::Element::HasAttribute>("hasAttribute")
         .fun<&Rml::Element::RemoveAttribute>("removeAttribute")
@@ -52,7 +53,10 @@ void Element::Glue(qjs::Context::Module& m) {
         .fun<&Rml::Element::GetPreviousSibling>("getPreviousSibling")
         .fun<&Rml::Element::GetFirstChild>("getFirstChild")
         .fun<&Rml::Element::GetLastChild>("getLastChild")
+        .fun<&Rml::Element::GetChild>("getChild")
         .fun<&Rml::Element::GetNumChildren>("getNumChildren")
+        .fun<&Rml::Element::GetOuterRML>("getOuterRML")
+        .fun<&Rml::Element::Clone>("clone")
         .fun<&Rml::Element::Focus>("focus")
         .fun<&Rml::Element::Blur>("blur")
         .fun<&Rml::Element::Click>("click")
@@ -87,12 +91,19 @@ void Element::Glue(qjs::Context::Module& m) {
             .base<Rml::Element>()
             .property<&Rml::ElementFormControl::GetValue, &Rml::ElementFormControl::SetValue>("value");
 
+        m.class_<Rml::ElementText>("ElementText")
+            .base<Rml::Element>()
+            .property<&Rml::ElementText::GetText, &Rml::ElementText::SetText>("text");
+
 //        m.class_<Rml::ElementFormControlInput>("ElementFormControlInput")
 //            .base<Rml::ElementFormControl>();
 
-		m.function("ToElementFormControl", [](Rml::Element* el) -> ElementFormControl* {
+		m.function("convertToElementFormControl", [](Rml::Element* el) -> ElementFormControl* {
 			return reinterpret_cast<ElementFormControl*>(el);
 		});
+        m.function("convertToElementText", [](Rml::Element* el) -> ElementText* {
+          return reinterpret_cast<ElementText*>(el);
+        });
 
 }
 

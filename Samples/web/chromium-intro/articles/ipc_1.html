@@ -1,0 +1,57 @@
+<rml>
+<head>
+    <title>Inside look at modern web browser (part 1)</title>
+    <link type="text/rcss" href="../css/main.rcss" />
+    <link type="text/rcss" href="../css/header.rcss" />
+    <link type="text/rcss" href="main.rcss" />
+    <link type="image/x-icon" href="images/chrome_icon.png" />
+</head>
+<body>
+    <div class="intro-header-wrapper">
+        <a class="intro-header" href="articles/ipc_1.html">
+            <img id="logo" src="../images/chromium.png"></img>
+            <p>Chromium</p>
+        </a>
+    </div>
+    <div class="content">
+        <h1>Inside look at modern web browser (part 1)</h1>
+        <h2 id="cpu-gpu-memory-and-multi-process-architecture" tabindex="-1">
+            CPU, GPU, Memory, and multi-process architecture
+        </h2>
+        <p>In this 4-part blog series, we’ll look inside the Chrome browser from high-level architecture to the specifics of the rendering pipeline. If you ever wondered how the browser turns your code into a functional website, or you are unsure why a specific technique is suggested for performance improvements, this series is for you.</p>
+        <p>As part 1 of this series, we’ll take a look at core computing terminology and Chrome’s multi-process architecture.</p>
+        <div class="aside aside--note"><p>If you are familiar with the idea of CPU/GPU and process/thread you may skip to <a href="#browser-architecture">Browser Architecture</a>.</p></div>
+        <h2 id="at-the-core-of-the-computer-are-the-cpu-and-gpu" tabindex="-1">At the core of the computer are the CPU and GPU</h2>
+        <p>In order to understand the environment that the browser is running, we need to understand a few computer parts and what they do.</p>
+        <h3 id="cpu" tabindex="-1"> CPU</h3>
+        <p class="float-left" style="width: 60%">First is the <strong>C</strong>entral <strong>P</strong>rocessing <strong>U</strong>nit - or <strong>CPU</strong>. The CPU can be considered your computer’s brain. A CPU core, pictured here as an office worker, can handle many different tasks one by one as they come in. It can handle everything from math to art while knowing how to reply to a customer call. In the past most CPUs were a single chip. A core is like another CPU living in the same chip. In modern hardware, you often get more than one core, giving more computing power to your phones and laptops.</p>
+        <div class="float-right"><img style="width: 300px" src="../images/Wx90M7DlxzVdXEeg5UhL.png"></img></div>
+        <div class="clear"></div>
+        <h3 id="gpu" tabindex="-1"> GPU</h3>
+        <p class="float-left" style="width: 60%"><strong>G</strong>raphics <strong>P</strong>rocessing <strong>U</strong>nit - or <strong>GPU</strong> is another part of the computer. Unlike CPU, GPU is good at handling simple tasks but across multiple cores at the same time. As the name suggests, it was first developed to handle graphics. This is why in the context of graphics "using GPU" or "GPU-backed" is associated with fast rendering and smooth interaction. In recent years, with GPU-accelerated computing, more and more computation is becoming possible on GPU alone.</p>
+        <div class="float-right"><img style="width: 300px" src="../images/W6kFjvrwk1yDEhs8lFm1.png"></img></div>
+        <div class="clear"></div>
+        <p>When you start an application on your computer or phone, the CPU and GPU are the ones powering the application. Usually, applications run on the CPU and GPU using mechanisms provided by the Operating System.</p>
+        <img src="../images/9M8aKlSl3207o9C3QVVp.png"></img>
+        <h2 id="executing-program-on-process-and-thread" tabindex="-1">Executing program on Process and Thread</h2>
+        <p class="float-left" style="width: 60%">Another concept to grasp before diving into browser architecture is Process and Thread. A process can be described as an application’s executing program. A thread is the one that lives inside of process and executes any part of its process's program.</p>
+        <div class="float-right"><img style="width: 300px" src="../images/ICtmZ85CWgSJ7UZjomd1.png"></img></div>
+        <div class="clear"></div>
+        <p>When you start an application, a process is created. The program might create thread(s) to help it do work, but that's optional. The Operating System gives the process a "slab" of memory to work with and all application state is kept in that private memory space. When you close the application, the process also goes away and the Operating System frees up the memory.</p>
+        <img style="width: 80%" src="../images/QQ截图20230425200927.png"></img>
+        <p>A process can ask the Operating System to spin up another process to run different tasks. When this happens, different parts of the memory are allocated for the new process. If two processes need to talk, they can do so by using <strong>I</strong>nter <strong>P</strong>rocess <strong>C</strong>ommunication (<strong>IPC</strong>). Many applications are designed to work this way so that if a worker process get unresponsive, it can be restarted without stopping other processes which are running different parts of the application.</p>
+        <img style="width: 80%" src="../images/QQ截图20230425201105.png"></img>
+        <h2 id="Browser-Architecture" tabindex="-1">Browser Architecture</h2>
+        <p>So how is a web browser built using processes and threads? Well, it could be one process with many different threads or many different processes with a few threads communicating over IPC.</p>
+        <img src="../images/BG4tvT7y95iPAelkeadP.png"></img>
+        <p>The important thing to note here is that these different architectures are implementation details. There is no standard specification on how one might build a web browser. One browser’s approach may be completely different from another.</p>
+        <p>For the sake of this blog series, we are going to use Chrome’s recent architecture described in the diagram below.</p>
+        <p>At the top is the browser process coordinating with other processes that take care of different parts of the application. For the renderer process, multiple processes are created and assigned to each tab. Until very recently, Chrome gave each tab a process when it could; now it tries to give each site its own process, including iframes (see <a href="#site-isolation">Site Isolation</a>).</p>
+        <img src="../images/JvSL0B5q1DmZAKgRHj42.png"></img>
+
+        <h2 id="Which process controls what?" tabindex="-1">Which process controls what?</h2>
+        <img src="../images/vl5sRzL8pFwlLSN7WW12.png"></img>
+        <p>There are even more processes like the Extension process and utility processes. If you want to see how many processes are running in your Chrome, click the options menu icon <span class="material-icons">more_vert</span> at the top right corner, select More Tools, then select Task Manager. This opens up a window with a list of processes that are currently running and how much CPU/Memory they are using.</p>
+    </div>
+</body>
+</rml>

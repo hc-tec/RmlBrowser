@@ -10,6 +10,8 @@
 #include "Dom/Element.h"
 #include "Dom/Event.h"
 
+#include "Net/Glue.h"
+
 #include "log/logging.h"
 
 namespace Rml {
@@ -24,14 +26,19 @@ void Glue(qjs::Context* context) {
     context->global()["log"] = [](const Rml::String& str){
       std::cout << str << std::endl;
     };
+
     qjs::Context::Module& dom = context->addModule("dom");
     Event::Glue(dom);
     Element::Glue(dom);
 	Document::Glue(dom);
+
+    NetGlue(context);
+
 	for (auto func : GLUE_FUNC_LIST) {
 		func(context);
 	}
-	context->eval("import * as dom from 'dom';globalThis.dom = dom;", "<eval>", JS_EVAL_TYPE_MODULE);
+	context->eval("import * as dom from 'dom';import * as net from 'net';"
+				        "globalThis.dom = dom;globalThis.net = net;", "<eval>", JS_EVAL_TYPE_MODULE);
 }
 
 }
