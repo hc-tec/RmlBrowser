@@ -4,7 +4,7 @@ body, div, p, h1, h2, h3, h4, h5, h6 {
 }
 
 body {
-  font-family: LatoLatin;
+  font-family: LatoLatin, DengXian;
   background-color: #080808;
   color: white;
   font-size: 16px;
