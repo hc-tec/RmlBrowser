@@ -1,7 +1,7 @@
 <rml>
 <head>
     <title>Inside look at modern web browser (part 1)</title>
-    <link type="text/rcss" href="../css/main.rcss" />
+    <link type="text/rcss" href="../main.rcss" />
     <link type="text/rcss" href="../css/header.rcss" />
     <link type="text/rcss" href="main.rcss" />
     <link type="image/x-icon" href="images/chrome_icon.png" />
@@ -14,7 +14,7 @@
         </a>
     </div>
     <div class="content">
-        <h1>Inside look at modern web browser (part 1)</h1>
+        <h1>Inside look at modern web browser (part 1)字体文件</h1>
         <h2 id="cpu-gpu-memory-and-multi-process-architecture" tabindex="-1">
             CPU, GPU, Memory, and multi-process architecture
         </h2>

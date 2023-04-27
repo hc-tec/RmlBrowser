@@ -7,6 +7,10 @@
 #include <utility>
 #include <json/json.h>
 
+#include "quickjspp.hpp"
+
+#include "../../Browser/NetScheduler.h"
+#include "../../Browser/RenderScheduler.h"
 #include "Script/quickjsppExtend.h"
 
 namespace Rml {
@@ -15,7 +19,7 @@ namespace Script {
 NetHttp::NetHttp()
 		: impl_(MakeUnique<NetHttpImpl>()) {}
 
-qjs::Value NetHttp::Request(String url, net::Method method, qjs::Value params, qjs::Value headers)
+void NetHttp::Request(String url, net::Method method, qjs::Value params, qjs::Value headers, const qjs::Value& options)
 {
 	net::RequestParams p;
 	p.request_info.method = method;
@@ -23,7 +27,40 @@ qjs::Value NetHttp::Request(String url, net::Method method, qjs::Value params, q
     p.request_info.body = std::make_shared<net::HttpRequestBufferBody>(
         "application/json;charset=UTF-8", params.toJSON());
 
-	String h = headers.toJSON();
+    ParseHeader(p, std::move(headers));
+
+    co::Scheduler* s = NetScheduler().Get();
+	s->go([&, p, params, options](){
+      auto res = impl_->Get(p);
+
+      JSValue o = JS_NewObject(params.ctx);
+      qjs::Value ret {params.ctx, JS_DupValue(params.ctx, o)};
+      GenerateResponse(ret, res);
+
+	  RenderScheduler().Get()->go([ctx = options.ctx, options, ret](){
+        JSValue axios_cb = JS_GetPropertyStr(ctx, options.v, "axios_cb");
+        JSValue user_cb = JS_GetPropertyStr(ctx, options.v, "user_cb");
+        JSValue _this = JS_GetPropertyStr(ctx, options.v, "_this");
+
+		JS_SetPropertyStr(ctx, ret.v, "_u_cb", user_cb);
+
+		JSValue args[] = { ret.v };
+		JS_Call(ctx, axios_cb, _this, 1, args);
+	  });
+	});
+}
+
+void NetHttp::Get(String url, qjs::Value params, qjs::Value headers, const qjs::Value& options) {
+	Request(std::move(url), net::Method::GET, std::move(params), std::move(headers), options);
+}
+
+void NetHttp::Post(String url, qjs::Value params, qjs::Value headers, const qjs::Value& options)
+{
+    Request(std::move(url), net::Method::POST, std::move(params), std::move(headers), options);
+}
+
+void NetHttp::ParseHeader(net::RequestParams& p, qjs::Value headers) {
+    String h = headers.toJSON();
     Json::Reader reader;
     Json::Value obj;
     reader.parse(h, obj);
@@ -33,35 +70,23 @@ qjs::Value NetHttp::Request(String url, net::Method method, qjs::Value params, q
     Json::Value::Members members = obj.getMemberNames();
     for (const auto& member : members) {
         httpHeaders.PutHeaders(member, obj[member].asString());
-	}
+    }
 
     p.request_info.headers = httpHeaders;
-    auto res = impl_->Get(p);
+}
 
-    JSValue o = JS_NewObject(params.ctx);
-	qjs::Value ret {params.ctx, JS_DupValue(params.ctx, o)};
-
-	ret["code"] = res->status.code;
+void NetHttp::GenerateResponse(qjs::Value& ret, net::HttpResponseInfo* res) {
+    ret["code"] = res->status.code;
     ret["msg"] = res->status.description;
-	ret["header"] = res->headers; // qjs::js_traits<net::HttpHeaders>::wrap(params.ctx, res->headers);
+    ret["header"] = res->headers; // qjs::js_traits<net::HttpHeaders>::wrap(params.ctx, res->headers);
 
     std::string_view buf;
-	const int bytes = 1024;
+    const int bytes = 1024;
     res->body->Read(&buf, bytes);
     char buffer[bytes];
     memcpy(buffer, buf.data(), bytes);
 
     ret["data"] = String(buffer);
-	return ret;
-}
-
-qjs::Value NetHttp::Get(String url, qjs::Value params, qjs::Value headers) {
-	return Request(std::move(url), net::Method::GET, std::move(params), std::move(headers));
-}
-
-qjs::Value NetHttp::Post(String url, qjs::Value params, qjs::Value headers)
-{
-    return Request(std::move(url), net::Method::POST, std::move(params), std::move(headers));
 }
 
 }

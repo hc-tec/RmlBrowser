@@ -143,9 +143,9 @@ class Rue {
             switch (instruct) {
                 case 'if':
                     if (new_val) {
-                        el.setProperty('visibility', 'visible')
+                        el.setProperty('display', 'block')
                     } else {
-                        el.setProperty('visibility', 'hidden')
+                        el.setProperty('display', 'none')
                     }
                     break
                 case 'text':

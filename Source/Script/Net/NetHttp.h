@@ -16,14 +16,18 @@ public:
 
     NetHttp();
 
-    qjs::Value Get(String url, qjs::Value params, qjs::Value headers);
+    void Get(String url, qjs::Value params, qjs::Value headers, const qjs::Value& options);
 
-    qjs::Value Post(String url, qjs::Value params, qjs::Value headers);
+    void Post(String url, qjs::Value params, qjs::Value headers, const qjs::Value& options);
 
 
 
 private:
-    qjs::Value Request(String url, net::Method method, qjs::Value params, qjs::Value headers);
+    void Request(String url, net::Method method, qjs::Value params, qjs::Value headers, const qjs::Value& options);
+
+	void ParseHeader(net::RequestParams& p, qjs::Value headers);
+
+	void GenerateResponse(qjs::Value& ret, net::HttpResponseInfo* res);
 
 private:
 	UniquePtr<NetHttpImpl> impl_;

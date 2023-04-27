@@ -1,0 +1,43 @@
+body {
+  background-color: #fff;
+  color: black;
+  height: 99%;
+}
+
+#app {
+}
+
+.chat {
+  width: 60%;
+  margin: 0 auto;
+}
+
+.chat-main {
+  padding: 50px;
+  padding-bottom: 0;
+  width: 100%;
+  height: 67%;
+  overflow-y: auto;
+}
+
+.chat-content {
+  border-bottom-width: 1px;
+  border-bottom-color: #ececf1;
+  padding: 25px 25px;
+}
+
+.chat-input-container {
+  width: 100%;
+  height: 15%;
+  padding: 0 50px;
+  margin-top: 10px;
+}
+
+
+
+
+
+
+
+
+

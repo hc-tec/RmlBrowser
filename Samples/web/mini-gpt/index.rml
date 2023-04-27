@@ -1,0 +1,157 @@
+<rml lang="en">
+<head>
+    <title>mini-gpt</title>
+    <link type="text/rcss" href="../chromium-intro/main.rcss" />
+    <link type="text/rcss" href="gpt.rcss" />
+    <link type="image/x-icon" href="images/chatgpt.png" />
+</head>
+<body id="app">
+    <div class="chat">
+        <div class="chat-main">
+            <div
+                class="w-full chat-content"
+                r-for="chat in chat_contents"
+                r-user="chat.isUser"
+                r-load="chatBgChange">
+                <div class="flex text-base gap-4 m-auto">
+                    <div class="relative items-end" style="width: 30px;margin-right: 15px;">
+                        <div class="relative">
+                            <img r-src="chat.avatar" />
+                        </div>
+                    </div>
+                    <div class="relative" style="padding-right: 60px;">
+                        <div class="break-all whitespace-pre-wrap">{{ chat.message }}</div>
+                    </div>
+                </div>
+</div>
+        </div>
+        <div class="text-center w-full chat-input-container flex flex-col justify-center items-center">
+            <div class="w-full" style="margin-bottom: 10px;">
+                <input
+                    id="search-input"
+                    style="width: 70%; border-width: 1px; border-color: #bab6b6;padding: 10px 15px;font-size: 16px;border-radius: 0.25rem;"
+                    type="text"
+                    name="search" />
+            </div>
+            <div class="btn" style="width: 100px;margin-bottom: 5px;" r-click="askQuestion">
+                发送
+            </div>
+            <div style="font-size: 12px;">
+                <span class="underline">gpt-3.5-turbo-0301 & gpt-4-0314</span>
+                . Free Research Preview. Our goal is to make AI systems more natural and safe to interact with. Your feedback will help us improve.
+            </div>
+        </div>
+    </div>
+    <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/rue.js"></script>
+    <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/Net/axios.js"></script>
+    <script>
+        const axios = new Axios()
+        axios.interceptors.request.use(
+            config => {
+                config.headers['X-Token'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTYwMjcsIlRlbCI6IjE4MDcwNTAyNzY3IiwiTWVtYmVyRXhwIjowLCJleHAiOjE2ODQ5ODQ1NDAsImlzcyI6IlRERCIsIm5iZiI6MTY4MjM5MjU0MH0.qgF2fRsELBcov5XlfNcD4N8sg5-cx71jTcHfylI6IRw'
+            },
+            config => {
+                return config
+            }
+        )
+        const rue = new Rue({
+            el: 'app',
+            data: {
+                chat_contents: [],
+            },
+            methods: {
+                chatBgChange(el) {
+                    const isUser = el.getAttribute('user')
+                    if (isUser === 'false') {
+                        el.setProperty('background', '#F7F7F8')
+                    }
+                },
+                askQuestion() {
+                    let search_input = document.getElementById('search-input')
+                    search_input = dom.convertToElementFormControl(search_input)
+                    const question = search_input.value
+                    if (!question) return
+                    search_input.value = ''
+                    this.chat_contents.push({
+                        avatar: 'images/132.png',
+                        message: question,
+                        isUser: true,
+                    })
+                    this.chat_contents.push({
+                        avatar: 'images/QQ20230426221033.png',
+                        message: '',
+                        isUser: false,
+                    })
+                    this.chat_contents = this.chat_contents
+                    axios.post('https://aisys.globalcdn.top/v1/ai/chat2', {
+                        "annal": [],
+                        "dialogue": false,
+                        "prompt": question
+                    }, (res) => {
+                        log(JSON.stringify(res))
+                        const index = this.chat_contents.length - 1
+                        this.chat_contents[index].message = res.data
+                        this.chat_contents = this.chat_contents
+                    })
+                }
+            },
+            onMounted() {
+                this.chat_contents.push(
+                    {
+                        avatar: 'images/QQ20230426221033.png',
+                        message: '欢迎使用 MiniGPT v0.1 copyright @titto',
+                        isUser: false,
+                    }
+                )
+                // this.chat_contents = [
+                //     {
+                //         avatar: 'images/132.png',
+                //         message: '在学术界，与chromium内核相关的研究有哪些?',
+                //         isUser: true,
+                //     },
+                //     {
+                //         avatar: 'images/QQ20230426221033.png',
+                //         message: '在学术界，与chromium内核相关的研究包括以下方面：\n' +
+                //             '                            Chromium的安全性分析：对Chromium的网络安全机制和防御措施进行分析和评估，例如沙箱、同源策略和SSL/TLS等。\n' +
+                //             '                            Chromium的性能和优化研究：基于Chromium的渲染引擎和JavaScript引擎的性能优化，例如使用多线程、缓存和预加载等方式。基于Chromium的Web应用程序和扩展：开发基于Chromium内核的Web应用程序和扩展插件，以扩展Chromium的功能和增强用户体验。\n' +
+                //             '                            基于Chromium的Web应用程序和扩展：开发基于Chromium内核的Web应用程序和扩展插件，以扩展Chromium的功能和增强用户体验。\n' +
+                //             '                            使用Chromium内核构建浏览器：研究如何基于Chromium内核构建安全、高性能的浏览器，例如使用开源代码或添加特定功能。',
+                //         isUser: false,
+                //     },
+                //     {
+                //         avatar: 'images/132.png',
+                //         message: '在学术界，与chromium内核相关的研究有哪些?',
+                //         isUser: true,
+                //     },
+                //     {
+                //         avatar: 'images/QQ20230426221033.png',
+                //         message: '在学术界，与chromium内核相关的研究包括以下方面：\n' +
+                //             '                            Chromium的安全性分析：对Chromium的网络安全机制和防御措施进行分析和评估，例如沙箱、同源策略和SSL/TLS等。\n' +
+                //             '                            Chromium的性能和优化研究：基于Chromium的渲染引擎和JavaScript引擎的性能优化，例如使用多线程、缓存和预加载等方式。基于Chromium的Web应用程序和扩展：开发基于Chromium内核的Web应用程序和扩展插件，以扩展Chromium的功能和增强用户体验。\n' +
+                //             '                            基于Chromium的Web应用程序和扩展：开发基于Chromium内核的Web应用程序和扩展插件，以扩展Chromium的功能和增强用户体验。\n' +
+                //             '                            使用Chromium内核构建浏览器：研究如何基于Chromium内核构建安全、高性能的浏览器，例如使用开源代码或添加特定功能。',
+                //         isUser: false,
+                //     },
+                //     {
+                //         avatar: 'images/132.png',
+                //         message: '在学术界，与chromium内核相关的研究有哪些?',
+                //         isUser: true,
+                //     },
+                //     {
+                //         avatar: 'images/QQ20230426221033.png',
+                //         message: '在学术界，与chromium内核相关的研究包括以下方面：\n' +
+                //             '                            Chromium的安全性分析：对Chromium的网络安全机制和防御措施进行分析和评估，例如沙箱、同源策略和SSL/TLS等。\n' +
+                //             '                            Chromium的性能和优化研究：基于Chromium的渲染引擎和JavaScript引擎的性能优化，例如使用多线程、缓存和预加载等方式。基于Chromium的Web应用程序和扩展：开发基于Chromium内核的Web应用程序和扩展插件，以扩展Chromium的功能和增强用户体验。\n' +
+                //             '                            基于Chromium的Web应用程序和扩展：开发基于Chromium内核的Web应用程序和扩展插件，以扩展Chromium的功能和增强用户体验。\n' +
+                //             '                            使用Chromium内核构建浏览器：研究如何基于Chromium内核构建安全、高性能的浏览器，例如使用开源代码或添加特定功能。',
+                //         isUser: false,
+                //     },
+                // ]
+                this.chat_contents = this.chat_contents
+            }
+        })
+
+
+    </script>
+</body>
+</rml>

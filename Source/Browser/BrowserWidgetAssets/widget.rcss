@@ -33,7 +33,6 @@ body {
 }
 
 .tab {
-  width: 200px;
   padding: 10px;
   position: relative;
   font-size: 16px;
@@ -50,7 +49,7 @@ body {
   height: 15px;
   margin-right: 5px;
   position: relative;
-  top: 2px;
+  top: -4px;
 }
 
 .tab-active {
@@ -59,6 +58,17 @@ body {
 
 .tab-active:hover {
   background-color: #f7f7f7;
+}
+
+.title-wrap {
+  display: inline-block;
+  overflow: hidden;
+  width: 200px;
+}
+
+.title-wrap p {
+  display: block;
+  width: 1000px;
 }
 
 .close-icon {

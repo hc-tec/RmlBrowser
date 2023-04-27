@@ -56,9 +56,12 @@ class TabManager extends Subject {
         const icon = document.createElement('img')
         icon.setClassNames('tab-icon')
         icon.setAttribute('src', params.icon)
+        const title_wrap = document.createElement('div')
+        title_wrap.setClassNames('title-wrap')
         const title = document.createElement('p')
         title.setClassNames('title')
         title.innerRML = params.title
+        title_wrap.appendChild(title, true)
         const close_icon = document.createElement('p')
         close_icon.setClassNames('close-icon')
         close_icon.innerRML = 'x'
@@ -71,7 +74,7 @@ class TabManager extends Subject {
             CRemoveTab(tab_id, focus_id)
         })
         tab.appendChild(icon, true)
-        tab.appendChild(title, true)
+        tab.appendChild(title_wrap, true)
         tab.appendChild(close_icon, true)
 
         const add_icon = document.getElementsByClassName('add-icon')[0]
