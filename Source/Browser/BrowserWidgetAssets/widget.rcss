@@ -10,7 +10,7 @@ body {
 }
 
 .active-btn {
-  transition: background-color 0.3s;
+  transition: background-color 0.2s;
 }
 
 .active-btn:hover {
@@ -33,10 +33,11 @@ body {
 }
 
 .tab {
-  padding: 10px;
+  padding: 10px 25px 10px 10px;
   position: relative;
   font-size: 16px;
   transition: background-color 0.3s;
+  width: 200px;
 }
 
 .tab:hover {
@@ -63,7 +64,7 @@ body {
 .title-wrap {
   display: inline-block;
   overflow: hidden;
-  width: 200px;
+  width: 75%;
 }
 
 .title-wrap p {
@@ -113,7 +114,7 @@ body {
   width: 21px;
   height: 21px;
   padding: 5px 20px;
-  transition: background-color 0.3s;
+  transition: background-color 0.2s;
 }
 
 .search-bar {
@@ -170,18 +171,26 @@ body {
 
 .function-icons {
   position: relative;
+  display: inline-flex;
+  width: 400px;
+  flex-direction: row;
+  align-content: flex-end;
   left: -55px;
 }
 
 .function-icons .active-btn {
   margin-right: 0px;
+  width: 26px;
+  height: 26px;
+  padding: 2px 15px;
+}
+
+.function-icons .extension-icon {
+  image-color: #000;
 }
 
 .components .star-icon {
   margin-right: 10px;
-  width: 50px;
-  height: 35px;
-  padding: 0;
 }
 
 
@@ -224,7 +233,4 @@ body {
   width: 1000px;
 }
 
-.history-icon {
-  width: 52px;
-  height: 31px;
-}
+

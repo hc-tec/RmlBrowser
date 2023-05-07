@@ -9,23 +9,19 @@
 #include "Glue.h"
 #include "Net/Network.h"
 #include "RmlUi/Core/Context.h"
-#include "RmlUi/Core/Element.h"
 #include "RmlUi/Core/ElementDocument.h"
 #include "RmlUi/Core/Factory.h"
 #include "RunTime.h"
 #include "core/http/response/http_response_info.h"
 #include <Core/ResourceLoader.h>
-#include <co/co/mutex.h>
 #include <iostream>
 
 namespace Rml {
 
 namespace Script {
 
-ScriptPlugin::ScriptPlugin(Context* context, Delegate* delegate)
-		: context_(context),
-		delegate_(delegate),
-		js_runtime_(nullptr) {
+ScriptPlugin::ScriptPlugin()
+		: js_runtime_(nullptr) {
 //    static co::mutex js_mutex;
 //    auto _ = co::mutex_guard(js_mutex);
     js_runtime_ = GetRunTime(); // new qjs::Runtime();
@@ -38,33 +34,12 @@ ScriptPlugin::ScriptPlugin(Context* context, Delegate* delegate)
     XMLParser::RegisterNodeHandler("script", js_document_element_instancer_);
 }
 
-int ScriptPlugin::GetEventClasses() { return Plugin::GetEventClasses(); }
-
-void ScriptPlugin::OnInitialise() {
-    std::cout << "Register ScriptPlugin" << std::endl;
-}
-
-void ScriptPlugin::OnShutdown() { Plugin::OnShutdown(); }
-
-void ScriptPlugin::OnContextCreate(Context* context) {
-//    context_ = context;
-
-}
-
-void ScriptPlugin::OnContextDestroy(Context* context) {
-    if (context != context_) return;
-}
-
-void ScriptPlugin::OnDocumentOpen(Context* context, const String& document_path) {
-    if (context != context_) return;
-}
 
 void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
-	if (document->GetContext() != context_) return;
     qjs::Context* js_context = js_context_.get();
     js_context->global()["document"] = document;
 	DocumentHeader::ResourceList scripts = js_document_element_instancer_->GetScripts();
-	if (delegate_ != nullptr) delegate_->OnDocumentLoad(document);
+	//if (delegate_ != nullptr) delegate_->OnDocumentLoad(document);
     try {
 //        static co::mutex js_mutex;
 //        auto _ = co::mutex_guard(js_mutex);
@@ -83,20 +58,6 @@ void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
         if((bool) exc["stack"])
             std::cerr << (std::string) exc["stack"] << std::endl;
     }
-}
-
-void ScriptPlugin::OnDocumentUnload(ElementDocument* document) {
-//	document_.reset();
-    if (document->GetContext() != context_) return;
-}
-
-void ScriptPlugin::OnElementCreate(Element* element) {
-//	element->GetParentNode()
-}
-
-void ScriptPlugin::OnElementDestroy(Element* element) {
-
-
 }
 
 ScriptPlugin::~ScriptPlugin() {

@@ -1,0 +1,17 @@
+<template name="chromium" content="content">
+	<head>
+		<title>Chromium Introduction</title>
+		<link type="text/rcss" href="main.rcss" />
+		<link type="text/rcss" href="css/header.rcss" />
+		<link type="image/x-icon" href="images/favicon-1.png" />
+	</head>
+	<body>
+		<div class="intro-header-wrapper">
+			<a class="intro-header" href="ipc_1.rml">
+				<img id="logo" src="images/chromium.png"></img>
+				<p>Chromium</p>
+			</a>
+		</div>
+		<div id="content"></div>
+	</body>
+</template>

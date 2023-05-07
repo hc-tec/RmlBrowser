@@ -35,8 +35,15 @@
             </div>
             <div class="function-icons">
                 <img class="active-btn star-icon" src="images/star.png" r-click="starUrl"></img>
-                <img class="active-btn history-icon" src="images/history.png" r-click="toHistoryPage"></img>
-                <img class="active-btn history-icon" src="images/history.png"></img>
+                <img class="active-btn" src="images/history.png" r-click="toHistoryPage"></img>
+                <span>
+                    <img
+                            class="active-btn extension-icon"
+                            r-for="extension in extensions"
+                            r-src="extension.icon"
+                            r-name="extension.name"
+                            r-click="handleExtensionClick" />
+                </span>
             </div>
         </div>
         <div class="stars">
@@ -56,7 +63,8 @@
             const rue = new Rue({
                 el: 'app',
                 data: {
-                    stars: []
+                    stars: [],
+                    extensions: [],
                 },
                 methods: {
                     handleStarClick(el) {
@@ -76,9 +84,20 @@
                     },
                     toHistoryPage() {
                         COpenTabWithUrl("-1", "/home/titto/CProjects/RmlUi5.0/Source/Browser/History/index.rml")
+                    },
+                    handleExtensionClick(e, event) {
+                        const name = e.getAttribute('name')
+                        rml.extension.dispatchClickEvent(name, event.getParameters())
                     }
                 }
             })
+            rml.extension.onLoad = (extension_info) => {
+                extension_info.forEach(item => {
+                    item.icon = `//home/titto/CProjects/RmlUi5.0/Extensions/${item.name}/${item.icon}`
+                })
+                rue.extensions = extension_info
+                log(JSON.stringify(extension_info))
+            }
             const STARS_LOADED = (stars) => {
                 rue.stars = stars
             }

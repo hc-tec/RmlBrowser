@@ -11,11 +11,13 @@ namespace Rml {
 
 class RenderScheduler {
 public:
-    RenderScheduler();
-    co::Scheduler* Get();
+    static co::Scheduler* Get() {
+        static co::Scheduler* s_ = co::schedulers()[0];
+		return s_;
+	}
 
 private:
-    co::Scheduler* s_{};
+
 };
 
 }

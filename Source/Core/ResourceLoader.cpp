@@ -13,11 +13,12 @@ void ResourceLoader::Load(String url, bool need_clear_after_finish) {
 	if (u.GetProtocol() == "file") return;
     {
         co::MutexGuard g(mutex_);
+		if (resource_map_.find(url) != resource_map_.end()) return;
         resource_map_[url] = MakeUnique<Resource>(url, LoadStatus::kLoading, need_clear_after_finish);
     }
 
     NextScheduler();
-	s_->go([=](){
+	s_->go([this, url](){
         Resource* resource = resource_map_[url].get();
 		if (resource == nullptr) return;
 		if (resource->file.Open(url))
@@ -50,6 +51,10 @@ LoadStatus ResourceLoader::WaitForResource(const String& url, NetStreamFile* fil
 	NetStreamFile f;
     LoadStatus status = TryGetResource(url, &f);
 	if (status == LoadStatus::kFinish) {
+        {
+            co::MutexGuard g(mutex_);
+            resource_map_.erase(url);
+        }
 		*file = f;
 		return status;
 	} else if (status == LoadStatus::kNotLoad) {
@@ -61,12 +66,23 @@ LoadStatus ResourceLoader::WaitForResource(const String& url, NetStreamFile* fil
 		resource_map_[url]->event = &event;
 	}
 	event.wait();
+    {
+        co::MutexGuard g(mutex_);
+		resource_map_.erase(url);
+	}
 	return LoadStatus::kFinish;
 }
 
 void ResourceLoader::NextScheduler() {
 	s_ = co::next_scheduler();
 	if (s_ == co::schedulers()[0]) NextScheduler();
+}
+
+void ResourceLoader::Clear() {
+    {
+        co::MutexGuard g(mutex_);
+        resource_map_.clear();
+    }
 }
 
 }

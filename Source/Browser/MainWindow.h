@@ -9,6 +9,7 @@
 #include "co/co/event.h"
 #include "TabManager.h"
 #include "BrowserWidget.h"
+#include "Extension/ExtensionManager.h"
 
 namespace Rml {
 
@@ -24,7 +25,8 @@ void OpenInCurrentTab(Context* context, const URL& url);
 void OpenInNewTab(Context* context, const URL& url);
 
 class MainWindow : public TabManager::Delegate,
-				   public BrowserWidget::Delegate {
+				   public BrowserWidget::Delegate,
+				   public ExtensionManager::Delegate {
 public:
 	MainWindow();
 	~MainWindow();
@@ -42,7 +44,8 @@ public:
 	void Close();
 	void WaitForClose();
 
-	TabManager* tab_manager() { return tab_manager_.get(); }
+	TabManager* tab_manager() { return tab_manager_.get(); };
+	ExtensionManager* extension_manager() { return extension_manager_.get(); };
 
 	/* TabManager Delegate */
 	void OnTabRun(Tab* tab) override;
@@ -57,11 +60,16 @@ public:
 	void DoTabRemove(const String& tab_id) override;
 	void DoTabEnterUrl(const String& tab_id, const String& url) override;
 	void DoTabOpenNew(const String& url) override;
+    void DoExtensionClick(const String& name, qjs::Value event) override;
+
+	/* ExtensionManager Delegate */
+	void OnExtensionLoad(const Vector<Json::Value>& extension_info) override;
 
 private:
 
     UniquePtr<TabManager> tab_manager_;
 	UniquePtr<BrowserWidget> browser_widget_;
+	UniquePtr<ExtensionManager> extension_manager_;
 	co::Event close_event_;
 };
 

@@ -1,0 +1,129 @@
+<rml>
+<head>
+    <link type="text/rcss" href="static/css/main.rcss" />
+    <style>
+        #network-details {
+            top: 50px;
+            left: 29%;
+            position: absolute;
+            width: 70%;
+            height: 100%;
+            border-width: 3px;
+            border-color: rgb(247,247,247);
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body id="devtools">
+    <handle move_target="#document">
+        <div style="width: 100%;">Title</div>
+    </handle>
+    <tabset style="position: relative">
+        <tab>网络</tab>
+        <panel>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <td colspan="4">名称</td>
+                            <td>方法</td>
+                            <td>状态</td>
+                            <td>协议</td>
+                            <td>大小</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr
+                                r-for="req in networkRequests"
+                                r-netid="req.header.net-id"
+                                r-click="handleNetworkItemClick">
+                            <td colspan="4">{{ req.url }}</td>
+                            <td>{{ req.method }}</td>
+                            <td>200</td>
+                            <td>h1</td>
+                            <td>111</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div
+                    id="network-details"
+                    r-if="networkDetailsVisible">
+
+                <tabset style="position: relative">
+                    <tab style="width: 14px;padding: 0;">
+                        <img src="static/imgs/close.png" r-click="closeNetworkDetails" />
+                    </tab>
+                    <panel></panel>
+                    <tab>标头</tab>
+                    <panel>
+                        1
+                    </panel>
+                    <tab>负载</tab>
+                    <panel>
+                        2
+                    </panel>
+                    <tab>响应</tab>
+                    <panel>
+                        3
+                    </panel>
+                </tabset>
+            </div>
+        </panel>
+        <tab>Tab 2</tab>
+        <panel>
+            Welcome to the second tab!
+        </panel>
+    </tabset>
+    <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/rue.js"></script>
+    <script>
+        const rue = new Rue({
+            el: 'devtools',
+            data: {
+                networkRequestsMap: {},
+                networkRequests: [],
+                chosenNetworkItem: {},
+                networkDetailsVisible: true,
+            },
+            methods: {
+                handleNetworkItemClick(e) {
+                    const net_id = e.getAttribute('netid')
+                    this.chosenNetworkItem = this.networkRequestsMap[net_id]
+                    this.networkDetailsVisible = true
+                },
+                closeNetworkDetails() {
+                    this.networkDetailsVisible = false
+                }
+            }
+        })
+        rml.net.observeNetwork()
+        rml.net.onRequestStart = (e) => {
+            try {
+                const net_id = e.header['net-id']
+                rue.networkRequests.push(e)
+                rue.networkRequests = rue.networkRequests
+                log(JSON.stringify(e))
+            } catch (err) {
+                log(`errxx ${err}`)
+            }
+        }
+        rml.net.onRequestEnd = (e) => {
+
+            const net_id = e.request.header['net-id']
+            log(`net_id ${net_id}`)
+            rue.networkRequestsMap[net_id] = e
+        }
+        rml.tab.onActive = (tab) => {
+            document.show(0, 0)
+            log(tab.getId())
+        }
+        rml.extension.onClick = (e) => {
+            if (document.isVisible()) {
+                document.hide()
+            } else {
+                document.show(0, 0)
+            }
+        }
+    </script>
+</body>
+</rml>

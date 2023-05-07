@@ -10,13 +10,14 @@
 #include "RmlUi/Core/XMLNodeHandler.h"
 #include "RmlUi/Core/EventListener.h"
 #include "RmlUi/Core/URL.h"
+#include "RmlUi/Core/ElementDocument.h"
 
 namespace Rml {
 
 namespace Script {
 
-extern void AnchorOpenInCurrentTabCallback(Context* context, const URL& url);
-extern void AnchorOpenInNewTabCallback(Context* context, const URL& url);
+extern void AnchorOpenInCurrentTabCallback(Rml::ElementDocument* document, const URL& url);
+extern void AnchorOpenInNewTabCallback(Rml::ElementDocument* document, const URL& url);
 
 class XMLNodeHandlerAnchor : public Rml::XMLNodeHandler {
 public:
@@ -26,8 +27,8 @@ public:
 
 };
 
-void OpenInCurrentTab(Context* context, const String& href);
-void OpenInNewTab(Context* context, const String& href);
+void OpenInCurrentTab(Rml::ElementDocument* document, const String& href);
+void OpenInNewTab(Rml::ElementDocument* document, const String& href);
 
 }
 }

@@ -3,36 +3,38 @@
 //
 
 #include "MainWindow.h"
-
-#include <co/co.h>
-
-#include "RmlUi/Core.h"
-#include "RmlUi/Core/Utils.h"
-#include "RmlUi/Config/Config.h"
-#include "RmlUi_Backend.h"
-#include "Shell.h"
-
 #include "../Script/RunTime.h"
 #include "../Script/ScriptPlugin.h"
-
-#include "TabManager.h"
 #include "BrowserWidget.h"
 #include "Glue.h"
 #include "History.h"
-
-const int window_width = 1550;
-const int window_height = 760;
+#include "RmlContext.h"
+#include "RmlUi/Config/Config.h"
+#include "RmlUi/Core.h"
+#include "RmlUi/Core/Utils.h"
+#include "RmlUi_Backend.h"
+#include "Shell.h"
+#include "TabManager.h"
+#include "log/logging.h"
+#include <Core/ResourceLoader.h>
+#include <co/co.h>
 
 namespace Rml {
 namespace Browser {
 
 MainWindow::MainWindow()
     : tab_manager_(MakeUnique<TabManager>(this)),
-      browser_widget_(MakeUnique<BrowserWidget>(this)) {
+      browser_widget_(MakeUnique<BrowserWidget>(this)),
+      extension_manager_(MakeUnique<ExtensionManager>(this)) {
 	RegisterBrowserGlueFunc();
     RegisterHistoryGlueFunc();
 	Initialize();
-    browser_widget_->Run();
+
+	RenderScheduler::Get()->go([this](){
+		browser_widget_->Initialize();
+		extension_manager_->LoadSingletonExtensions();
+	});
+
 }
 
 bool MainWindow::Initialize() {
@@ -64,6 +66,7 @@ bool MainWindow::Initialize() {
 MainWindow::~MainWindow() {
     tab_manager_.reset();
 	browser_widget_.reset();
+	extension_manager_.reset();
     Rml::Shutdown();
     Backend::Shutdown();
     Shell::Shutdown();
@@ -77,6 +80,8 @@ void MainWindow::Close() {
 }
 
 void MainWindow::WaitForClose() {
+	RmlContext::Get();
+	RmlContext::Render();
 	close_event_.wait();
     co::sleep(500);
 }
@@ -94,7 +99,7 @@ void MainWindow::ProcessEvent() {
 }
 
 void MainWindow::OnTabRun(Tab* tab) {
-
+    ResourceLoader::Get()->Clear();
     His h = {
         .title = tab->title(),
         .icon = tab->document()->GetIcon(),
@@ -117,7 +122,6 @@ void MainWindow::OnTabRun(Tab* tab) {
     obj["icon"] = tab->document()->GetIcon();
     obj["url"] = tab->document()->GetSourceURL();
 	func(obj);
-
 }
 
 void MainWindow::OnTabFresh(Tab* tab) {
@@ -179,21 +183,32 @@ void MainWindow::DoTabEnterUrl(const String& tab_id, const String& url) {
 
 void MainWindow::DoTabOpenNew(const String& url) {
     Rml::Browser::Tab* tab = tab_manager_->NewTab(url);
-    tab->Run();
+    extension_manager_->LoadEveryTabExtensions(tab);
+    tab->Run(true);
     DoTabFocus(tab->tab_id());
 }
 
+void MainWindow::OnExtensionLoad(const Vector<Json::Value>& extension_info) {
+	if (browser_widget_ == nullptr) return;
+    qjs::Context* js_context = browser_widget_->js_context();
+    auto func = js_context->global()["rml"]["extension"]["onLoad"];
+	if (JS_IsUndefined(func.this_obj)) return;
+	static_cast<std::function<void(const Vector<Json::Value>&)>>(func)(extension_info);
+}
 
+void MainWindow::DoExtensionClick(const String& name, qjs::Value event) {
+    extension_manager_->DoExtensionClick(tab_manager_->active_tab(), name, std::move(event));
+}
 
-void OpenInCurrentTab(Context* context, const URL& url) {
+void OpenInCurrentTab(ElementDocument* document, const URL& url) {
     MainWindow* window = MainWindow::GetInstance();
 	TabManager* tab_manager = window->tab_manager();
-	Tab* tab = tab_manager->GetTabByContext(context);
+	Tab* tab = tab_manager->GetTabById(document->GetId());
 	tab->SetUrl(url);
 	tab->Fresh();
 }
 
-void OpenInNewTab(Context* context, const URL& url) {
+void OpenInNewTab(ElementDocument* document, const URL& url) {
 
 }
 
@@ -202,11 +217,11 @@ void OpenInNewTab(Context* context, const URL& url) {
 
 namespace Script {
 
-void AnchorOpenInCurrentTabCallback(Context* context, const URL& url) {
-	Browser::OpenInCurrentTab(context, url);
+void AnchorOpenInCurrentTabCallback(ElementDocument* document, const URL& url) {
+	Browser::OpenInCurrentTab(document, url);
 }
-void AnchorOpenInNewTabCallback(Context* context, const URL& url) {
-    Browser::OpenInNewTab(context, url);
+void AnchorOpenInNewTabCallback(ElementDocument* document, const URL& url) {
+    Browser::OpenInNewTab(document, url);
 }
 
 }
@@ -218,10 +233,14 @@ DEF_main(argc, argv) {
     Rml::Browser::TabManager* tab_manager = window->tab_manager();
 //    Rml::Browser::Tab* tab2 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Source/Browser/History/index.rml");
 //    tab2->Run();
-//    Rml::Browser::Tab* tab1 = tab_manager->NewTab("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/thread.rml");
-//    tab1->Run(true);
-    Rml::Browser::Tab* tab3 = tab_manager->NewTab("http://127.0.0.1:8000/articles/ipc_1.rml");
-    tab3->Run(true);
+    Rml::RenderScheduler::Get()->go([window](){
+      window->DoTabOpenNew("/home/titto/CProjects/RmlUi5.0/Samples/web/chromium-intro/ipc_1.rml");
+	});
+
+//    Rml::Browser::Tab* tab3 = tab_manager->NewTab("http://127.0.0.1:8000/ipc_1.rml");
+//    tab3->Run(true);
+
+
 
 	window->WaitForClose();
 	delete window;

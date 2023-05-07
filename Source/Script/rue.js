@@ -161,6 +161,7 @@ class Rue {
                         if (typeof real_val !== 'object') break
                         origin_attr.split('.').forEach((key, index) => {
                             if (index === 0) return
+                            if (real_val === undefined) return
                             real_val = real_val[key]
                         })
                     }

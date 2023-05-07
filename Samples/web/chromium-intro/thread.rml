@@ -1,18 +1,10 @@
 <rml>
     <head>
         <title>Thread</title>
-        <link type="text/rcss" href="main.rcss" />
-        <link type="text/rcss" href="css/header.rcss" />
-        <link type="text/rcss" href="css/section.rcss" />
+        <link type="text/template" href="template.rml" />
         <link type="image/x-icon" href="images/favicon-1.png" />
     </head>
-    <body>
-        <div class="intro-header-wrapper">
-            <a class="intro-header" href="index.rml">
-                <img id="logo" src="images/chromium.png"></img>
-                <p>Chromium</p>
-            </a>
-        </div>
+    <body template="chromium">
         Thread Introduction
         <script src="js/main.js"></script>
     </body>

@@ -19,7 +19,9 @@ void Document::Glue(qjs::Context::Module& m)
 		.fun<&ElementDocument::SetTitle>("setTitle")
         .fun<&ElementDocument::GetTitle>("getTitle")
         .fun<&ElementDocument::GetSourceURL>("getSourceURL")
-        .fun<&ElementDocument::CreateElement>("createElement");
+        .fun<&ElementDocument::CreateElement>("createElement")
+        .fun<&ElementDocument::Hide>("hide")
+        .fun<&ElementDocument::Show>("show");
 }
 
 }

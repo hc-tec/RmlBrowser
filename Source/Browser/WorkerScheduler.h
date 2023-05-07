@@ -2,14 +2,14 @@
 // Created by titto on 2023/4/27.
 //
 
-#ifndef RMLUI_NETSCHEDULER_H
-#define RMLUI_NETSCHEDULER_H
+#ifndef RMLUI_WORKERSCHEDULER_H
+#define RMLUI_WORKERSCHEDULER_H
 
 #include <co/co.h>
 
 namespace Rml {
 
-class NetScheduler {
+class WorkerScheduler {
 public:
 	co::Scheduler* Get();
 
@@ -20,4 +20,4 @@ private:
 
 }
 
-#endif // RMLUI_NETSCHEDULER_H
+#endif // RMLUI_WORKERSCHEDULER_H

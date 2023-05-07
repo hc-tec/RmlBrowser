@@ -34,9 +34,17 @@ void Glue(qjs::Context* context) {
 
     NetGlue(context);
 
-	for (auto func : GLUE_FUNC_LIST) {
-		func(context);
-	}
+    try
+    {
+        for (auto func : GLUE_FUNC_LIST) {
+            func(context);
+        }
+    }catch (qjs::exception e) {
+//        auto exc = e.get();
+//        Log::Message(Log::LT_DEBUG, "%s", ((std::string) exc).data());
+//        if((bool) exc["stack"])
+//            Log::Message(Log::LT_DEBUG, "%s", ((std::string) exc["stack"]).data());
+    }
 	context->eval("import * as dom from 'dom';import * as net from 'net';"
 				        "globalThis.dom = dom;globalThis.net = net;", "<eval>", JS_EVAL_TYPE_MODULE);
 }

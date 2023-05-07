@@ -24,6 +24,7 @@ body {
   border-bottom-width: 1px;
   border-bottom-color: #ececf1;
   padding: 25px 25px;
+  background-color: #fff;
 }
 
 .chat-input-container {

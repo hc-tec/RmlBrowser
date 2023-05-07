@@ -20,7 +20,8 @@ static void TabGlue(qjs::Context* context) {
 
     auto& m = context->addModule("browser");
 	m.class_<Tab>("Tab")
-	    .fun<&Tab::document>("getDocument");
+	    .fun<&Tab::document>("getDocument")
+        .fun<&Tab::tab_id>("getId");
     context->eval("import * as browser from 'browser';globalThis.browser = browser;", "<eval>", JS_EVAL_TYPE_MODULE);
 
     context->global()["COpenTabWithUrl"] = [&](const Rml::String& tab_id, const Rml::String& url){

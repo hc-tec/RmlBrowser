@@ -6,6 +6,7 @@
 
 #include <cmath>
 
+
 #include "Net/Network.h"
 #include "core/http/request/http_request_body.h"
 #include "core/http/response/http_response_info.h"
@@ -59,6 +60,7 @@ bool NetStreamFile::Open(const String& path)
     net::RequestParams params;
     params.request_info.url = net::URL(path);
     params.request_info.method = net::Method::GET;
+
     std::unique_ptr<net::URLLoader> loader = service->CreateURLLoader(params);
     loader->AddHttpRequestObserver(this);
     loader->Start();

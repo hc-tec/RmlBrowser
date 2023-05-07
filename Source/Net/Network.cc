@@ -4,17 +4,24 @@
 
 #include "Network.h"
 
-#include <utility>
+#include "Browser/MainWindow.h"
 
 namespace Rml {
 namespace Net {
 
 Network::Network()
-    : service_(net::GetNetworkService()),
+    : net_id_(1),
+		service_(net::GetNetworkService()),
 		observer_context_(std::make_unique<NetworkObserverContext>()) {}
 
 std::unique_ptr<net::URLLoader> Network::CreateURLLoader(net::RequestParams& request_params) {
     net::HttpRequestHeaders& headers = request_params.request_info.headers;
+
+    auto win = Rml::Browser::MainWindow::GetInstance();
+    String tab_id = win->tab_manager()->active_tab()->tab_id();
+    headers.PutHeaders("browser-tab-id", tab_id);
+    headers.PutHeaders("net-id", std::to_string(net_id_++));
+
 	if (headers.GetHeader(net::HttpHeaders::ACCEPT_ENCODING).empty()) headers.PutHeaders(net::HttpHeaders::ACCEPT_ENCODING, "");
     if (headers.GetHeader(net::HttpHeaders::ACCEPT).empty()) headers.PutHeaders(net::HttpHeaders::ACCEPT, "*/*");
     if (headers.GetHeader(net::HttpHeaders::HOST).empty()) headers.PutHeaders(net::HttpHeaders::HOST, request_params.request_info.url.host());
@@ -26,6 +33,10 @@ std::unique_ptr<net::URLLoader> Network::CreateURLLoader(net::RequestParams& req
     return loader;
 }
 
+void Network::AddFineGrainRequestObserver(net::HttpRequestObserver* observer) {
+//    observer_context_->AddFineGrainRequestObserver(observer);
+}
+
 void Network::AddFineGrainRequestObserver(std::weak_ptr<net::HttpRequestObserver> observer) {
     observer_context_->AddFineGrainRequestObserver(std::move(observer));
 }
@@ -34,12 +45,24 @@ void Network::AddCoarseGrainRequestObserver(std::weak_ptr<net::URLRequestObserve
     service_->AddURLRequestObserver(std::move(observer));
 }
 
+void Network::AddCoarseGrainRequestObserver(net::URLRequestObserver* observer) {
+    service_->AddURLRequestObserver(observer);
+}
+
 void Network::AddURLLoaderInterceptor(std::weak_ptr<net::URLLoaderInterceptor> interceptor) {
 	service_->AddURLLoaderInterceptor(std::move(interceptor));
 }
 
 void Network::RemoveURLLoaderInterceptor(std::weak_ptr<net::URLLoaderInterceptor> interceptor) {
 	service_->RemoveURLLoaderInterceptor(std::move(interceptor));
+}
+
+void Network::RemoveCoarseGrainRequestObserver(net::URLRequestObserver* observer) {
+    service_->RemoveURLRequestObserver(observer);
+}
+
+void Network::RemoveCoarseGrainRequestObserver(std::weak_ptr<net::URLRequestObserver> observer) {
+    service_->RemoveURLRequestObserver(std::move(observer));
 }
 
 }

@@ -1,18 +1,11 @@
 <rml>
     <head>
         <title>Chromium Introduction</title>
-        <link type="text/rcss" href="main.rcss" />
-        <link type="text/rcss" href="css/header.rcss" />
+        <link type="text/template" href="template.rml" />
         <link type="text/rcss" href="css/section.rcss" />
         <link type="image/x-icon" href="images/favicon-1.png" />
     </head>
-    <body id="app">
-        <div class="intro-header-wrapper">
-            <a class="intro-header" href="articles/ipc_1.rml">
-                <img id="logo" src="images/chromium.png"></img>
-                <p>Chromium</p>
-            </a>
-        </div>
+    <body template="chromium" id="app">
         <div class="intro-img">
             <img class="intro-bg" src="images/bg.png"></img>
             <img class="intro-body" src="images/liebao.png"></img>
@@ -43,17 +36,6 @@
         </div>
         <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/rue.js"></script>
         <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/Net/axios.js"></script>
-        <script>
-            // const axios = new Axios()
-            // const res = axios.post('https://aisys.globalcdn.top/v1/ai/chat2', {
-            //     "annal": [],
-            //     "dialogue": false,
-            //     "prompt": "你好"
-            // }, {
-            //     'X-Token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTYwMjcsIlRlbCI6IjE4MDcwNTAyNzY3IiwiTWVtYmVyRXhwIjowLCJleHAiOjE2ODQ5ODQ1NDAsImlzcyI6IlRERCIsIm5iZiI6MTY4MjM5MjU0MH0.qgF2fRsELBcov5XlfNcD4N8sg5-cx71jTcHfylI6IRw'
-            // })
-            // log(JSON.stringify(res))
-        </script>
         <script>
             const rue = new Rue({
                 el: 'app',

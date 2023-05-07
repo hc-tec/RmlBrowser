@@ -6,23 +6,18 @@
 
 #include <iostream>
 #include <utility>
-#include <RmlUi/Core.h>
 #include <RmlUi_Backend.h>
-#include <co/co.h>
-
+#include "log/logging.h"
 #include "../Script/ScriptPlugin.h"
-
-
-const int window_width = 1550;
-const int window_height = 760;
-
+#include "RmlContext.h"
+#include "RenderScheduler.h"
 namespace Rml {
 
 namespace Browser {
 
 BrowserWidget::BrowserWidget(Delegate* delegate)
 		: delegate_(delegate),
-		scheduler(co::schedulers()[0]),
+		scheduler(RenderScheduler::Get()),
 		context_(nullptr),
 		document_(nullptr),
 		collections_(MakeUnique<Collections>()),
@@ -30,40 +25,21 @@ BrowserWidget::BrowserWidget(Delegate* delegate)
 
 int BrowserWidget::Initialize() {
     // Create the main RmlUi context.
-    context_ = Rml::CreateContext(BROWSER_WIDGET_ID, Rml::Vector2i(window_width, window_height));
+    context_ = RmlContext::Get();
     if (!context_)
     {
         return -1;
     }
-    Backend::RegisterContext(context_, scheduler);
 
-    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_, nullptr);
-    Rml::RegisterPlugin(script_plugin_.get());
+    script_plugin_ = MakeUnique<Script::ScriptPlugin>();
 
     qjs::Context* js_context = script_plugin_->js_context();
-    js_context->global()["CStarAdd"] = [&](String title, String icon, String url){
-      Star s = {
-			.title = std::move(title),
-			.icon = std::move(icon),
-			.url = std::move(url)
-		};
-	  collections_->Collect(s);
-    };
-    js_context->global()["CFocusTab"] = [&](const Rml::String& tab_id){
-		delegate_->DoTabFocus(tab_id);
-		std::cout << tab_id << std::endl;
-    };
-    js_context->global()["CRemoveTab"] = [&](const Rml::String& tab_id, const Rml::String& focus_id){
-        delegate_->DoTabRemove(tab_id);
-        delegate_->DoTabFocus(focus_id);
-        std::cout << tab_id << std::endl;
-    };
-
-
+    Glue();
     // Load the demo document.
     document_ = context_->LoadDocument(widget_rml_);
 	if (document_)
 	{
+        script_plugin_->OnDocumentLoad(document_);
         document_->Show();
 		document_->SetId(BROWSER_WIDGET_ID);
 	}
@@ -76,39 +52,50 @@ int BrowserWidget::Initialize() {
     func(v);
 }
 
-void BrowserWidget::Render() {
-    if (!running_) return;
-	RMLUI_ASSERT(context_)
-    // This is a good place to update your game or application.
-    // Always update the context before rendering.
-    context_->Update();
-
-    // Prepare the backend for taking rendering commands from RmlUi and then render the context.
-    Backend::BeginFrame();
-    context_->Render();
-    Backend::PresentFrame();
-//    co::sleep(40);
-    scheduler->go([&](){
-      Render();
-    });
-}
-
 void BrowserWidget::Run() {
     scheduler->go([&](){
         Initialize();
-        Render();
     });
 }
 
 BrowserWidget::~BrowserWidget() {
 	running_ = false;
-    Rml::RemoveContext(BROWSER_WIDGET_ID);
-    Rml::UnregisterPlugin(script_plugin_.get());
     script_plugin_.reset();
 	collections_.reset();
 }
 
 qjs::Context* BrowserWidget::js_context() { return script_plugin_->js_context(); }
+
+void BrowserWidget::Glue() {
+    qjs::Context* js_context = script_plugin_->js_context();
+    js_context->global()["CStarAdd"] = [&](String title, String icon, String url){
+      Star s = {
+          .title = std::move(title),
+          .icon = std::move(icon),
+          .url = std::move(url)
+      };
+      collections_->Collect(s);
+    };
+    js_context->global()["CFocusTab"] = [&](const Rml::String& tab_id){
+      delegate_->DoTabFocus(tab_id);
+      std::cout << tab_id << std::endl;
+    };
+    js_context->global()["CRemoveTab"] = [&](const Rml::String& tab_id, const Rml::String& focus_id){
+      delegate_->DoTabRemove(tab_id);
+      delegate_->DoTabFocus(focus_id);
+      std::cout << tab_id << std::endl;
+    };
+
+    qjs::Value rml = js_context->newObject();
+    rml["extension"] = js_context->newObject();
+    rml["extension"]["dispatchClickEvent"] = [this](const String& name, qjs::Value event) {
+		delegate_->DoExtensionClick(name, std::move(event));
+	};
+//    rml["dom"] = js_context->newObject();
+//    rml["tab"] = js_context->newObject();
+//    rml["net"] = js_context->newObject();
+    js_context->global()["rml"] = rml;
+}
 
 }
 

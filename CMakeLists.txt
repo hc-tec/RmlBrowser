@@ -1105,7 +1105,17 @@ add_executable(browser
 		Source/Browser/BrowserWidget.h
 		Source/Browser/Glue.cpp
 		Source/Browser/Glue.h
-		Source/Net/Network.cc Source/Net/Network.h Source/Net/URLLoaderProxy.cc Source/Net/URLLoaderProxy.h Source/Net/NetworkObserverContext.cc Source/Net/NetworkObserverContext.h Source/Browser/Collections.cpp Source/Browser/Collections.h Source/Browser/History.cpp Source/Browser/History.h Source/Script/Net/Glue.cpp Source/Script/Net/Glue.h Source/Script/Net/NetHttp.cpp Source/Script/Net/NetHttp.h Source/Script/Net/Impl/NetHttpImpl.cpp Source/Script/Net/Impl/NetHttpImpl.h Source/Core/ResourceLoader.cpp Source/Core/ResourceLoader.h Source/Script/Dom/XMLNodeHandlerImg.cpp Source/Script/Dom/XMLNodeHandlerImg.h Source/Browser/NetScheduler.cpp Source/Browser/NetScheduler.h Source/Browser/RenderScheduler.cpp Source/Browser/RenderScheduler.h)
+		Source/Net/Network.cc Source/Net/Network.h
+		Source/Net/URLLoaderProxy.cc
+		Source/Net/URLLoaderProxy.h
+		Source/Net/NetworkObserverContext.cc Source/Net/NetworkObserverContext.h Source/Browser/Collections.cpp Source/Browser/Collections.h Source/Browser/History.cpp Source/Browser/History.h Source/Script/Net/Glue.cpp Source/Script/Net/Glue.h Source/Script/Net/NetHttp.cpp
+		Source/Script/Net/NetHttp.h Source/Script/Net/Impl/NetHttpImpl.cpp Source/Script/Net/Impl/NetHttpImpl.h Source/Core/ResourceLoader.cpp
+		Source/Core/ResourceLoader.h Source/Script/Dom/XMLNodeHandlerImg.cpp Source/Script/Dom/XMLNodeHandlerImg.h Source/Browser/WorkerScheduler.cpp
+		Source/Browser/WorkerScheduler.h Source/Browser/RenderScheduler.cpp Source/Browser/RenderScheduler.h Source/Browser/Extension/ExtensionController.cpp
+		Source/Browser/Extension/ExtensionController.h Source/Browser/RmlContext.cpp Source/Browser/RmlContext.h Source/Browser/BrowserPlugin.cpp
+		Source/Browser/BrowserPlugin.h Source/Browser/BrowserPluginRegistry.cpp Source/Browser/BrowserPluginRegistry.h Source/Browser/Extension/ExtensionManager.cpp
+		Source/Browser/Extension/ExtensionManager.h Source/Browser/Extension/ExtensionManifest.cpp Source/Browser/Extension/ExtensionManifest.h
+		)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

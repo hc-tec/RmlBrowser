@@ -1,0 +1,11 @@
+{
+  "manifest_version": 1,
+  "name": "DevTools",
+  "version": "1.0.0",
+  "description": "插件描述内容",
+  "icon": "static/imgs/logo.png",
+  "mode": "every-tab",
+  "action": {
+    "default_popup": "popup.rml"
+  }
+}

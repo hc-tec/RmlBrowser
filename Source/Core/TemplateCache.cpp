@@ -27,9 +27,11 @@
  */
 
 #include "TemplateCache.h"
+#include "../../Include/RmlUi/Core/Log.h"
+#include "NetStreamFile.h"
+#include "ResourceLoader.h"
 #include "StreamFile.h"
 #include "Template.h"
-#include "../../Include/RmlUi/Core/Log.h"
 
 namespace Rml {
 
@@ -72,7 +74,18 @@ Template* TemplateCache::LoadTemplate(const String& name)
 
 	// Nope, we better load it
 	Template* new_template = nullptr;
-	auto stream = MakeUnique<StreamFile>();
+    UniquePtr<StreamFile> stream;
+    URL sheet_url(name);
+    if (sheet_url.GetProtocol() == "file")
+    {
+        // Open stream, construct new sheet and pass the stream into the sheet
+        stream = MakeUnique<StreamFile>();
+    } else {
+        NetStreamFile file;
+        ResourceLoader::Get()->WaitForResource(name, &file);
+        // Network resource stream
+        stream = MakeUnique<NetStreamFile>(file);
+    }
 	if (stream->Open(name))
 	{
 		new_template = new Template();

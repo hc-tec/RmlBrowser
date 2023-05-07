@@ -2,17 +2,17 @@
 // Created by titto on 2023/4/27.
 //
 
-#include "NetScheduler.h"
+#include "WorkerScheduler.h"
 
 namespace Rml {
 
-co::Scheduler* NetScheduler::Get()
+co::Scheduler* WorkerScheduler::Get()
 {
 	NextScheduler();
 	return s_;
 }
 
-void NetScheduler::NextScheduler() {
+void WorkerScheduler::NextScheduler() {
     s_ = co::next_scheduler();
     if (s_ == co::schedulers()[0]) NextScheduler();
 }

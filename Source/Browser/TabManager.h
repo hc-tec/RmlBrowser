@@ -6,8 +6,11 @@
 #define RMLUI_TABMANAGER_H
 
 #include "RmlUi/Core/Types.h"
-#include "Tab.h"
 #include <atomic>
+
+#include "Tab.h"
+#include "BrowserPluginRegistry.h"
+
 
 namespace Rml {
 
@@ -31,8 +34,6 @@ public:
 
 	Tab* NewTab(const URL& url);
 
-	Tab* GetTabByContext(Context* context);
-
 	Tab* GetTabById(const String& tab_id);
 
 	void FocusTab(const String& tab_id);
@@ -50,12 +51,13 @@ public:
 	void OnUnActive(Tab* tab) override;
 	void OnDocumentLoad(Tab* tab, ElementDocument* document) override;
 
+	Tab* active_tab() { return active_tab_; }
+
 private:
     Delegate* delegate_;
 	std::atomic<int> tab_id_;
 
 	UnorderedMap<String, UniquePtr<Tab>> tab_map_;
-	UnorderedMap<Context*, Tab*> context_tab_map_;
 	Tab* active_tab_;
 };
 

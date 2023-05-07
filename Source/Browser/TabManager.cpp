@@ -26,25 +26,17 @@ Tab* TabManager::NewTab(const URL& url) {
 	new_tab_ptr->SetDelegate(this);
 	Tab* new_tab = new_tab_ptr.get();
 	tab_map_[new_tab_id] = std::move(new_tab_ptr);
+	active_tab_ = new_tab;
 	return new_tab;
 }
 
-Tab* TabManager::GetTabByContext(Context* context) {
-    auto it = context_tab_map_.find(context);
-    if (it == context_tab_map_.end()) return nullptr;
-    return it->second;
-}
 
 void TabManager::OnInitialize(Tab* tab) {
-	Context* context = tab->context();
-	context_tab_map_[context] = tab;
     if (delegate_) delegate_->OnTabRun(tab);
 }
 
 void TabManager::OnDestroy(Tab* tab) {
     Log::Message(Log::LT_DEBUG, "%s destroyed", tab->tab_id().data());
-    Context* context = tab->context();
-    context_tab_map_.erase(context);
 }
 
 void TabManager::OnFresh(Tab* tab) {
@@ -58,6 +50,7 @@ void TabManager::OnStopRunning(Tab* tab) {
 	if (it == tab_map_.end()) return;
 	tab_map_.erase(it);
     if (delegate_) delegate_->OnTabStopRunning(tab);
+    BrowserPluginRegistry::NotifyTabStopRunning(tab);
 }
 
 void TabManager::CloseTab(const String& tab_id) {
@@ -76,6 +69,7 @@ void TabManager::CloseAllTabs() {
 void TabManager::OnActive(Tab* tab) {
     active_tab_ = tab;
     if (delegate_) delegate_->OnTabActive(tab);
+	BrowserPluginRegistry::NotifyTabActive(tab);
 }
 
 void TabManager::OnUnActive(Tab* tab) {

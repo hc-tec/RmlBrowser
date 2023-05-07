@@ -20,40 +20,23 @@ namespace Script {
 class Document;
 class JsDocumentElementInstancer;
 
-class ScriptPlugin : public Rml::Plugin {
-public:
-	class Delegate {
-	public:
-		virtual void OnDocumentLoad(ElementDocument* document) = 0;
-	};
+class ScriptPlugin {
 public:
 
-	ScriptPlugin(Context* context, Delegate* delegate);
+	ScriptPlugin();
+    ~ScriptPlugin();
 
-    int GetEventClasses() override;
-    void OnInitialise() override;
-    void OnShutdown() override;
-    void OnContextCreate(Context* context) override;
-    void OnContextDestroy(Context* context) override;
-    void OnDocumentOpen(Context* context, const String& document_path) override;
-    void OnDocumentLoad(ElementDocument* document) override;
-    void OnDocumentUnload(ElementDocument* document) override;
-    void OnElementCreate(Element* element) override;
-    void OnElementDestroy(Element* element) override;
-	~ScriptPlugin() override;
-
+    void OnDocumentLoad(ElementDocument* document);
 	qjs::Context* js_context() { return js_context_.get(); }
 
-	void LoadExternJs(qjs::Context* js_context, const std::string& path);
-
 private:
-	Delegate* delegate_;
-	Context* context_;
+
+    void LoadExternJs(qjs::Context* js_context, const std::string& path);
+
 	qjs::Runtime* js_runtime_;
     UniquePtr<qjs::Context> js_context_;
     SharedPtr<JsDocumentElementInstancer> js_document_element_instancer_;
 };
-
 
 }
 

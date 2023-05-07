@@ -14,6 +14,7 @@
 
 #include <any>
 
+
 namespace qjs {
 
 class Context;
@@ -27,8 +28,9 @@ class ElementDocument;
 
 namespace Browser {
 
-class Tab : public Script::OwnershipObserver,
-				public Script::ScriptPlugin::Delegate {
+class BrowserPlugin;
+
+class Tab : public Script::OwnershipObserver {
 public:
 	class Delegate {
 	public:
@@ -67,8 +69,6 @@ public:
 	/* OwnershipObserver */
 	void OnOwnerShift(std::any ptr) override;
 
-	/* ScriptPlugin::Delegate */
-	void OnDocumentLoad(ElementDocument* document) override;
 
 private:
     void Destroy();
@@ -86,6 +86,7 @@ private:
 	bool active_;
 	bool rendering_;
 	bool running_;
+
 };
 
 }

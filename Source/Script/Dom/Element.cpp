@@ -5,6 +5,7 @@
 #include "Element.h"
 #include "Ownership.h"
 #include "RmlUi/Core/Element.h"
+#include "RmlUi/Core/Elements/ElementTabSet.h"
 #include "RmlUi/Core/Elements/ElementFormControlInput.h"
 #include "RmlUi/Core/Property.h"
 #include "RmlUi/Core/StyleSheet.h"
@@ -61,16 +62,9 @@ void Element::Glue(qjs::Context::Module& m) {
         .fun<&Rml::Element::Blur>("blur")
         .fun<&Rml::Element::Click>("click")
         .fun<&Rml::Element::_ScrollIntoView>("scrollIntoView")
-//		.fun<>("setAttribute", [](Rml::Element* _this, const String& name, const String& value) {
-//			_this->SetAttribute(name, value);
-//		})
 		.fun<&Rml::Element::AppendChild>("appendChild")
         .fun<&Rml::Element::RemoveChild>("removeChild")
         .fun<&Rml::Element::InsertBefore>("insertChild")
-//        .fun<>("removeChild", [](Rml::Element* _this, Rml::Element* child) {
-//			_this->RemoveChild(child);
-//			GetOwnership<Rml::Element>()->GetOwner(child).reset();
-//        })
         .fun<>("addEventListener", [](Rml::Element* _this, const String& event, const std::function<void(Event*)>& callback) {
 			UniquePtr<SelfListener> listener_ptr = MakeUnique<SelfListener>(event, callback);
 			SelfListener* listener = listener_ptr.get();
@@ -80,11 +74,7 @@ void Element::Glue(qjs::Context::Module& m) {
 		})
 		.fun<>("removeEventListener", [](Rml::Element* _this, SelfListener* listener) {
             _this->RemoveEventListener(listener->GetEvent(), listener);
-//            GetOwnershipMgr<SelfListener>()->GetOwner(listener).reset();
 		})
-//		.fun("setValue", [](Rml::Element* _this, const String& value){
-//			_this->GetContext();
-//		})
         .property<&Rml::Element::_GetInnerRML, &Rml::Element::SetInnerRML>("innerRML");
 
         m.class_<Rml::ElementFormControl>("ElementFormControl")
@@ -98,11 +88,20 @@ void Element::Glue(qjs::Context::Module& m) {
 //        m.class_<Rml::ElementFormControlInput>("ElementFormControlInput")
 //            .base<Rml::ElementFormControl>();
 
+        m.class_<Rml::ElementTabSet>("ElementTabSet")
+            .base<Rml::Element>()
+            .fun<&Rml::ElementTabSet::SetActiveTab>("setActiveTab")
+            .fun<&Rml::ElementTabSet::GetActiveTab>("getActiveTab");
+
+
 		m.function("convertToElementFormControl", [](Rml::Element* el) -> ElementFormControl* {
 			return reinterpret_cast<ElementFormControl*>(el);
 		});
         m.function("convertToElementText", [](Rml::Element* el) -> ElementText* {
           return reinterpret_cast<ElementText*>(el);
+        });
+        m.function("convertToElementTabSet", [](Rml::Element* el) -> ElementTabSet* {
+          return reinterpret_cast<ElementTabSet*>(el);
         });
 
 }

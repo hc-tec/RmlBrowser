@@ -3,28 +3,22 @@
 //
 
 #include "Tab.h"
-
-#include <RmlUi/Core.h>
-#include <RmlUi/Debugger.h>
+#include "../Script/RunTime.h"
+#include "MainWindow.h"
+#include "RmlContext.h"
 #include <RmlUi/Config/Config.h>
+#include <RmlUi/Core.h>
 #include <RmlUi_Backend.h>
 #include <Shell.h>
-#include <co/co.h>
+#include "RenderScheduler.h"
 
-#include "../Script/RunTime.h"
-
-#include "MainWindow.h"
-
-
-const int window_width = 1550;
-const int window_height = 760;
 const int browser_widget_height = 100;
 
 namespace Rml {
 namespace Browser {
 
 Tab::Tab(const String& tab_id, const URL& url)
-    : scheduler(co::schedulers()[0]),
+    : scheduler(RenderScheduler::Get()),
 		delegate_(nullptr),
 		tab_id_(tab_id),
 		url_(url),
@@ -38,16 +32,14 @@ Tab::Tab(const String& tab_id, const URL& url)
 int Tab::Initialize() {
     Rml::Script::RegisterOwnershipObserver(this);
     // Create the main RmlUi context.
-    context_ = Rml::CreateContext(tab_id_, Rml::Vector2i(window_width, window_height));
+    context_ = RmlContext::Get(); //Rml::CreateContext(tab_id_, Rml::Vector2i(window_width, window_height));
     if (!context_)
     {
         Destroy();
         return -1;
     }
-    Backend::RegisterContext(context_, scheduler);
 
-    script_plugin_ = MakeUnique<Script::ScriptPlugin>(context_, this);
-    Rml::RegisterPlugin(script_plugin_.get());
+    script_plugin_ = MakeUnique<Script::ScriptPlugin>();
 
     qjs::Context* js_context = script_plugin_->js_context();
     js_context->global()["reload"] = [&](){
@@ -62,6 +54,8 @@ int Tab::Initialize() {
 //    Rml::Debugger::Initialise(context_);
     // Load the demo document.
     document_ = context_->LoadDocument(url_.GetURL());
+	if (document_ == nullptr) return -1;
+    script_plugin_->OnDocumentLoad(document_);
     document_->SetId(tab_id_);
     using Rml::PropertyId;
     document_->SetProperty(PropertyId::Top, Rml::Property(browser_widget_height, Rml::Property::PX));
@@ -69,31 +63,10 @@ int Tab::Initialize() {
 	return 0;
 }
 
-void Tab::Render() {
-	if (!rendering_) return;
-
-    // This is a good place to update your game or application.
-    // Always update the context before rendering.
-    context_->Update();
-
-    // Prepare the backend for taking rendering commands from RmlUi and then render the context.
-    Backend::BeginFrame();
-    context_->Render();
-    Backend::PresentFrame();
-//	co::sleep(50);
-	if (rendering_)
-        scheduler->go([&](){
-          Render();
-		});
-}
-
 void Tab::Destroy() {
-    Backend::UnRegisterContext(context_);
     Rml::Script::UnRegisterOwnershipObserver(this);
-    Rml::RemoveContext(tab_id_);
     Rml::Script::ClearOwners(js_owner_list_);
     js_owner_list_.clear();
-    Rml::UnregisterPlugin(script_plugin_.get());
 	script_plugin_.reset();
 //    Rml::Debugger::Shutdown();
     Factory::ClearStyleSheetCache();
@@ -103,7 +76,7 @@ void Tab::Destroy() {
 
 void Tab::Run(bool show) {
 	scheduler->go([&, show](){
-        Initialize();
+		if(Initialize() != 0) return;
         if (show) Show();
 	});
 }
@@ -112,7 +85,7 @@ void Tab::Fresh() {
     rendering_ = false;
     scheduler->go([=](){
         Destroy();
-        Initialize();
+        if(Initialize() != 0) return;
         if (delegate_) delegate_->OnFresh(this);
 		if (active_) Show();
     });
@@ -141,7 +114,6 @@ void Tab::Show() {
 		}
         document_->Show();
 		if (delegate_) delegate_->OnActive(this);
-		Render();
 	});
 }
 
@@ -175,9 +147,6 @@ void Tab::OnOwnerShift(std::any ptr) {
 	}
 }
 
-void Tab::OnDocumentLoad(ElementDocument* document) {
-    delegate_->OnDocumentLoad(this, document);
-}
 
 }
 }

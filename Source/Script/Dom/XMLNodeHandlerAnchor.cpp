@@ -26,9 +26,9 @@ void ProcessEvent(Rml::Event* event) {
         if (href.empty()) return;
         String target = element->GetAttribute<String>("target", "_self");
         if (target == "_self") {
-            OpenInCurrentTab(context, href);
+            OpenInCurrentTab(element->GetOwnerDocument(), href);
         } else if (target == "_blank") {
-            OpenInNewTab(context, href);
+            OpenInNewTab(element->GetOwnerDocument(), href);
         }
     } else if (event->GetId() == EventId::Unload) {
         Element* element = event->GetCurrentElement();
@@ -51,16 +51,16 @@ Rml::Element* XMLNodeHandlerAnchor::ElementStart(Rml::XMLParser* parser, const R
     return result;
 }
 
-void OpenInCurrentTab(Context* context, const Rml::String& href) {
+void OpenInCurrentTab(Rml::ElementDocument* document, const Rml::String& href) {
     Log::Message(Log::LT_DEBUG, "Open in Current Tab");
-	String url = context->GetDocument(context->GetName())->GetSourceURL();
-	AnchorOpenInCurrentTabCallback(context, URL(Absolutepath(href, url)));
+    String url = document->GetSourceURL();
+	AnchorOpenInCurrentTabCallback(document, URL(Absolutepath(href, url)));
 }
 
-void OpenInNewTab(Context* context, const Rml::String& href) {
+void OpenInNewTab(Rml::ElementDocument* document, const Rml::String& href) {
     Log::Message(Log::LT_DEBUG, "Open in New Tab");
-    String url = context->GetDocument(context->GetName())->GetSourceURL();
-    AnchorOpenInNewTabCallback(context, URL(Absolutepath(href, url)));
+    String url = document->GetSourceURL();
+    AnchorOpenInNewTabCallback(document, URL(Absolutepath(href, url)));
 }
 
 bool XMLNodeHandlerAnchor::ElementEnd(XMLParser* parser, const String& name) { return true; }

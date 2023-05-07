@@ -49,6 +49,7 @@
         axios.interceptors.request.use(
             config => {
                 config.headers['X-Token'] = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJJRCI6MTYwMjcsIlRlbCI6IjE4MDcwNTAyNzY3IiwiTWVtYmVyRXhwIjowLCJleHAiOjE2ODQ5ODQ1NDAsImlzcyI6IlRERCIsIm5iZiI6MTY4MjM5MjU0MH0.qgF2fRsELBcov5XlfNcD4N8sg5-cx71jTcHfylI6IRw'
+                return config
             },
             config => {
                 return config
@@ -62,8 +63,11 @@
             methods: {
                 chatBgChange(el) {
                     const isUser = el.getAttribute('user')
-                    if (isUser === 'false') {
-                        el.setProperty('background', '#F7F7F8')
+                    if (parseInt(isUser) === 0) {
+                        log(`isUser ${isUser}`)
+                        el.setProperty('background-color', '#F7F7F8')
+                    } else {
+                        el.setProperty('background-color', '#FFFFFF')
                     }
                 },
                 askQuestion() {
@@ -75,12 +79,12 @@
                     this.chat_contents.push({
                         avatar: 'images/132.png',
                         message: question,
-                        isUser: true,
+                        isUser: 1,
                     })
                     this.chat_contents.push({
                         avatar: 'images/QQ20230426221033.png',
                         message: '',
-                        isUser: false,
+                        isUser: 0,
                     })
                     this.chat_contents = this.chat_contents
                     axios.post('https://aisys.globalcdn.top/v1/ai/chat2', {
@@ -100,7 +104,7 @@
                     {
                         avatar: 'images/QQ20230426221033.png',
                         message: '欢迎使用 MiniGPT v0.1 copyright @titto',
-                        isUser: false,
+                        isUser: 0,
                     }
                 )
                 // this.chat_contents = [

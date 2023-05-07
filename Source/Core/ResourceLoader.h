@@ -45,6 +45,8 @@ public:
 
     LoadStatus TryGetResource(const String& url, NetStreamFile* file);
 
+	void Clear();
+
 private:
 
 	void NextScheduler();

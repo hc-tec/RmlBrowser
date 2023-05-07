@@ -3,15 +3,12 @@
 //
 
 #include "NetHttp.h"
-
-#include <utility>
-#include <json/json.h>
-
-#include "quickjspp.hpp"
-
-#include "../../Browser/NetScheduler.h"
 #include "../../Browser/RenderScheduler.h"
+#include "../../Browser/WorkerScheduler.h"
 #include "Script/quickjsppExtend.h"
+#include "quickjspp.hpp"
+#include <json/json.h>
+#include <utility>
 
 namespace Rml {
 namespace Script {
@@ -29,7 +26,7 @@ void NetHttp::Request(String url, net::Method method, qjs::Value params, qjs::Va
 
     ParseHeader(p, std::move(headers));
 
-    co::Scheduler* s = NetScheduler().Get();
+    co::Scheduler* s = WorkerScheduler().Get();
 	s->go([&, p, params, options](){
       auto res = impl_->Get(p);
 
@@ -37,7 +34,7 @@ void NetHttp::Request(String url, net::Method method, qjs::Value params, qjs::Va
       qjs::Value ret {params.ctx, JS_DupValue(params.ctx, o)};
       GenerateResponse(ret, res);
 
-	  RenderScheduler().Get()->go([ctx = options.ctx, options, ret](){
+	  RenderScheduler::Get()->go([ctx = options.ctx, options, ret](){
         JSValue axios_cb = JS_GetPropertyStr(ctx, options.v, "axios_cb");
         JSValue user_cb = JS_GetPropertyStr(ctx, options.v, "user_cb");
         JSValue _this = JS_GetPropertyStr(ctx, options.v, "_this");

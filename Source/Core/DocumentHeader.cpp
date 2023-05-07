@@ -27,10 +27,12 @@
  */
 
 #include "DocumentHeader.h"
-#include "XMLParseTools.h"
 #include "../../Include/RmlUi/Core/Core.h"
-#include "../../Include/RmlUi/Core/SystemInterface.h"
 #include "../../Include/RmlUi/Core/StringUtilities.h"
+#include "../../Include/RmlUi/Core/SystemInterface.h"
+#include "ResourceLoader.h"
+#include "XMLParseTools.h"
+#include <RmlUi/Core/Utils.h>
 
 namespace Rml {
 
@@ -53,10 +55,10 @@ void DocumentHeader::MergePaths(StringList& target, const StringList& source, co
 {
 	for (size_t i = 0; i < source.size(); i++)
 	{
-		String joined_path;
-		::Rml::GetSystemInterface()->JoinPath(joined_path, StringUtilities::Replace(source_path, '|', ':'), StringUtilities::Replace(source[i], '|', ':'));
-
-		target.push_back(StringUtilities::Replace(joined_path, ':', '|'));
+		String path = Absolutepath(source[i], source_path);
+		ResourceLoader* loader = ResourceLoader::Get();
+		loader->Load(path);
+		target.push_back(path);
 	}
 }
 

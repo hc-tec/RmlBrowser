@@ -5,6 +5,7 @@
 #ifndef RMLUI_QUICKJSPPEXTEND_H
 #define RMLUI_QUICKJSPPEXTEND_H
 
+#include <json/json.h>
 #include "quickjspp.hpp"
 #include "RmlUi/Config/Config.h"
 #include "RmlUi/Core/Variant.h"
@@ -12,6 +13,7 @@
 #include "Dom/Ownership.h"
 #include "Browser/Collections.h"
 #include "core/http/http_headers.h"
+
 
 namespace qjs {
 
@@ -195,6 +197,23 @@ struct js_traits<tit::net::HttpHeaders> {
     }
 };
 
+template <>
+struct js_traits<Json::Value> {
+    /// @throws exception
+    Json::Value unwrap(JSContext* ctx, JSValueConst v)
+    {
+        Json::Value map;
+        return map;
+    }
+
+    static JSValue wrap(JSContext* ctx, Json::Value s) noexcept {
+        Json::FastWriter writer;
+        std::string jsonString = writer.write(s);
+        JSValue obj = JS_ParseJSON(ctx, jsonString.c_str(), jsonString.size(), "<eval>");
+        Value v {ctx, JS_DupValue(ctx, obj)};
+        return v.v;
+    }
+};
 
 }
 

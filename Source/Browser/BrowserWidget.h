@@ -5,9 +5,9 @@
 #ifndef RMLUI_BROWSERWIDGET_H
 #define RMLUI_BROWSERWIDGET_H
 
-#include <RmlUi/Core/Types.h>
-
 #include "Collections.h"
+#include <RmlUi/Core/Types.h>
+#include <quickjspp.hpp>
 
 namespace co {
 
@@ -46,6 +46,8 @@ public:
         virtual void DoTabRemove(const String& tab_id) = 0;
         virtual void DoTabOpenNew(const String& url) = 0;
         virtual void DoTabEnterUrl(const String& tab_id, const String& url) = 0;
+
+		virtual void DoExtensionClick(const String& name, qjs::Value event) = 0;
 	};
 
     BrowserWidget(Delegate* delegate);
@@ -57,6 +59,7 @@ public:
 
     qjs::Context* js_context();
 private:
+	void Glue();
     Delegate* delegate_;
 
     co::Scheduler* scheduler;

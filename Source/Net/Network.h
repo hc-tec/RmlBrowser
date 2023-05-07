@@ -5,6 +5,8 @@
 #ifndef RMLUI_NETWORK_H
 #define RMLUI_NETWORK_H
 
+#include <atomic>
+
 #include "core/base/weak_container.h"
 #include "core/network/network_service.h"
 #include "core/network/request_params.h"
@@ -34,11 +36,20 @@ public:
     void RemoveURLLoaderInterceptor(
         std::weak_ptr<net::URLLoaderInterceptor> interceptor);
 
+    void AddFineGrainRequestObserver(net::HttpRequestObserver* observer);
+
     void AddFineGrainRequestObserver(std::weak_ptr<net::HttpRequestObserver> observer);
+
+    void AddCoarseGrainRequestObserver(net::URLRequestObserver* observer);
 
     void AddCoarseGrainRequestObserver(std::weak_ptr<net::URLRequestObserver> observer);
 
+    void RemoveCoarseGrainRequestObserver(net::URLRequestObserver* observer);
+
+    void RemoveCoarseGrainRequestObserver(std::weak_ptr<net::URLRequestObserver> observer);
+
 private:
+    std::atomic<int> net_id_;
     net::NetworkService* service_;
     std::unique_ptr<NetworkObserverContext> observer_context_;
 };
