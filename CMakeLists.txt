@@ -1115,7 +1115,7 @@ add_executable(browser
 		Source/Browser/Extension/ExtensionController.h Source/Browser/RmlContext.cpp Source/Browser/RmlContext.h Source/Browser/BrowserPlugin.cpp
 		Source/Browser/BrowserPlugin.h Source/Browser/BrowserPluginRegistry.cpp Source/Browser/BrowserPluginRegistry.h Source/Browser/Extension/ExtensionManager.cpp
 		Source/Browser/Extension/ExtensionManager.h Source/Browser/Extension/ExtensionManifest.cpp Source/Browser/Extension/ExtensionManifest.h
-		)
+		Source/Script/CustomComponent/XMLNodeHandlerCustomComponent.cpp Source/Script/CustomComponent/XMLNodeHandlerCustomComponent.h Source/Script/CustomComponent/XMLNodeHandlerSlot.cpp Source/Script/CustomComponent/XMLNodeHandlerSlot.h Source/Script/CustomComponent/CustomComponent.cpp Source/Script/CustomComponent/CustomComponent.h)
 
 include_directories(${PROJECT_SOURCE_DIR}/Backends)
 include_directories(${PROJECT_SOURCE_DIR}/Samples/shell/include)

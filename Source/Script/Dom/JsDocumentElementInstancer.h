@@ -15,6 +15,12 @@ namespace Script {
 
 class JsDocumentElementInstancer : public Rml::ElementInstancer, public Rml::XMLNodeHandler
 {
+public:
+	class Delegate {
+	public:
+		virtual void OnHeadParseFinish() = 0;
+	};
+    explicit JsDocumentElementInstancer(Delegate* delegate);
     /// Instances an element given the tag name and attributes.
     /// @param[in] parent The element the new element is destined to be parented to.
     /// @param[in] tag The tag of the element to instance.
@@ -34,6 +40,9 @@ public:
 
     /// script source
     DocumentHeader::ResourceList scripts_;
+
+private:
+    Delegate* delegate_;
 };
 
 }

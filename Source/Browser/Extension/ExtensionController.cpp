@@ -33,6 +33,9 @@ ExtensionController::~ExtensionController() {
 	script_plugin_.reset();
 	manifest_.reset();
     Net::Network::GetInstance()->RemoveCoarseGrainRequestObserver(this);
+	if (cur_tab_) {
+        cur_tab_->document()->RemoveEventListener(EventId::Click, this);
+	}
 }
 
 void ExtensionController::Glue() {
@@ -148,7 +151,11 @@ void ExtensionController::OnRequestStart(net::URLRequest* request, net::HttpRequ
         obj["method"] = method;
         obj["body"] = body;
         obj["header"] = headers;
-        static_cast<std::function<void(qjs::Value)>>(cb)(obj);
+        try {
+            static_cast<std::function<void(qjs::Value)>>(cb)(obj);
+        }catch (qjs::exception) {
+            Log::Message(Log::LT_DEBUG, "OnRequestStart error");
+        }
 	});
 }
 
@@ -184,7 +191,11 @@ void ExtensionController::OnRequestEnd(net::URLRequest* request, net::HttpReques
       obj["status"] = res_s.code;
 
       ret["response"] = obj;
-      static_cast<std::function<void(qjs::Value)>>(cb)(ret);
+      try {
+          static_cast<std::function<void(qjs::Value)>>(cb)(ret);
+      }catch (qjs::exception) {
+          Log::Message(Log::LT_DEBUG, "OnRequestEnd error");
+      }
     });
 }
 
@@ -206,6 +217,18 @@ bool ExtensionController::Filter(Element* element) { return cur_tab_ && cur_tab_
 bool ExtensionController::Filter(Tab* tab) { return cur_tab_ && cur_tab_ != tab; }
 
 bool ExtensionController::Filter(const String& tab_id) { return cur_tab_ && cur_tab_->tab_id() != tab_id; }
+
+void ExtensionController::set_interested_tab(Tab* tab) {
+    cur_tab_ = tab;
+//	tab->document()->AddEventListener(EventId::Click, this);
+}
+
+void ExtensionController::ProcessEvent(Event& event) {
+	if (!document_->IsVisible()) return;
+	if (event == EventId::Click) {
+		Element* el = event.GetTargetElement();
+	}
+}
 
 }
 

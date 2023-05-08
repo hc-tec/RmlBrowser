@@ -5,10 +5,56 @@
     <link type="text/rcss" href="css/header.rcss" />
     <link type="text/rcss" href="articles/main.rcss" />
     <link type="image/x-icon" href="images/chrome_icon.png" />
+    <script src="js/my-page.js"></script>
 </head>
 <body template="chromium">
-    <div class="content">
+    <div class="content" id="app">
         <h1>Inside look at modern web browser (part 1)</h1>
+        <rml-notification ref="notifier">
+            <template slot="header">
+                Documentation Vuesax 4.0+
+            </template>
+            <template>
+                These documents refer to the latest version of vuesax (4.0+), to see the documents of the previous versions you can do it here 👉 Vuesax 3.x
+            </template>
+        </rml-notification>
+        <rml-avatar>
+            <template>
+                <img src="//home/titto/CProjects/RmlUi5.0/Extensions/DevTools/static/imgs/logo.png" />
+            </template>
+        </rml-avatar>
+        <rml-select />
+        <rml-input type="password"></rml-input>
+        <rml-input r-click="handleClick" ref="input" icon="//home/titto/CProjects/RmlUi5.0/Extensions/DevTools/static/imgs/logo.png"></rml-input>
+        <my-page />
+        <rml-alert>
+            <template slot="title">Title</template>
+            <template>
+                Vuesax no usa ninguna librería o fuente de iconos por defecto, con esto damos la libertad de usar la que prefieras Todos los componentes que usen en algún lugar un icono por defecto como el de close en un Alert o un Popup va a ser un svg para no tener que instalar ningún tipo de fuente externa, y se podrá sustituir con un slot="icon" por el icono de su preferencia
+            </template>
+        </rml-alert>
+        <rml-alert type="success">
+            <template slot="title">Title</template>
+            <template>
+                Vuesax no usa ninguna librería o fuente de iconos por defecto, con esto damos la libertad de usar la que prefieras Todos los componentes que usen en algún lugar un icono por defecto como el de close en un Alert o un Popup va a ser un svg para no tener que instalar ningún tipo de fuente externa, y se podrá sustituir con un slot="icon" por el icono de su preferencia
+            </template>
+        </rml-alert>
+        <rml-alert type="danger">
+            <template slot="title">Title</template>
+            <template>
+                Vuesax no usa ninguna librería o fuente de iconos por defecto, con esto damos la libertad de usar la que prefieras Todos los componentes que usen en algún lugar un icono por defecto como el de close en un Alert o un Popup va a ser un svg para no tener que instalar ningún tipo de fuente externa, y se podrá sustituir con un slot="icon" por el icono de su preferencia
+            </template>
+        </rml-alert>
+        <rml-button ref="hello" >
+            <div>Active</div>
+        </rml-button>
+        <rml-button type="success" >Active</rml-button>
+<!--        <rml-button type="danger" >Active</rml-button>-->
+<!--        <rml-button type="warn" >Active</rml-button>-->
+<!--        <rml-button flat="1">Active</rml-button>-->
+<!--        <rml-button type="success" flat="1">Active</rml-button>-->
+<!--        <rml-button type="danger" flat="1">Active</rml-button>-->
+<!--        <rml-button type="warn" flat="1">Active</rml-button>-->
         <h2 id="cpu-gpu-memory-and-multi-process-architecture" tabindex="-1">
             CPU, GPU, Memory, and multi-process architecture
         </h2>
@@ -48,12 +94,19 @@
         <p>There are even more processes like the Extension process and utility processes. If you want to see how many processes are running in your Chrome, click the options menu icon <span class="material-icons">more_vert</span> at the top right corner, select More Tools, then select Task Manager. This opens up a window with a list of processes that are currently running and how much CPU/Memory they are using.</p>
     </div>
     <script>
-        document.addEventListener(document, 'mousedown', e => {
-            const params = e.getParameters()
-            if (params.button === 1) {
-
+        new Rue({
+            el: 'app',
+            data: {},
+            methods: {
+                handleClick() {
+                    log(this.getRef('input').getValue())
+                    this.getRef('notifier').open()
+                }
+            },
+            onMounted() {
+                // this.getRef('notifier').close()
+                // this.getRef('notifier').open()
             }
-            log(JSON.stringify(params))
         })
     </script>
 </body>

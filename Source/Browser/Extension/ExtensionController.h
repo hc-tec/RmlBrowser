@@ -5,10 +5,11 @@
 #ifndef RMLUI_EXTENSION_CONTROLLER_H
 #define RMLUI_EXTENSION_CONTROLLER_H
 
-#include <Browser/BrowserPlugin.h>
-#include <Script/ScriptPlugin.h>
 #include "Net/Network.h"
 #include "core/url_request/url_request_observer.h"
+#include <RmlUi/Core/EventListener.h>
+#include <Browser/BrowserPlugin.h>
+#include <Script/ScriptPlugin.h>
 
 namespace Rml {
 
@@ -16,7 +17,10 @@ namespace Browser {
 
 class ExtensionManifest;
 
-class ExtensionController : public BrowserPlugin, public net::URLRequestObserver {
+class ExtensionController :
+	public BrowserPlugin,
+	public net::URLRequestObserver,
+    public EventListener {
 public:
 	ExtensionController(UniquePtr<ExtensionManifest> manifest);
 	~ExtensionController() override;
@@ -25,7 +29,7 @@ public:
     bool Filter(Tab* tab);
     bool Filter(const String& tab_id);
 
-	void set_interested_tab(Tab* tab) { cur_tab_ = tab; }
+	void set_interested_tab(Tab* tab);
 
 	/* BrowserPlugin */
 	void OnInitialise() override;
@@ -48,6 +52,10 @@ public:
 	void OnExtensionIconClick(Tab* tab, const String& name, qjs::Value event);
 
     ExtensionManifest* manifest() { return manifest_.get(); }
+
+	/* EventListener */
+	void ProcessEvent(Event& event) override;
+
 private:
 
     void Glue();

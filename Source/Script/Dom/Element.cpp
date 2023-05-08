@@ -11,12 +11,19 @@
 #include "RmlUi/Core/StyleSheet.h"
 #include "SelfListener.h"
 #include <RmlUi/Core/ElementText.h>
-
+#include "../CustomComponent/CustomComponent.h"
 namespace Rml {
 
 namespace Script {
 
 void Element::Glue(qjs::Context::Module& m) {
+
+    m.class_<CustomComponent>("CustomComponent")
+        .constructor<const String&>("CustomComponent")
+        .fun<&CustomComponent::SetRml>("setRml")
+        .fun<&CustomComponent::SetRcss>("setRcss")
+        .fun<&CustomComponent::SetScript>("setScript")
+        .fun<&CustomComponent::Register>("register");
 
     m.class_<Rml::StyleSheet>("StyleSheet");
 //        .fun<&Rml::StyleSheet::MergeStyleSheet>("MergeStyleSheet");

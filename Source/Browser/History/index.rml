@@ -25,7 +25,7 @@
                 </div>
             </div>
         </div>
-        <script src="../../Script/rue.js"></script>
+<!--        <script src="../../Script/rue.js"></script>-->
         <script>
             const rue = new Rue({
                 el: 'app',

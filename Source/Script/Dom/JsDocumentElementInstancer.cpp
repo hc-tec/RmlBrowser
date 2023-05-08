@@ -64,6 +64,9 @@ Element* JsDocumentElementInstancer::ElementStart(XMLParser* parser, const Strin
         loader->Load(r.path);
         scripts_.push_back(r);
     }
+	if (parser->GetParseFrame()->tag == "head") {
+		delegate_->OnHeadParseFinish();
+	}
 	return element;
 }
 
@@ -74,6 +77,9 @@ bool JsDocumentElementInstancer::ElementData(XMLParser* parser, const String& da
 	scripts_.push_back(MakeInlineResource(parser, data));
 	return true;
 }
+
+JsDocumentElementInstancer::JsDocumentElementInstancer(JsDocumentElementInstancer::Delegate* delegate)
+: delegate_(delegate) {}
 
 }
 }

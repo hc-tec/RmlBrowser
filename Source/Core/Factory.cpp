@@ -287,7 +287,7 @@ bool Factory::Initialise()
 	XMLParser::RegisterNodeHandler("", MakeShared<XMLNodeHandlerDefault>());
 	XMLParser::RegisterNodeHandler("body", MakeShared<XMLNodeHandlerBody>());
 	XMLParser::RegisterNodeHandler("head", MakeShared<XMLNodeHandlerHead>());
-	XMLParser::RegisterNodeHandler("template", MakeShared<XMLNodeHandlerTemplate>());
+//	XMLParser::RegisterNodeHandler("template", MakeShared<XMLNodeHandlerTemplate>());
 
 	// XML node handlers for control elements
 	XMLParser::RegisterNodeHandler("datagrid", MakeShared<XMLNodeHandlerDataGrid>());

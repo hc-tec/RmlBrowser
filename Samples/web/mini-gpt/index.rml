@@ -42,7 +42,7 @@
             </div>
         </div>
     </div>
-    <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/rue.js"></script>
+<!--    <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/rue.js"></script>-->
     <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/Net/axios.js"></script>
     <script>
         const axios = new Axios()

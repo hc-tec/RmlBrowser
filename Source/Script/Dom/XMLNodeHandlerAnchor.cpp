@@ -3,15 +3,14 @@
 //
 
 #include "XMLNodeHandlerAnchor.h"
-
-#include "RmlUi/Core/Factory.h"
-#include "RmlUi/Core/Element.h"
+#include "Ownership.h"
 #include "RmlUi/Core/Context.h"
+#include "RmlUi/Core/Element.h"
 #include "RmlUi/Core/ElementDocument.h"
+#include "RmlUi/Core/Factory.h"
 #include "RmlUi/Core/SystemInterface.h"
 #include "RmlUi/Core/Utils.h"
 #include "SelfListener.h"
-#include "Ownership.h"
 
 namespace Rml {
 

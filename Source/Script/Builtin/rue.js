@@ -2,10 +2,27 @@ const isPropAccess = (s) => {
     return s !== s.split('.')[0]
 }
 
+class RueRefs {
+    constructor() {
+        this.$refs = {}
+    }
+    addRef(id, rue) {
+        this.$refs[id] = rue
+    }
+    findRef(id) {
+        return this.$refs[id]
+    }
+}
+
+const rueRefs = new RueRefs()
+
 class Rue {
     constructor(options) {
+        rueRefs.addRef(options.el, this)
         this.$options = options
         this.$el = this.getBindingElement()
+        this.$refs = {}
+        this.$attrs = {}
         this.deps = {}
         this.rue = this.$options.data
         this._rue = {}
@@ -13,6 +30,10 @@ class Rue {
         this._defineProp()
         this.proxyData()
         this.init()
+    }
+
+    getRef(name) {
+        return rueRefs.findRef(this.$refs[name])
     }
 
     getBindingElement() {
@@ -28,6 +49,19 @@ class Rue {
     }
 
     parse(root) {
+        if (root === null) return
+        if (root.getId().startsWith('rue') && root !== this.$el) {
+            const name = root.getParentNode().getAttribute('ref')
+            if (name) this.$refs[name] = root.getId()
+            return;
+        }
+        if (root.getId().startsWith('rue')) {
+            const p = root.getParentNode();
+            const attrs = p.getAttributes()
+            Object.keys(attrs).forEach(key => {
+                this.$attrs[key] = attrs[key]
+            })
+        }
         let index = arguments[1]
         if (index === undefined) index = -1
         if (root.getTagName() === '#text') {
@@ -209,6 +243,9 @@ class Rue {
                     break
                 case 'load':
                     break
+                case 'class':
+                    el.setClassNames(new_val)
+                    break
                 default:
                     const attr = instruct
                     const origin1 = dep[2]
@@ -260,13 +297,16 @@ class Rue {
                 }
             })
         })
-        Object.keys(this.$options.methods).forEach(key => {
-            this[key] = this.$options.methods[key]
-        })
+        if (this.$options.methods) {
+            Object.keys(this.$options.methods).forEach(key => {
+                this[key] = this.$options.methods[key]
+            })
+        }
     }
 
     init() {
         Object.keys(this.deps).forEach(key => {
+            if (key.includes('__')) return
             this.triggerUpdate(key, this.rue[key])
         })
         if(this.$options.onMounted) {

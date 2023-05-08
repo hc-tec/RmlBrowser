@@ -4,68 +4,127 @@
     <style>
         #network-details {
             top: 50px;
-            left: 29%;
+            left: 19%;
             position: absolute;
-            width: 70%;
-            height: 100%;
+            width: 80%;
+            /*height: 100%;*/
+            /*overflow: auto;*/
             border-width: 3px;
             border-color: rgb(247,247,247);
             background-color: #fff;
+            z-index: 1;
+        }
+        .network-details-head {
+            border-bottom-width: 1px;
+            border-color: #d0d0d0;
+            padding: 5px 0 5px 5px;
+            font-size: 14px;
+        }
+        .network-details-head p {
+            font-size: 16px;
+            font-weight: bolder;
+        }
+        .network-details-head > div {
+            padding: 5px 15px 0 15px;
+        }
+        .network-details-head span:first-child {
+            font-weight: bold;
         }
     </style>
 </head>
 <body id="devtools">
     <handle move_target="#document">
-        <div style="width: 100%;">Title</div>
-    </handle>
-    <tabset style="position: relative">
+        <tabset style="position: relative">
         <tab>网络</tab>
         <panel>
-            <div>
+            <div r-if="networkRequestsVisible">
                 <table>
-                    <thead>
-                        <tr>
-                            <td colspan="4">名称</td>
-                            <td>方法</td>
-                            <td>状态</td>
-                            <td>协议</td>
-                            <td>大小</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr
-                                r-for="req in networkRequests"
-                                r-netid="req.header.net-id"
-                                r-click="handleNetworkItemClick">
-                            <td colspan="4">{{ req.url }}</td>
-                            <td>{{ req.method }}</td>
-                            <td>200</td>
-                            <td>h1</td>
-                            <td>111</td>
-                        </tr>
-                    </tbody>
-                </table>
+                <thead>
+                    <tr>
+                        <td colspan="4">名称</td>
+                        <td>方法</td>
+                        <td>状态</td>
+                        <td>协议</td>
+                        <td>大小</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr
+                            r-for="req in networkRequests"
+                            r-netid="req.header.net-id"
+                            r-click="handleNetworkItemClick">
+                        <td colspan="4">{{ req.url }}</td>
+                        <td>{{ req.method }}</td>
+                        <td>200</td>
+                        <td>h1</td>
+                        <td>111</td>
+                    </tr>
+                </tbody>
+    </table>
             </div>
             <div
                     id="network-details"
                     r-if="networkDetailsVisible">
-
-                <tabset style="position: relative">
+                <tabset
+                        id="network-details-tabset"
+                        style="position: relative">
                     <tab style="width: 14px;padding: 0;">
                         <img src="static/imgs/close.png" r-click="closeNetworkDetails" />
                     </tab>
                     <panel></panel>
                     <tab>标头</tab>
                     <panel>
-                        1
+                        <div class="network-details-head">
+                            <p>常规</p>
+                            <div>
+                                <div>
+                                    <span>请求URL：</span>
+                                    <span>{{ chosenNetworkItem.request.url }}</span>
+                                </div>
+                                <div>
+                                    <span>请求方法：</span>
+                                    <span>{{ chosenNetworkItem.request.method }}</span>
+                                </div>
+                                <div>
+                                    <span>状态代码：</span>
+                                    <span>{{ chosenNetworkItem.response.status }}</span>
+                                </div>
+                                <div>
+                                    <span>远程地址：</span>
+                                    <span>{{ chosenNetworkItem.request.header.Host }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="network-details-head">
+                            <p>响应头</p>
+                            <div>
+                                <div
+                                        r-for="response in networkDetailsResponseHeaders">
+                                    <span>{{ response.key }}：</span>
+                                    <span>{{ response.value }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="network-details-head">
+                            <p>请求头</p>
+                            <div>
+                                <div
+                                    r-for="request in networkDetailsRequestHeaders">
+                                    <span>{{ request.key }}：</span>
+                                    <span>{{ request.value }}</span>
+                                </div>
+                            </div>
+                        </div>
                     </panel>
                     <tab>负载</tab>
                     <panel>
-                        2
+                        {{ chosenNetworkItem.request.body }}
                     </panel>
                     <tab>响应</tab>
                     <panel>
-                        3
+                        <div class="whitespace-pre-wrap break-words">
+                            {{ chosenNetworkItem.response.body }}
+                        </div>
                     </panel>
                 </tabset>
             </div>
@@ -75,7 +134,8 @@
             Welcome to the second tab!
         </panel>
     </tabset>
-    <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/rue.js"></script>
+    </handle>
+<!--    <script src="//home/titto/CProjects/RmlUi5.0/Source/Script/rue.js"></script>-->
     <script>
         const rue = new Rue({
             el: 'devtools',
@@ -83,17 +143,40 @@
                 networkRequestsMap: {},
                 networkRequests: [],
                 chosenNetworkItem: {},
-                networkDetailsVisible: true,
+                networkRequestsVisible: false,
+                networkDetailsVisible: false,
+                networkDetailsRequestHeaders: [],
+                networkDetailsResponseHeaders: [],
             },
             methods: {
                 handleNetworkItemClick(e) {
                     const net_id = e.getAttribute('netid')
                     this.chosenNetworkItem = this.networkRequestsMap[net_id]
+                    this.chosenNetworkItem.response.body = this.chosenNetworkItem.response.body.replace(/^\s+|\s+$/g, '')
+                    this.networkDetailsRequestHeaders = []
+                    Object.keys(this.chosenNetworkItem.request.header).forEach(key => {
+                        this.networkDetailsRequestHeaders.push({key, value: this.chosenNetworkItem.request.header[key]})
+                    })
+                    this.networkDetailsRequestHeaders = this.networkDetailsRequestHeaders
+                    this.networkDetailsResponseHeaders = []
+                    Object.keys(this.chosenNetworkItem.response.header).forEach(key => {
+                        this.networkDetailsResponseHeaders.push({key, value: this.chosenNetworkItem.response.header[key]})
+                    })
+                    this.networkDetailsResponseHeaders = this.networkDetailsResponseHeaders
                     this.networkDetailsVisible = true
+                    this.initNetworkDetailTabset()
                 },
                 closeNetworkDetails() {
                     this.networkDetailsVisible = false
+                },
+                initNetworkDetailTabset() {
+                    let tabset = document.getElementById('network-details-tabset')
+                    tabset = dom.convertToElementTabSet(tabset)
+                    tabset.setActiveTab(1)
                 }
+            },
+            onMounted() {
+                this.initNetworkDetailTabset()
             }
         })
         rml.net.observeNetwork()
@@ -102,19 +185,17 @@
                 const net_id = e.header['net-id']
                 rue.networkRequests.push(e)
                 rue.networkRequests = rue.networkRequests
+                rue.networkRequestsVisible = true
                 log(JSON.stringify(e))
             } catch (err) {
                 log(`errxx ${err}`)
             }
         }
         rml.net.onRequestEnd = (e) => {
-
             const net_id = e.request.header['net-id']
-            log(`net_id ${net_id}`)
             rue.networkRequestsMap[net_id] = e
         }
         rml.tab.onActive = (tab) => {
-            document.show(0, 0)
             log(tab.getId())
         }
         rml.extension.onClick = (e) => {
