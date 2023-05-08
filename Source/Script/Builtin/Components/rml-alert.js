@@ -42,28 +42,28 @@ style = `
 .rml-alert.primary {
     border-color: rgb(${RUE_PRIMARY});
 }
-.rml-alert.primary:hover {
+.rml-alert.primary.flat:hover {
     background: rgba(${RUE_PRIMARY},${RUE_BG_ALPHA});
     color: rgb(${RUE_PRIMARY});
 }
 .rml-alert.success {
     border-color: rgb(${RUE_SUCCESS});
 }
-.rml-alert.success:hover {
+.rml-alert.success.flat:hover {
     background: rgba(${RUE_SUCCESS},${RUE_BG_ALPHA});
     color: rgb(${RUE_SUCCESS});
 }
 .rml-alert.danger {
     border-color: rgb(${RUE_DANGER});
 }
-.rml-alert.danger:hover {
+.rml-alert.danger.flat:hover {
     background: rgba(${RUE_DANGER},${RUE_BG_ALPHA});
     color: rgb(${RUE_DANGER});
 }
 .rml-alert.warn {
     border-color: rgb(${RUE_WARN});
 }
-.rml-alert.warn:hover {
+.rml-alert.warn.flat:hover {
     background: rgba(${RUE_WARN},${RUE_BG_ALPHA});
     color: rgb(${RUE_WARN});
 }

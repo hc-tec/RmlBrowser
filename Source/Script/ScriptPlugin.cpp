@@ -56,6 +56,8 @@ ScriptPlugin::ScriptPlugin()
     builtin_scripts_.push_back(script);
     script = "/home/titto/CProjects/RmlUi5.0/Source/Script/Builtin/Components/rml-notification.js";
     builtin_scripts_.push_back(script);
+    script = "/home/titto/CProjects/RmlUi5.0/Source/Script/Builtin/Components/rml-dialog.js";
+    builtin_scripts_.push_back(script);
 
 
     for (auto& path : builtin_scripts_) {

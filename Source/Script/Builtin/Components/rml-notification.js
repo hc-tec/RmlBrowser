@@ -50,7 +50,7 @@ style = `
     position: fixed;
     right: 10px;
     top: 0;
-    z-index: 200000;
+    z-index: 110;
     background: #fff;
     color: rgb(44,62,80);
     width: 340px;

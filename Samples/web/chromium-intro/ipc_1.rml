@@ -10,6 +10,23 @@
 <body template="chromium">
     <div class="content" id="app">
         <h1>Inside look at modern web browser (part 1)</h1>
+        <rml-dialog ref="dialog">
+            <template slot="header">
+                Welcome to Vuesax
+            </template>
+            <template>
+                <div class="flex flex-col items-center">
+                    <rml-input style="width: 200px;"></rml-input>
+                    <rml-input style="width: 200px;"></rml-input>
+                    <rml-input style="width: 200px;"></rml-input>
+                    <rml-input style="width: 200px;"></rml-input>
+                </div>
+            </template>
+            <template slot="footer">
+                <rml-button>ok</rml-button>
+                <rml-button flat="1">cancel</rml-button>
+            </template>
+        </rml-dialog>
         <rml-notification ref="notifier">
             <template slot="header">
                 Documentation Vuesax 4.0+
@@ -101,6 +118,7 @@
                 handleClick() {
                     log(this.getRef('input').getValue())
                     this.getRef('notifier').open()
+                    this.getRef('dialog').open()
                 }
             },
             onMounted() {

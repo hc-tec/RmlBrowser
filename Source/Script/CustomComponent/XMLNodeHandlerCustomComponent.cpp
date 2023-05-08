@@ -35,6 +35,7 @@ static std::string generate_random_string(int length) {
 Rml::Element* XMLNodeHandlerCustomComponent::ElementStart(XMLParser* parser, const String& name, const XMLAttributes& attributes)
 {
     Element* res = XMLNodeHandlerDefault::ElementStart(parser, name, attributes);
+    if (components_map_.find(name) == components_map_.end()) return res;
     need_parse_els_.push(res);
     String id = "rue" + generate_random_string(4);
     res->SetAttribute("r_id", id);
@@ -73,6 +74,7 @@ void XMLNodeHandlerCustomComponent::ReplaceScript(CustomComponentAssert& assert,
 
 void XMLNodeHandlerCustomComponent::RegisterCustomComponent(String name, CustomComponentAssert assert) {
 	assert.name = name;
+	if (components_map_.find(name) != components_map_.end()) return;
     XMLParser::RegisterNodeHandler(name, MakeShared<XMLNodeHandlerCustomComponent>());
     components_map_.insert({std::move(name), std::move(assert)});
 }
