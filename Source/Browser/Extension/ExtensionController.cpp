@@ -7,9 +7,12 @@
 #include "../RmlContext.h"
 #include "ExtensionManifest.h"
 #include "core/http/response/http_response_info.h"
+#include "Script/Dom/JsDocumentElement.h"
 namespace Rml {
 
 namespace Browser {
+
+
 
 ExtensionController::ExtensionController(UniquePtr<ExtensionManifest> manifest)
     : context_(RmlContext::Get()),
@@ -43,7 +46,22 @@ void ExtensionController::Glue() {
     qjs::Value rml = js_context->newObject();
     rml["extension"] = js_context->newObject();
     rml["dom"] = js_context->newObject();
+    rml["dom"]["getElementProperties"] = [=](Element* el){
+        auto* document = dynamic_cast<Script::JsDocumentElement*>(cur_tab_->document());
+	    return document->GetElementProperties(el);
+    };
     rml["tab"] = js_context->newObject();
+    rml["tab"]["getHostDocument"] = [=](){
+        return cur_tab_->document();
+    };
+    rml["tab"]["showBox"] = [=](Element* el){
+        auto* document = dynamic_cast<Script::JsDocumentElement*>(cur_tab_->document());
+        document->set_source_element(el);
+    };
+    rml["tab"]["hideBox"] = [=](){
+      auto* document = dynamic_cast<Script::JsDocumentElement*>(cur_tab_->document());
+      document->set_source_element(nullptr);
+    };
     rml["net"] = js_context->newObject();
     rml["net"]["observeNetwork"] = [=](){
 		Net::Network::GetInstance()->AddCoarseGrainRequestObserver(this);
@@ -130,7 +148,14 @@ void ExtensionController::OnTabActive(Tab* tab) {
     qjs::Context* js_context = script_plugin_->js_context();
     qjs::Value cb = js_context->global()["rml"]["tab"]["onActive"];
 	if (JS_IsUndefined(cb.v)) return;
-	static_cast<std::function<void(Tab*)>>(cb)(tab);
+    try {
+        static_cast<std::function<void(Tab*)>>(cb)(tab);
+    }catch (qjs::exception) {
+        auto exc = js_context->getException();
+        Log::Message(Log::LT_DEBUG, "%s", ((std::string) exc).data());
+        if((bool) exc["stack"])
+            Log::Message(Log::LT_DEBUG, "%s", ((std::string) exc["stack"]).data());
+    }
 }
 
 void ExtensionController::OnRequestStart(net::URLRequest* request, net::HttpRequestInfo* requestInfo)

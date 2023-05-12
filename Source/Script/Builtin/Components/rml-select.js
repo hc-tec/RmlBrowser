@@ -28,7 +28,7 @@ const __rue__ = new Rue({
     el: '__rue__',
     data: {
         options: ['so?', '456'],
-        value: '',
+        value: 'default',
     },
     methods: {
         handleClick(e) {
@@ -92,6 +92,9 @@ style = `
     width: 16px;
     transition: transform .2s;
 }
+.rml-select-icon img {
+    width: 100%;
+}
 .rml-select input:focus + .rml-options + .rml-select-icon {
     transform: translateY(-50%) rotate(180deg);
 }
@@ -99,15 +102,14 @@ style = `
     opacity: 0;
     z-index: -1;
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%) translateY(100%);
-    bottom: -5px;
+    left: 0;
+    top: 104%;
     width: 200px;
     background-color: rgb(244,247,248);
     padding: 5px 0;
     border-radius: 0 0 12px 12px;
     height: 200px;
-    overflow: auto;
+    overflow: visible;
     transition: all .2s;
 }
 .rml-option {

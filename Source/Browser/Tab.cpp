@@ -58,7 +58,7 @@ int Tab::Initialize() {
     script_plugin_->OnDocumentLoad(document_);
     document_->SetId(tab_id_);
     using Rml::PropertyId;
-    document_->SetProperty(PropertyId::Top, Rml::Property(browser_widget_height, Rml::Property::PX));
+    document_->SetProperty("left", "16%");
     if (delegate_) delegate_->OnInitialize(this);
 	return 0;
 }

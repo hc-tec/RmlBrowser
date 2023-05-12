@@ -2,15 +2,47 @@ body, div {
   display: block;
 }
 body {
-  width: 100%;
-  height: 100px;
-  background-color: #f7f7f7;
-  color: black;
   font-family: LatoLatin;
+  width: 100%;
+  height: 100%;
+  //background-color: #f1f1f1;
+  background-color: #f5f5f5;
+  color: black;
+  z-index: -1;
+  overflow: auto;
+}
+
+.widget {
+  width: 15%;
+  padding: 10px;
+  overflow-y: auto;
+}
+
+.widget > * {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.tab-ops {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0;
+}
+
+.tab-ops img {
+  width: 15px;
+  margin-left: 15px;
+  padding: 5px;
+  border-radius: 10px;
+  transition: background-color .1s;
+}
+
+.tab-ops img:hover {
+  background-color: #fff;
 }
 
 .active-btn {
-  transition: background-color 0.2s;
+  transition: background-color 0.1s;
 }
 
 .active-btn:hover {
@@ -22,13 +54,13 @@ body {
 }
 
 .tabs {
-  height: 33px;
-  background-color: #cdcdcd;
+  //height: 35%;
+  width: 85%;
 }
 
 .tabs-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   position: relative;
 }
 
@@ -36,8 +68,10 @@ body {
   padding: 10px 25px 10px 10px;
   position: relative;
   font-size: 16px;
-  transition: background-color 0.3s;
-  width: 200px;
+  transition: background-color .1s;
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 5px;
 }
 
 .tab:hover {
@@ -54,11 +88,11 @@ body {
 }
 
 .tab-active {
-  background-color: #f7f7f7;
+  background-color: #fff;
 }
 
 .tab-active:hover {
-  background-color: #f7f7f7;
+  background-color: #fff;
 }
 
 .title-wrap {
@@ -72,35 +106,43 @@ body {
   width: 1000px;
 }
 
+.tab:hover .close-icon {
+  opacity: 1;
+}
+
 .close-icon {
+  opacity: 0;
   display: inline-block;
   width: 15px;
   height: 15px;
   position: absolute;
-  right: 5px;
+  right: 15px;
   top: 9px;
   text-align: center;
+  transition: opacity .1s;
 }
 
 .close-icon:hover {
-  background-color: #cdcdcd;
+  background-color: rgb(244,247,248);
 }
 
 .add-icon {
-  background-color: #cdcdcd;
   margin-left: 10px;
-  font-size: 18px;
-  width: 33px;
+  font-size: 16px;
+  width: 100%;
   height: 33px;
-  text-align: center;
+  text-align: left;
+  padding-left: 10px;
   line-height: 38px;
-  transition: background-color 0.3s;
+  border-radius: 10px;
+  transition: background-color 0.1s;
+  margin-bottom: 10px;
 }
 .add-icon:hover {
-  background-color: #ADADAD;
+  background-color: #e4e4e4;
 }
 .add-icon:active {
-  background-color: #A2A2A2;
+  background-color: #cdcdcd;
 }
 
 .components {
@@ -194,22 +236,45 @@ body {
 }
 
 
+.stars-wrapper {
+  width: 100%;
+}
 
+.stars-wrapper .title {
+  color: rgb(44,62,80);
+  display: flex;
+  align-items: flex-end;
+  flex-direction: row;
+  width: 100%;
+  justify-content: flex-start;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
 
+.stars-wrapper .title img {
+  width: 20px;
+  margin-right: 5px;
+}
+
+.separate-line {
+  margin: 10px 0;
+  width: 100%;
+  height: 1px;
+  background-color: rgba(44,62,80, 40);
+}
 
 .stars {
-  height: 30px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  border-bottom-width: 1px;
-  border-bottom-color: #bab6b6;
+  width: 220px;
+  overflow: hidden auto;
+  height: 200px;
 }
 
 .star {
-  padding: 0px 15px 4px 10px;
+  padding: 8px 0 10px 10px;
   position: relative;
   font-size: 14px;
+  width: 200px;
+  border-radius: 10px;
 }
 
 .star .star-icon {
@@ -221,7 +286,7 @@ body {
 }
 
 .star .text {
-  width: 80px;
+  width: 75%;
   display: inline-block;
   overflow: hidden;
   position: relative;
@@ -231,6 +296,12 @@ body {
 .star .text p {
   display: block;
   width: 1000px;
+}
+
+
+body .rml-input input,
+body .rml-avatar {
+  background-color: #fff;
 }
 
 

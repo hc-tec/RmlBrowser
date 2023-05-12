@@ -37,7 +37,7 @@ style = `
     border-radius: 12px;
     padding: 6px 15px;
     font-size: 16px;
-    transition: background .2s;
+    transition: background .2s, transform .2s;
 }
 .primary {
     background: rgb(${RUE_PRIMARY});
@@ -47,7 +47,7 @@ style = `
     background: rgba(${RUE_PRIMARY},${RUE_BG_ALPHA});
     color: rgb(${RUE_PRIMARY});
 }
-.primary.flat:hover {
+.primary.flat:active {
     background: rgb(${RUE_PRIMARY});
     color: #fff;
 }
@@ -59,7 +59,7 @@ style = `
     background: rgba(${RUE_SUCCESS},${RUE_BG_ALPHA});
     color: rgb(${RUE_SUCCESS});
 }
-.success.flat:hover {
+.success.flat:active {
     background: rgb(${RUE_SUCCESS});
     color: #fff;
 }
@@ -71,7 +71,7 @@ style = `
     background: rgba(${RUE_DANGER},${RUE_BG_ALPHA});
     color: rgb(${RUE_DANGER});
 }
-.danger.flat:hover {
+.danger.flat:active {
     background: rgb(${RUE_DANGER});
     color: #fff;
 }
@@ -83,15 +83,18 @@ style = `
     background: rgba(${RUE_WARN},${RUE_BG_ALPHA});
     color: rgb(${RUE_WARN});
 }
-.warn.flat:hover {
+.warn.flat:active {
     background: rgb(${RUE_WARN});
     color: #fff;
 }
 .rml-button:hover {
     opacity: 0.8;
+    transform: translateY(-4px);
 }
 .rml-button:active {
     opacity: 0.7;
+    transform: scale(.95);
+    transform-origin: center center;
 }
 `.slice(8)
 

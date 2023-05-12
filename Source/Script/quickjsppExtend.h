@@ -10,10 +10,11 @@
 #include "RmlUi/Config/Config.h"
 #include "RmlUi/Core/Variant.h"
 #include "RmlUi/Core/Types.h"
+#include "RmlUi/Core/Property.h"
 #include "Dom/Ownership.h"
 #include "Browser/Collections.h"
 #include "core/http/http_headers.h"
-
+#include "Dom/JsDocumentElement.h"
 
 namespace qjs {
 
@@ -214,6 +215,61 @@ struct js_traits<Json::Value> {
         return v.v;
     }
 };
+
+template <>
+struct js_traits<Rml::Script::ElementProperty> {
+
+    static JSValue wrap(JSContext* ctx, Rml::Script::ElementProperty s) noexcept {
+        JSValue obj = JS_NewObject(ctx);
+        Value v {ctx, JS_DupValue(ctx, obj)};
+		v["inherit"] = s.inherit;
+		v["list"] = s.list;
+        return v.v;
+    }
+};
+
+template <>
+struct js_traits<Rml::Script::UnitProperty> {
+
+    static JSValue wrap(JSContext* ctx, Rml::Script::UnitProperty s) noexcept {
+        JSValue obj = JS_NewObject(ctx);
+        Value v {ctx, JS_DupValue(ctx, obj)};
+        v["source"] = s.source;
+        v["list"] = s.list;
+        return v.v;
+    }
+};
+
+template <>
+struct js_traits<const Rml::PropertySource*> {
+    const Rml::PropertySource* unwrap(JSContext* ctx, JSValueConst v)
+    {
+        Rml::PropertySource* obj;
+        return obj;
+    }
+    static JSValue wrap(JSContext* ctx, const Rml::PropertySource* s) noexcept {
+        JSValue obj = JS_NewObject(ctx);
+        Value v {ctx, JS_DupValue(ctx, obj)};
+		if (s != nullptr)
+		{
+			v["path"] = s->path;
+			v["rule"] = s->rule_name;
+			v["lineNumber"] = s->line_number;
+		}
+        return v.v;
+    }
+};
+
+
+//template <>
+//struct js_traits<const Rml::Property*> {
+//
+//    static JSValue wrap(JSContext* ctx, const Rml::Property* s) noexcept {
+//        JSValue obj = JS_NewString(ctx, s->ToString().data());
+//        Value v {ctx, JS_DupValue(ctx, obj)};
+//        return v.v;
+//    }
+//};
 
 }
 

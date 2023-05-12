@@ -121,6 +121,8 @@ public:
 		return value.Get<T>();
 	}
 
+    const PropertySource* GetSource() { return source.get(); }
+
 	bool operator==(const Property& other) const { return unit == other.unit && value == other.value; }
 	bool operator!=(const Property& other) const { return !(*this == other); }
 

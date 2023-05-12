@@ -4,61 +4,96 @@
         <link type="text/rcss" href="widget.rcss" />
     </head>
     <body id="app">
-        <div class="tabs">
-            <div style="position: relative;">
-                <div class="tabs-container">
-<!--                <div class="tab tab-active">-->
-<!--                    <img class="tab-icon" src="images/favicon.png"></img>-->
-<!--                    <p>title</p>-->
-<!--                    <p class="close-icon">x</p>-->
-<!--                </div>-->
-                    <div class="add-icon">
-                        +
-                    </div>
-                </div>
-
+        <div class="widget">
+            <div class="tab-ops">
+                <img src="images/left_arrow.png"/>
+                <img src="images/right_arrow.png"/>
+                <img src="images/fresh.png"/>
             </div>
-        </div>
-        <div class="components">
-            <img class="icon active-btn" src="images/left_arrow.png"></img>
-            <img class="icon active-btn" src="images/fresh.png"></img>
-            <img class="icon active-btn" src="images/right_arrow.png"></img>
-            <div class="search-bar">
+            <rml-input
+                    ref="search"
+                    width="100%"
+                   icon="//home/titto/CProjects/RmlUi5.0/Extensions/DevTools/static/imgs/logo.png" />
+            <div style="width: 100%; display: flex;flex-direction: row;justify-content: space-around;">
+                <rml-avatar r-click="starUrl">
+                    <img src="images/star.png" />
+                </rml-avatar>
+                <rml-avatar r-click="toHistoryPage">
+                    <img src="images/history.png" />
+                </rml-avatar>
                 <div>
-                    <div class="icon-wrapper">
-                        <img class="icon active-btn" src="images/rmlui_icon.png"></img>
-                        <p class="icon-text">Rml</p>
-                        <h1 class="line"></h1>
-                    </div>
-                    <input id="search-input" class="search-input" type="text" name="search"/>
-                </div>
-            </div>
-            <div class="function-icons">
-                <img class="active-btn star-icon" src="images/star.png" r-click="starUrl"></img>
-                <img class="active-btn" src="images/history.png" r-click="toHistoryPage"></img>
-                <span>
-                    <img
-                            class="active-btn extension-icon"
+                    <rml-avatar
                             r-for="extension in extensions"
-                            r-src="extension.icon"
                             r-name="extension.name"
-                            r-click="handleExtensionClick" />
-                </span>
-            </div>
-        </div>
-        <div class="stars">
-            <div
-                class="star active-btn"
-                r-for="star in stars"
-                r-url="star.url"
-                r-click="handleStarClick">
-                <img class="star-icon" r-src="star.icon"></img>
-                <div class="text">
-                    <p>{{ star.title }}</p>
+                            r-click="handleExtensionClick">
+                        <img r-src="extension.icon" />
+                    </rml-avatar>
                 </div>
             </div>
-        </div>
-<!--        <script src="../../Script/rue.js"></script>-->
+            <div class="stars-wrapper">
+                <div class="title">
+                    <img src="//home/titto/CProjects/RmlUi5.0/Source/Browser/BrowserWidgetAssets/images/star.png" />
+                    <p>Stars</p>
+                </div>
+                <div class="stars">
+                    <div
+                            class="star active-btn"
+                            r-for="star in stars"
+                            r-url="star.url"
+                            r-click="handleStarClick">
+                        <img class="star-icon" r-src="star.icon"></img>
+                        <div class="text">
+                            <p>{{ star.title }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="separate-line"></div>
+            </div>
+            <div class="tabs">
+                <div style="position: relative;">
+                    <div class="tabs-container">
+                        <div class="add-icon">
+                            + New Tab
+                        </div>
+    <!--                <div class="tab tab-active">-->
+    <!--                    <img class="tab-icon" src="images/favicon.png"></img>-->
+    <!--                    <p>title</p>-->
+    <!--                    <p class="close-icon">x</p>-->
+    <!--                </div>-->
+
+                    </div>
+            </div>
+            </div>
+<!--        <div class="components">-->
+<!--            <img class="icon active-btn" src="images/left_arrow.png"></img>-->
+<!--            <img class="icon active-btn" src="images/fresh.png"></img>-->
+<!--            <img class="icon active-btn" src="images/right_arrow.png"></img>-->
+<!--            <div class="search-bar">-->
+<!--                <div>-->
+<!--                    <div class="icon-wrapper">-->
+<!--                        <img class="icon active-btn" src="images/rmlui_icon.png"></img>-->
+<!--                        <p class="icon-text">Rml</p>-->
+<!--                        <h1 class="line"></h1>-->
+<!--                    </div>-->
+<!--                    <input id="search-input" class="search-input" type="text" name="search"/>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="function-icons">-->
+<!--                <img class="active-btn star-icon" src="images/star.png" r-click="starUrl"></img>-->
+<!--                <img class="active-btn" src="images/history.png" r-click="toHistoryPage"></img>-->
+<!--                <span>-->
+<!--                    <img-->
+<!--                            class="active-btn extension-icon"-->
+<!--                            r-for="extension in extensions"-->
+<!--                            r-src="extension.icon"-->
+<!--                            r-name="extension.name"-->
+<!--                            r-click="handleExtensionClick" />-->
+<!--                </span>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </div>
+        <script src="widget.js"></script>
         <script>
             const rue = new Rue({
                 el: 'app',
@@ -88,6 +123,9 @@
                     handleExtensionClick(e, event) {
                         const name = e.getAttribute('name')
                         rml.extension.dispatchClickEvent(name, event.getParameters())
+                    },
+                    updateSearchInputValue(value) {
+                        this.getRef('search').setValue(value)
                     }
                 }
             })
@@ -101,7 +139,14 @@
             const STARS_LOADED = (stars) => {
                 rue.stars = stars
             }
+            // observe tab focus
+            class SearchInputObserver extends TabManagerObserver {
+                onTabFocus(tab, params) {
+                    rue.updateSearchInputValue(params.url)
+                }
+            }
+            const search_input_observer = new SearchInputObserver()
+            tab_manager.attach(search_input_observer)
         </script>
-        <script src="widget.js"></script>
     </body>
 </rml>

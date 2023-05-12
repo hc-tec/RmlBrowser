@@ -24,12 +24,14 @@ const __rue__ = new Rue({
     },
     methods: {
         getValue() {
-            const input = dom.convertToElementFormControl(this.inputEl)
-            return input.value
+            return this.inputEl.value
+        },
+        setValue(value) {
+            this.inputEl.value = value
         }
     },
     onMounted() {
-        this.inputEl = this.$el.getElementsByTagName('input')[0]
+        this.inputEl = dom.convertToElementFormControl(this.$el.getElementsByTagName('input')[0])
         if (this.$attrs.type) {
             this.type = this.$attrs.type 
         }
@@ -86,6 +88,9 @@ style = `
     border-radius: 12px;
     top: 50%;
     transform: translateY(-50%);
+}
+.rml-input-icon img {
+    width: 100%;
 }
 `.slice(8)
 

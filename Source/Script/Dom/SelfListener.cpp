@@ -6,6 +6,7 @@
 #include <quickjspp.hpp>
 #include <utility>
 #include "log/logging.h"
+#include <iostream>
 namespace Rml {
 
 namespace Script {
@@ -19,9 +20,9 @@ void SelfListener::ProcessEvent(Event& event) {
 		callback_(&event);
 	} catch (qjs::exception e) {
         auto exc = e.get();
-		LOG(ERROR) << (std::string) exc;
+		std::cerr << (std::string) exc << std::endl;
         if((bool) exc["stack"])
-            LOG(ERROR) << (std::string) exc["stack"];
+            std::cerr << (std::string) exc["stack"] << std::endl;
     }
 }
 

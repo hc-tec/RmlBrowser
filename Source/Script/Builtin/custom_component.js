@@ -82,6 +82,7 @@ const parse = (root) => {
 const parseSlotData = (root) => {
     const child_num = root.getNumChildren(false)
     const id = root.getAttribute('r_id')
+    log(root.getTagName())
     for (let i = 0; i < child_num; ++i) {
         const child = root.getChild(i)
         const tag = child.getTagName()

@@ -6,6 +6,7 @@
 
 #include "RmlUi/Core/Context.h"
 #include "RmlUi/Core/ElementDocument.h"
+#include "JsDocumentElement.h"
 
 namespace Rml {
 
@@ -22,6 +23,27 @@ void Document::Glue(qjs::Context::Module& m)
         .fun<&ElementDocument::CreateElement>("createElement")
         .fun<&ElementDocument::Hide>("hide")
         .fun<&ElementDocument::Show>("show");
+
+    m.class_<Rml::Property>("Property")
+        .constructor<>("Property")
+        .fun<&Rml::Property::ToString>("asString")
+        .fun<&Rml::Property::GetSource>("getSource");
+
+    m.function("getPropString", [](const Rml::Property* prop){
+		return prop->ToString();
+	});
+    m.function("getPropSource", [](const Rml::Property* prop){
+      return prop->source;
+    });
+//    m.function("getSourceRule", [](const Rml::PropertySource* source){
+//      return source->rule_name;
+//    });
+//    m.function("getSourcePath", [](const Rml::PropertySource* source){
+//      return source->path;
+//    });
+//    m.function("getSourceLineNumber", [](const Rml::PropertySource* source){
+//      return source->line_number;
+//    });
 }
 
 }

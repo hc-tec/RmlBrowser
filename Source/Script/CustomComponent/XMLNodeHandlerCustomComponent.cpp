@@ -8,13 +8,14 @@
 #include <random>
 
 #include "RmlUi/Core/XMLParser.h"
+#include <unordered_map>
 
 namespace Rml {
 
 namespace Script {
 
-static UnorderedMap<String, String> slots_map_;
-static UnorderedMap<String, CustomComponentAssert> components_map_;
+static std::unordered_map<String, String> slots_map_;
+static std::unordered_map<String, CustomComponentAssert> components_map_;
 static Vector<CustomComponentAssert> use_components_list_;
 static Queue<Element*> need_parse_els_;
 
@@ -58,6 +59,7 @@ bool XMLNodeHandlerCustomComponent::ElementData(XMLParser* parser, const String&
 }
 
 void XMLNodeHandlerCustomComponent::ReplaceScript(CustomComponentAssert& assert, const String& id) {
+	assert.id = id;
     String old_str = "__rue__";
     size_t pos = assert.script.find(old_str);
     while (pos != String::npos) {
@@ -89,7 +91,7 @@ String XMLNodeHandlerCustomComponent::GetSlot(const String& id) {
 	return "";
 }
 
-UnorderedMap<String, CustomComponentAssert>& XMLNodeHandlerCustomComponent::GetComponentAssets() { return components_map_; }
+std::unordered_map<String, CustomComponentAssert>& XMLNodeHandlerCustomComponent::GetComponentAssets() { return components_map_; }
 
 Vector<CustomComponentAssert>& XMLNodeHandlerCustomComponent::GetUseComponentAssets() { return use_components_list_; }
 

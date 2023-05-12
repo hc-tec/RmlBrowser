@@ -53,9 +53,7 @@ class Rue {
         if (root.getId().startsWith('rue') && root !== this.$el) {
             const name = root.getParentNode().getAttribute('ref')
             if (name) this.$refs[name] = root.getId()
-            return;
-        }
-        if (root.getId().startsWith('rue')) {
+        } else if (root.getId().startsWith('rue')) {
             const p = root.getParentNode();
             const attrs = p.getAttributes()
             Object.keys(attrs).forEach(key => {
@@ -108,11 +106,14 @@ class Rue {
                 const instruct = key.split('-')[1]
                 let val = attrs[key]
                 if (instruct === 'for') {
+                    log(`for -- ${root.getOuterRML()}`)
                     const for_ = val.split(' in ')
                     const item_v = for_[0]
                         , arr_v = for_[1]
                     root.removeAttribute('r-for')
-                    this.deps[arr_v].push([instruct, root, item_v])
+                    if (this.deps[arr_v]) {
+                        this.deps[arr_v].push([instruct, root, item_v])
+                    }
                 } else if (instruct === 'click') {
                     const event_handler = this.$options.methods[val]
                     root.addEventListener(root, 'click', e => {
@@ -205,7 +206,6 @@ class Rue {
                     const len = new_val.length
                     const item_v = dep[2]
                     const parent = el.getParentNode()
-
                     // clear
                     const child_n = parent.getNumChildren(false)
                     log(`clear ${child_n}`)
@@ -306,12 +306,15 @@ class Rue {
 
     init() {
         Object.keys(this.deps).forEach(key => {
+            log(`key ${key} ${this.rue[key]}`)
             if (key.includes('__')) return
             this.triggerUpdate(key, this.rue[key])
         })
         if(this.$options.onMounted) {
             this.$options.onMounted.apply(this)
         }
+        // log(this)
+        // log(JSON.stringify(this))
     }
 
     elementLoad(el) {

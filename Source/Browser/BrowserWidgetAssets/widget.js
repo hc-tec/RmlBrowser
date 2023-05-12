@@ -77,8 +77,8 @@ class TabManager extends Subject {
         tab.appendChild(title_wrap, true)
         tab.appendChild(close_icon, true)
 
-        const add_icon = document.getElementsByClassName('add-icon')[0]
-        this.tab_parent_el.insertChild(tab, add_icon)
+        // const add_icon = document.getElementsByClassName('add-icon')[0]
+        this.tab_parent_el.appendChild(tab, true)
         this.NotifyTabAdd(tab)
         log(`Id: ${id} title: ${params.title} added to Tabs`)
     }
@@ -209,33 +209,23 @@ function TAB_MANAGER_UPDATE_TAB_PARAMS(params) {
 }
 
 
-/* Search Input */
-let search_input = document.getElementById('search-input')
-search_input = dom.convertToElementFormControl(search_input)
 
-// observe tab focus
-class SearchInputObserver extends TabManagerObserver {
-    onTabFocus(tab, params) {
-        log('SearchInputObserver')
-        search_input.value = params.url
-    }
-}
-const search_input_observer = new SearchInputObserver()
-tab_manager.attach(search_input_observer)
+
+
 
 // listen keydown event
-search_input.addEventListener(search_input, 'keydown', e => {
-    const params = e.getParameters()
-    const key_identifier = params['key_identifier']
-    // press enter
-    if (key_identifier === 72) {
-        const input_value = search_input.value
-        log(`input_value ${input_value}`)
-        const params = tab_manager.get_active_tab_params()
-        if (params.url === input_value) return
-        COpenTabWithUrl(params.id, input_value)
-    }
-})
+// search_input.addEventListener(search_input, 'keydown', e => {
+//     const params = e.getParameters()
+//     const key_identifier = params['key_identifier']
+//     // press enter
+//     if (key_identifier === 72) {
+//         const input_value = search_input.value
+//         log(`input_value ${input_value}`)
+//         const params = tab_manager.get_active_tab_params()
+//         if (params.url === input_value) return
+//         COpenTabWithUrl(params.id, input_value)
+//     }
+// })
 
 class Stars {
     constructor() {

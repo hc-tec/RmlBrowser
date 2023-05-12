@@ -22,10 +22,11 @@ namespace Rml {
 namespace Script {
 
 ScriptPlugin::ScriptPlugin()
-		: js_runtime_(nullptr) {
+		: document_(nullptr),
+		js_runtime_(GetRunTime()) {
 //    static co::mutex js_mutex;
 //    auto _ = co::mutex_guard(js_mutex);
-    js_runtime_ = GetRunTime(); // new qjs::Runtime();
+//    js_runtime_ = ; // new qjs::Runtime();
     js_context_ = MakeUnique<qjs::Context>(js_runtime_->rt);
     Glue(js_context_.get());
     js_document_element_instancer_ = MakeShared<JsDocumentElementInstancer>(this);
@@ -75,6 +76,11 @@ ScriptPlugin::ScriptPlugin()
     js_context_->global()["CCustomGetParseEl"] = [](){
       return XMLNodeHandlerCustomComponent::GetParseEl();
     };
+    js_context_->global()["CDynamicCustomLoad"] = [&](){
+      ParseCustomComponent();
+      LoadCustomComponentScript();
+    };
+
 }
 
 void ScriptPlugin::LoadJs() {
@@ -101,24 +107,11 @@ void ScriptPlugin::LoadJs() {
 
 void ScriptPlugin::OnDocumentLoad(ElementDocument* document) {
     qjs::Context* js_context = js_context_.get();
+	document_ = document;
     js_context->global()["document"] = document;
-	if (!register_components_.empty())
-	{
-		try
-		{
-			auto func = (std::function<void()>)js_context->eval("parseCustomComponent");
-			func();
-		} catch (qjs::exception)
-		{
-			auto exc = js_context->getException();
-			std::cerr << (std::string)exc << std::endl;
-			if ((bool)exc["stack"])
-				std::cerr << (std::string)exc["stack"] << std::endl;
-		}
-	}
-
-    LoadCustomComponentResource(document);
+    ParseCustomComponent();
 	LoadJs();
+    LoadCustomComponentResource(document);
 }
 
 ScriptPlugin::~ScriptPlugin() {
@@ -144,41 +137,67 @@ void ScriptPlugin::LoadExternJs(qjs::Context* js_context, const std::string& pat
 
 void ScriptPlugin::OnHeadParseFinish() {
 	LoadJs();
-    UnorderedMap<String, CustomComponentAssert>& assets = XMLNodeHandlerCustomComponent::GetComponentAssets();
+    std::unordered_map<String, CustomComponentAssert>& assets = XMLNodeHandlerCustomComponent::GetComponentAssets();
     for (auto& [key, value] : assets) {
         register_components_.push_back(key);
     }
 }
 
 void ScriptPlugin::LoadCustomComponentResource(ElementDocument* document) {
+
+    LoadCustomComponentCss(document);
+
+    LoadCustomComponentScript();
+}
+
+void ScriptPlugin::LoadCustomComponentCss(ElementDocument* document) {
     SharedPtr<StyleSheetContainer> new_sheet = MakeShared<StyleSheetContainer>();
     const StyleSheetContainer* origin_sheet = document->GetStyleSheetContainer();
-	new_sheet->MergeStyleSheetContainer(*origin_sheet);
-	// css load once
-    UnorderedMap<String, CustomComponentAssert>& assets = XMLNodeHandlerCustomComponent::GetComponentAssets();
-    for (auto& key : register_components_) {
-        CustomComponentAssert& value = assets[key];
+    new_sheet->MergeStyleSheetContainer(*origin_sheet);
+    // css load once
+    std::unordered_map<String, CustomComponentAssert>& assets = XMLNodeHandlerCustomComponent::GetComponentAssets();
+    for (auto& [key, value] : assets) {
+//        CustomComponentAssert& value = assets[key];
         SharedPtr<StyleSheetContainer> style_sheet = Factory::InstanceStyleSheetString(value.rcss);
-		if (style_sheet == nullptr) continue;
+        if (style_sheet == nullptr) continue;
         new_sheet->MergeStyleSheetContainer(*(style_sheet.get()));
-	}
+    }
     document->SetStyleSheetContainer(std::move(new_sheet));
+}
 
-    qjs::Context* js_context = js_context_.get();
-	// but js execute times with regard to how many times the component use by the developer
+void ScriptPlugin::LoadCustomComponentScript() {
+    // but js execute times with regard to how many times the component use by the developer
     Vector<CustomComponentAssert>& use_assets = XMLNodeHandlerCustomComponent::GetUseComponentAssets();
-	for (auto& value : use_assets) {
-		try
-		{
-            js_context->eval(value.script, value.name.data());
+    for (auto& value : use_assets) {
+        try
+        {
+			if (!document_->GetElementById(value.id)) continue;
+            js_context_->eval(value.script, value.name.data());
         } catch (qjs::exception) {
-            auto exc = js_context->getException();
+            auto exc = js_context_->getException();
             std::cerr << (std::string) exc << std::endl;
             if((bool) exc["stack"])
                 std::cerr << (std::string) exc["stack"] << std::endl;
         }
-	}
+    }
     XMLNodeHandlerCustomComponent::ClearUseComponentAssets();
+}
+
+void ScriptPlugin::ParseCustomComponent() {
+    if (XMLNodeHandlerCustomComponent::NeedParse())
+    {
+        try
+        {
+            auto func = (std::function<void()>)js_context_->eval("parseCustomComponent");
+            func();
+        } catch (qjs::exception)
+        {
+            auto exc = js_context_->getException();
+            std::cerr << (std::string)exc << std::endl;
+            if ((bool)exc["stack"])
+                std::cerr << (std::string)exc["stack"] << std::endl;
+        }
+    }
 }
 
 }

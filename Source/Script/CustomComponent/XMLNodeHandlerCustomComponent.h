@@ -15,6 +15,7 @@ namespace Rml {
 namespace Script {
 
 struct CustomComponentAssert {
+    String id;
     String name;
     String rml;
     String rcss;
@@ -35,7 +36,7 @@ public:
 
 	static String GetSlot(const String& id);
 
-	static UnorderedMap<String, CustomComponentAssert>& GetComponentAssets();
+	static std::unordered_map<String, CustomComponentAssert>& GetComponentAssets();
 
 	static Vector<CustomComponentAssert>& GetUseComponentAssets();
 

@@ -10,6 +10,8 @@
 <body template="chromium">
     <div class="content" id="app">
         <h1>Inside look at modern web browser (part 1)</h1>
+        <rml-input type="password"></rml-input>
+        <rml-input r-click="handleClick" ref="input" icon="//home/titto/CProjects/RmlUi5.0/Extensions/DevTools/static/imgs/logo.png"></rml-input>
         <rml-dialog ref="dialog">
             <template slot="header">
                 Welcome to Vuesax
@@ -17,9 +19,7 @@
             <template>
                 <div class="flex flex-col items-center">
                     <rml-input style="width: 200px;"></rml-input>
-                    <rml-input style="width: 200px;"></rml-input>
-                    <rml-input style="width: 200px;"></rml-input>
-                    <rml-input style="width: 200px;"></rml-input>
+                    <rml-select />
                 </div>
             </template>
             <template slot="footer">
@@ -41,31 +41,6 @@
             </template>
         </rml-avatar>
         <rml-select />
-        <rml-input type="password"></rml-input>
-        <rml-input r-click="handleClick" ref="input" icon="//home/titto/CProjects/RmlUi5.0/Extensions/DevTools/static/imgs/logo.png"></rml-input>
-        <my-page />
-        <rml-alert>
-            <template slot="title">Title</template>
-            <template>
-                Vuesax no usa ninguna librería o fuente de iconos por defecto, con esto damos la libertad de usar la que prefieras Todos los componentes que usen en algún lugar un icono por defecto como el de close en un Alert o un Popup va a ser un svg para no tener que instalar ningún tipo de fuente externa, y se podrá sustituir con un slot="icon" por el icono de su preferencia
-            </template>
-        </rml-alert>
-        <rml-alert type="success">
-            <template slot="title">Title</template>
-            <template>
-                Vuesax no usa ninguna librería o fuente de iconos por defecto, con esto damos la libertad de usar la que prefieras Todos los componentes que usen en algún lugar un icono por defecto como el de close en un Alert o un Popup va a ser un svg para no tener que instalar ningún tipo de fuente externa, y se podrá sustituir con un slot="icon" por el icono de su preferencia
-            </template>
-        </rml-alert>
-        <rml-alert type="danger">
-            <template slot="title">Title</template>
-            <template>
-                Vuesax no usa ninguna librería o fuente de iconos por defecto, con esto damos la libertad de usar la que prefieras Todos los componentes que usen en algún lugar un icono por defecto como el de close en un Alert o un Popup va a ser un svg para no tener que instalar ningún tipo de fuente externa, y se podrá sustituir con un slot="icon" por el icono de su preferencia
-            </template>
-        </rml-alert>
-        <rml-button ref="hello" >
-            <div>Active</div>
-        </rml-button>
-        <rml-button type="success" >Active</rml-button>
 <!--        <rml-button type="danger" >Active</rml-button>-->
 <!--        <rml-button type="warn" >Active</rml-button>-->
 <!--        <rml-button flat="1">Active</rml-button>-->
@@ -116,9 +91,10 @@
             data: {},
             methods: {
                 handleClick() {
-                    log(this.getRef('input').getValue())
+
                     this.getRef('notifier').open()
                     this.getRef('dialog').open()
+                    log(this.getRef('input').getValue())
                 }
             },
             onMounted() {

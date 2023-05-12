@@ -110,6 +110,9 @@ void Element::Glue(qjs::Context::Module& m) {
         m.function("convertToElementTabSet", [](Rml::Element* el) -> ElementTabSet* {
           return reinterpret_cast<ElementTabSet*>(el);
         });
+        m.function("appendChildUseRML", [](Rml::Element* parent, const String& rml) -> bool {
+          return Factory::InstanceElementText(parent, rml);
+        });
 
 }
 
